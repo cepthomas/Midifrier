@@ -15,7 +15,6 @@ using NBagOfTricks;
 using NBagOfUis;
 using NBagOfTricks.Slog;
 using MidiLib;
-using AudioLib;
 
 
 namespace Midifrier

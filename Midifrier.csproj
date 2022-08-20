@@ -58,9 +58,6 @@
         <Reference Include="NBagOfUis">
             <HintPath>lib\NBagOfUis.dll</HintPath>
         </Reference>
-        <Reference Include="AudioLib">
-            <HintPath>lib\AudioLib.dll</HintPath>
-        </Reference>
         <Reference Include="MidiLib">
             <HintPath>lib\MidiLib.dll</HintPath>
         </Reference>

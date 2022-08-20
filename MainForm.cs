@@ -97,20 +97,12 @@ namespace Midifrier
 
             // Other UI configs.
             toolStrip.Renderer = new NBagOfUis.CheckBoxRenderer() { SelectedColor = _settings.ControlColor };
-
-
             btnAutoplay.Checked = _settings.Autoplay;
-
-
             btnLoop.Checked = _settings.Loop;
-
-
             chkPlay.FlatAppearance.CheckedBackColor = _settings.ControlColor;
-
-
             sldVolume.DrawColor = _settings.ControlColor;
             sldVolume.Value = _settings.Volume;
-
+            barBar.ProgressColor = _settings.ControlColor;
 
             sldTempo.Resolution = _settings.TempoResolution;
             sldTempo.DrawColor = _settings.ControlColor;
@@ -127,9 +119,6 @@ namespace Midifrier
             }
             cmbDrumChannel1.SelectedIndex = MidiDefs.DEFAULT_DRUM_CHANNEL;
             cmbDrumChannel2.SelectedIndex = 0;
-
-            barBar.ProgressColor = _settings.ControlColor;
-
 
             // Hook up some simple handlers.
             btnRewind.Click += (_, __) => { UpdateState(ExplorerState.Rewind); };
@@ -169,7 +158,7 @@ namespace Midifrier
             // Initialize tree from user settings.
             InitNavigator();
 
-            ///// >>> Debug. _drums_ch1.mid  _LoveSong.S474.sty  WICKGAME.MID
+            ///// TODO Debug. _drums_ch1.mid  _LoveSong.S474.sty  WICKGAME.MID
             OpenFile(@"C:\Dev\repos\TestAudioFiles\WICKGAME.MID");
         }
 
@@ -190,21 +179,16 @@ namespace Midifrier
         /// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
         protected override void Dispose(bool disposing)
         {
-            // Resources.
-            //_midiExplorer?.Dispose();
-
             // Stop and destroy mmtimer.
             Stop();
 
             // Resources.
             _mmTimer.Stop();
             _mmTimer.Dispose();
-
             _outputDevice.Dispose();
 
             // Wait a bit in case there are some lingering events.
             System.Threading.Thread.Sleep(100);
-
 
             if (disposing)
             {
@@ -226,48 +210,39 @@ namespace Midifrier
                 // Unhook.
                 chkPlay.CheckedChanged -= ChkPlay_CheckedChanged;
 
-                try
+                switch (state)
                 {
-                    switch (state)
-                    {
-                        case ExplorerState.Complete:
-                            Rewind();
-                            if (btnLoop.Checked)
-                            {
-                                chkPlay.Checked = true;
-                                Play();
-                            }
-                            else
-                            {
-                                chkPlay.Checked = false;
-                                Stop();
-                            }
-                            break;
-
-                        case ExplorerState.Play:
+                    case ExplorerState.Complete:
+                        Rewind();
+                        if (btnLoop.Checked)
+                        {
                             chkPlay.Checked = true;
                             Play();
-                            break;
-
-                        case ExplorerState.Stop:
+                        }
+                        else
+                        {
                             chkPlay.Checked = false;
                             Stop();
-                            break;
+                        }
+                        break;
 
-                        case ExplorerState.Rewind:
-                            Rewind();
-                            break;
-                    }
+                    case ExplorerState.Play:
+                        chkPlay.Checked = true;
+                        Play();
+                        break;
+
+                    case ExplorerState.Stop:
+                        chkPlay.Checked = false;
+                        Stop();
+                        break;
+
+                    case ExplorerState.Rewind:
+                        Rewind();
+                        break;
                 }
-                catch (Exception ex)
-                {
-                    MessageBox.Show(ex.Message);
-                }
-                finally
-                {
-                    // Rehook.
-                    chkPlay.CheckedChanged += ChkPlay_CheckedChanged;
-                }
+
+                // Rehook.
+                chkPlay.CheckedChanged += ChkPlay_CheckedChanged;
             }
         }
 
@@ -527,7 +502,6 @@ namespace Midifrier
             var changes = _settings.Edit("User Settings", 500);
 
             // Detect changes of interest.
-            bool midiChange = false;
             bool navChange = false;
             bool restart = false;
 
@@ -538,11 +512,8 @@ namespace Midifrier
                     case "InputDevice":
                     case "OutputDevice":
                     case "ControlColor":
-                        restart = true;
-                        break;
-
                     case "TempoResolution":
-                        midiChange = true;
+                        restart = true;
                         break;
 
                     case "RootDirs":
@@ -555,11 +526,6 @@ namespace Midifrier
             {
                 MessageBox.Show("Restart required for device changes to take effect");
             }
-
-            //if (midiChange)
-            //{
-            //    _midiExplorer?.UpdateSettings();
-            //}
 
             if (navChange)
             {
@@ -903,6 +869,7 @@ namespace Midifrier
                     _logger.Warn("Please select at least one pattern");
                     return;
                 }
+
                 List<PatternInfo> patterns = new();
                 patternNames.ForEach(p => patterns.Add(_mdata.GetPattern(p)!));
 
@@ -916,7 +883,7 @@ namespace Midifrier
 
                 switch (stext.ToLower())
                 {
-                    case "csv":
+                    case "export csv":
                         {
                             var newfn = MiscUtils.MakeExportFileName(_outPath, _mdata.FileName, "all", "csv");
                             MidiExport.ExportCsv(newfn, patterns, channels, _mdata.GetGlobal());
@@ -924,7 +891,7 @@ namespace Midifrier
                         }
                         break;
 
-                    case "midi":
+                    case "export midi":
                         foreach (var pattern in patterns)
                         {
                             var newfn = MiscUtils.MakeExportFileName(_outPath, _mdata.FileName, pattern.PatternName, "mid");
@@ -995,7 +962,6 @@ namespace Midifrier
                 _logger.Info($"WaveIn {id} {cap.ProductName}");
             }
         }
-
         #endregion
     }
 }

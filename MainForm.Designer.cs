@@ -285,11 +285,11 @@
             // 
             this.FileMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.OpenMenuItem,
+            this.toolStripSeparator3,
+            this.RecentMenuItem,
             this.toolStripSeparator2,
             this.ExportCsvMenuItem,
-            this.ExportMidiMenuItem,
-            this.toolStripSeparator3,
-            this.RecentMenuItem});
+            this.ExportMidiMenuItem});
             this.FileMenuItem.Name = "FileMenuItem";
             this.FileMenuItem.Size = new System.Drawing.Size(46, 24);
             this.FileMenuItem.Text = "File";

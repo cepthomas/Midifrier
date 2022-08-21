@@ -398,25 +398,12 @@ namespace Midifrier
         /// <param name="e"></param>
         void File_DropDownOpening(object? sender, EventArgs e)
         {
-            FileMenuItem.DropDownItems.Clear();
-
-            FileMenuItem.DropDownItems.AddRange(new ToolStripItem[]
+            RecentMenuItem.DropDownItems.Clear();
+            _settings.RecentFiles.ForEach(f =>
             {
-                OpenMenuItem,
-                toolStripSeparator2,
-                ExportCsvMenuItem,
-                ExportMidiMenuItem
+                ToolStripMenuItem menuItem = new(f, null, new EventHandler(Recent_Click));
+                RecentMenuItem.DropDownItems.Add(menuItem);
             });
-
-            if(_settings.RecentFiles.Count > 0)
-            {
-                FileMenuItem.DropDownItems.Add(new ToolStripSeparator());
-                _settings.RecentFiles.ForEach(f =>
-                {
-                    ToolStripMenuItem menuItem = new(f, null, new EventHandler(Recent_Click));
-                    FileMenuItem.DropDownItems.Add(menuItem);
-                });
-            }
         }
 
         /// <summary>

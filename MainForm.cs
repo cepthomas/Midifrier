@@ -99,15 +99,13 @@ namespace Midifrier
             toolStrip.Renderer = new NBagOfUis.CheckBoxRenderer() { SelectedColor = _settings.ControlColor };
             btnAutoplay.Checked = _settings.Autoplay;
             btnLoop.Checked = _settings.Loop;
-            chkPlay.FlatAppearance.CheckedBackColor = _settings.ControlColor;
             sldVolume.DrawColor = _settings.ControlColor;
             sldVolume.Value = _settings.Volume;
             barBar.ProgressColor = _settings.ControlColor;
 
-            sldTempo.Resolution = _settings.TempoResolution;
-            sldTempo.DrawColor = _settings.ControlColor;
-            sldTempo.Resolution = _settings.TempoResolution;
-            sldTempo.Value = _settings.MidiSettings.DefaultTempo;
+            sldBPM.Resolution = _settings.TempoResolution;
+            sldBPM.DrawColor = _settings.ControlColor;
+            sldBPM.Value = _settings.MidiSettings.DefaultTempo;
 
             // Init channels and selectors.
             cmbDrumChannel1.Items.Add("NA");
@@ -124,8 +122,8 @@ namespace Midifrier
             btnRewind.Click += (_, __) => { UpdateState(ExplorerState.Rewind); };
             btnKillMidi.Click += (_, __) => { _channels.Values.ForEach(ch => ch.Kill()); };
             btnLogMidi.Click += (_, __) => { _outputDevice.LogEnable = btnLogMidi.Checked; };
-            sldTempo.ValueChanged += (_, __) => { SetTimer(); };
-            chkPlay.CheckedChanged += ChkPlay_CheckedChanged;
+            sldBPM.ValueChanged += (_, __) => { SetTimer(); };
+            btnPlay.Click += Play_Click;
 
             // Set up output device.
             foreach (var dev in _settings.MidiSettings.OutputDevices)
@@ -159,7 +157,7 @@ namespace Midifrier
             InitNavigator();
 
             ///// TODO Debug. _drums_ch1.mid  _LoveSong.S474.sty  WICKGAME.MID
-            OpenFile(@"C:\Dev\repos\TestAudioFiles\WICKGAME.MID");
+            //OpenFile(@"C:\Dev\repos\TestAudioFiles\WICKGAME.MID");
         }
 
         /// <summary>
@@ -208,7 +206,7 @@ namespace Midifrier
             if (_outputDevice.Valid)
             {
                 // Unhook.
-                chkPlay.CheckedChanged -= ChkPlay_CheckedChanged;
+                btnPlay.CheckedChanged -= Play_Click;
 
                 switch (state)
                 {
@@ -216,23 +214,23 @@ namespace Midifrier
                         Rewind();
                         if (btnLoop.Checked)
                         {
-                            chkPlay.Checked = true;
+                            btnPlay.Checked = true;
                             Play();
                         }
                         else
                         {
-                            chkPlay.Checked = false;
+                            btnPlay.Checked = false;
                             Stop();
                         }
                         break;
 
                     case ExplorerState.Play:
-                        chkPlay.Checked = true;
+                        btnPlay.Checked = true;
                         Play();
                         break;
 
                     case ExplorerState.Stop:
-                        chkPlay.Checked = false;
+                        btnPlay.Checked = false;
                         Stop();
                         break;
 
@@ -242,7 +240,7 @@ namespace Midifrier
                 }
 
                 // Rehook.
-                chkPlay.CheckedChanged += ChkPlay_CheckedChanged;
+                btnPlay.CheckedChanged += Play_Click;
             }
         }
 
@@ -251,9 +249,9 @@ namespace Midifrier
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void ChkPlay_CheckedChanged(object? sender, EventArgs e)
+        private void Play_Click(object? sender, EventArgs e)
         {
-            UpdateState(chkPlay.Checked ? ExplorerState.Play : ExplorerState.Stop);
+            UpdateState(btnPlay.Checked ? ExplorerState.Play : ExplorerState.Stop);
         }
         #endregion
 
@@ -318,7 +316,7 @@ namespace Midifrier
                             lbPatterns.SelectedIndex = 0;
 
                             // Set up timer default.
-                            sldTempo.Value = 100;
+                            sldBPM.Value = 100;
 
                             ExportMidiMenuItem.Enabled = _mdata.IsStyleFile;
                         }
@@ -347,7 +345,7 @@ namespace Midifrier
                 }
             }
 
-            chkPlay.Enabled = ok;
+            btnPlay.Enabled = ok;
 
             if (ok)
             {
@@ -476,7 +474,7 @@ namespace Midifrier
             _settings.Volume = sldVolume.Value;
             _settings.Autoplay = btnAutoplay.Checked;
             _settings.Loop = btnLoop.Checked;
-            _settings.TempoResolution = (int)sldTempo.Resolution;
+            _settings.TempoResolution = (int)sldBPM.Resolution;
             _settings.Volume = sldVolume.Value;
             _settings.Save();
         }
@@ -626,7 +624,7 @@ namespace Midifrier
             {
                 case Keys.Space:
                     // Toggle.
-                    UpdateState(chkPlay.Checked ? ExplorerState.Stop : ExplorerState.Play);
+                    UpdateState(btnPlay.Checked ? ExplorerState.Stop : ExplorerState.Play);
                     e.Handled = true;
                     break;
             }
@@ -712,7 +710,7 @@ namespace Midifrier
 
                 // For scaling subdivs to internal.
                 MidiTimeConverter mt = new(_mdata.DeltaTicksPerQuarterNote, _settings.MidiSettings.DefaultTempo);
-                sldTempo.Value = pinfo.Tempo;
+                sldBPM.Value = pinfo.Tempo;
 
                 foreach (var (number, patch) in pinfo.GetChannels(true, true))
                 {
@@ -759,7 +757,7 @@ namespace Midifrier
                 }
 
                 // Set timer.
-                sldTempo.Value = pinfo.Tempo;
+                sldBPM.Value = pinfo.Tempo;
             }
 
             // Update bar.
@@ -919,7 +917,7 @@ namespace Midifrier
         /// </summary>
         void SetTimer()
         {
-            MidiTimeConverter mt = new(_mdata.DeltaTicksPerQuarterNote, sldTempo.Value);
+            MidiTimeConverter mt = new(_mdata.DeltaTicksPerQuarterNote, sldBPM.Value);
             double period = mt.RoundedInternalPeriod();
             _mmTimer.SetTimer((int)Math.Round(period), MmTimerCallback);
         }
@@ -950,5 +948,10 @@ namespace Midifrier
             }
         }
         #endregion
+
+        void ViewLogMenuItem_Click(object sender, EventArgs e) // TODO
+        {
+
+        }
     }
 }

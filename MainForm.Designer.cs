@@ -57,7 +57,6 @@
             this.ToolsMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.SettingsMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.AboutMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.ViewLogMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.barBar = new MidiLib.BarBar();
             this.lblChLoc = new System.Windows.Forms.Label();
             this.toolStrip.SuspendLayout();
@@ -216,7 +215,6 @@
             this.sldVolume.Maximum = 2D;
             this.sldVolume.Minimum = 0D;
             this.sldVolume.Name = "sldVolume";
-            this.sldVolume.Orientation = System.Windows.Forms.Orientation.Horizontal;
             this.sldVolume.Resolution = 0.05D;
             this.sldVolume.Size = new System.Drawing.Size(150, 40);
             this.sldVolume.Text = "vol";
@@ -236,7 +234,6 @@
             this.sldBPM.Maximum = 249D;
             this.sldBPM.Minimum = 40D;
             this.sldBPM.Name = "sldBPM";
-            this.sldBPM.Orientation = System.Windows.Forms.Orientation.Horizontal;
             this.sldBPM.Resolution = 1D;
             this.sldBPM.Size = new System.Drawing.Size(150, 40);
             this.sldBPM.Text = "bpm";
@@ -406,8 +403,7 @@
             // 
             this.ToolsMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.SettingsMenuItem,
-            this.AboutMenuItem,
-            this.ViewLogMenuItem});
+            this.AboutMenuItem});
             this.ToolsMenuItem.Name = "ToolsMenuItem";
             this.ToolsMenuItem.Size = new System.Drawing.Size(58, 24);
             this.ToolsMenuItem.Text = "Tools";
@@ -425,13 +421,6 @@
             this.AboutMenuItem.Size = new System.Drawing.Size(153, 26);
             this.AboutMenuItem.Text = "About";
             this.AboutMenuItem.Click += new System.EventHandler(this.About_Click);
-            // 
-            // ViewLogMenuItem
-            // 
-            this.ViewLogMenuItem.Name = "ViewLogMenuItem";
-            this.ViewLogMenuItem.Size = new System.Drawing.Size(153, 26);
-            this.ViewLogMenuItem.Text = "View Log";
-            this.ViewLogMenuItem.Click += new System.EventHandler(this.ViewLogMenuItem_Click);
             // 
             // barBar
             // 
@@ -509,7 +498,6 @@
         private System.Windows.Forms.ToolStripMenuItem ToolsMenuItem;
         private System.Windows.Forms.ToolStripMenuItem SettingsMenuItem;
         private System.Windows.Forms.ToolStripMenuItem AboutMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem ViewLogMenuItem;
         private System.Windows.Forms.ToolStripLabel toolStripLabel1;
         private System.Windows.Forms.ToolStripComboBox cmbDrumChannel1;
         private System.Windows.Forms.ToolStripLabel toolStripLabel2;

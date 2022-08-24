@@ -20,7 +20,7 @@ using MidiLib;
 namespace Midifrier
 {
     [Serializable]
-    public class UserSettings : Settings
+    public sealed class UserSettings : Settings
     {
         #region Persisted Editable Properties
         [DisplayName("Root Directories")]

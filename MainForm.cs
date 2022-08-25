@@ -264,97 +264,75 @@ namespace Midifrier
         public bool OpenFile(string fn) // TODO needs cleanup.
         {
             bool ok = true;
-
             UpdateState(ExplorerState.Stop);
-
             _logger.Info($"Opening file: {fn}");
 
-            using (new WaitCursor())
+            try
             {
-                try
+                if (!File.Exists(fn))
                 {
-                    var ext = Path.GetExtension(fn).ToLower();
+                    throw new InvalidOperationException($"Invalid file: {fn}");
+                }
 
-                    if (MidiLibDefs.MIDI_FILE_TYPES.Contains(ext) || MidiLibDefs.STYLE_FILE_TYPES.Contains(ext))
+                var ext = Path.GetExtension(fn).ToLower();
+                if (!MidiLibDefs.MIDI_FILE_TYPES.Contains(ext) && !MidiLibDefs.STYLE_FILE_TYPES.Contains(ext))
+                {
+                    throw new InvalidOperationException($"Invalid file type: {fn}");
+                }
+
+                using (new WaitCursor())
+                {
+                    // Reset stuff.
+                    cmbDrumChannel1.SelectedIndex = MidiDefs.DEFAULT_DRUM_CHANNEL;
+                    cmbDrumChannel2.SelectedIndex = 0;
+                    _mdata = new MidiDataFile();
+
+                    // Process the file. Set the default tempo from preferences.
+                    _mdata.Read(fn, _settings.MidiSettings.DefaultTempo, false);
+
+                    // Init new stuff with contents of file/pattern.
+                    lbPatterns.Items.Clear();
+                    var pnames = _mdata.GetPatternNames();
+
+                    if (pnames.Count > 0)
                     {
+                        pnames.ForEach(pn => { lbPatterns.Items.Add(pn); });
                     }
                     else
                     {
-                        _logger.Error($"Invalid file type: {fn}");
-                        ok = false;
+                        throw new InvalidOperationException($"Something wrong with this file: {fn}");
                     }
 
-                    if (ok)
+                    Rewind();
+
+                    // Pick first.
+                    lbPatterns.SelectedIndex = 0;
+
+                    // Set up timer default.
+                    sldBPM.Value = 100;
+
+                    ExportMidiMenuItem.Enabled = _mdata.IsStyleFile;
+
+                    // All good so far.
+                    _fn = fn;
+                    _settings.RecentFiles.UpdateMru(fn);
+
+                    if (_settings.Autoplay)
                     {
-                        // from midiexplorer:
-                        try
-                        {
-                            // Reset stuff.
-                            cmbDrumChannel1.SelectedIndex = MidiDefs.DEFAULT_DRUM_CHANNEL;
-                            cmbDrumChannel2.SelectedIndex = 0;
-                            _mdata = new MidiDataFile();
-
-                            // Process the file. Set the default tempo from preferences.
-                            _mdata.Read(fn, _settings.MidiSettings.DefaultTempo, false);
-
-                            // Init new stuff with contents of file/pattern.
-                            lbPatterns.Items.Clear();
-                            var pnames = _mdata.GetPatternNames();
-
-                            if (pnames.Count > 0)
-                            {
-                                pnames.ForEach(pn => { lbPatterns.Items.Add(pn); });
-                            }
-                            else
-                            {
-                                throw new InvalidOperationException($"Something wrong with this file: {fn}");
-                            }
-
-                            Rewind();
-
-                            // Pick first.
-                            lbPatterns.SelectedIndex = 0;
-
-                            // Set up timer default.
-                            sldBPM.Value = 100;
-
-                            ExportMidiMenuItem.Enabled = _mdata.IsStyleFile;
-                        }
-                        catch (Exception ex)
-                        {
-                            _logger.Error($"Couldn't open the file: {fn} because: {ex.Message}");
-                            ok = false;
-                        }
-
-
-                        if(ok)
-                        {
-                            _fn = fn;
-                            _settings.RecentFiles.UpdateMru(fn);
-                        }
-
-                        SetText();
+                        UpdateState(ExplorerState.Rewind);
+                        UpdateState(ExplorerState.Play);
                     }
                 }
-                catch (Exception ex)
-                {
-                    _logger.Error($"Couldn't open the file: {fn} because: {ex.Message}");
-                    _fn = "";
-                    SetText();
-                    ok = false;
-                }
             }
-
-            btnPlay.Enabled = ok;
-
-            if (ok)
+            catch (Exception ex)
             {
-                if (_settings.Autoplay)
-                {
-                    UpdateState(ExplorerState.Rewind);
-                    UpdateState(ExplorerState.Play);
-                }
+                _logger.Error($"Couldn't open the file: {fn} because: {ex.Message}");
+                _fn = "";
+                ok = false;
             }
+
+            SetText();
+            btnPlay.Enabled = ok;
 
             return ok;
         }
@@ -870,7 +848,7 @@ namespace Midifrier
                 {
                     case "export csv":
                         {
-                            var newfn = MiscUtils.MakeExportFileName(_outPath, _mdata.FileName, "all", "csv");
+                            var newfn = MiscUtils.MakeExportFileName(_outPath, _mdata.FileName, "export", "csv");
                             MidiExport.ExportCsv(newfn, patterns, channels, _mdata.GetGlobal());
                             _logger.Info($"Exported to {newfn}");
                         }
@@ -948,10 +926,5 @@ namespace Midifrier
             }
         }
         #endregion
-
-        void ViewLogMenuItem_Click(object sender, EventArgs e) // TODO
-        {
-
-        }
     }
 }

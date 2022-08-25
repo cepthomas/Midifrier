@@ -3,7 +3,7 @@
 - A windows tool for playing midi files and Yamaha style files.
 - This is primarily intended to be used for auditioning parts for use in compositions created in a real DAW.
 - Because the windows multimedia timer has inadequate accuracy for midi notes, resolution is limited to 32nd notes.
-- Minimal attention has been paid to aesthetics over functionality. This explains the poor color choices.
+- Minimal attention has been paid to aesthetics over functionality.
 - Midi play devices are limited to the ones available on your box. (Hint- VirtualMidiSynth).
 - Since midi files and NAudio use 1-based channel numbers, so does this application, except when used as an array index.
 - If midi file type is `1`, all tracks are combined. Because.

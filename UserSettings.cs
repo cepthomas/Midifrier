@@ -29,11 +29,6 @@ namespace Midifrier
         [Editor(typeof(StringListEditor), typeof(UITypeEditor))] // Ideally a multi folder picker.
         public List<string> RootDirs { get; set; } = new();
 
-        [DisplayName("Dump To Clipboard")]
-        [Description("Otherwise to file.")]
-        [Browsable(true)]
-        public bool DumpToClip { get; set; } = false;
-
         [DisplayName("Control Color")]
         [Description("Pick what you like.")]
         [Browsable(true)]

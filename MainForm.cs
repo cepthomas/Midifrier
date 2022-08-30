@@ -158,6 +158,8 @@ namespace Midifrier
 
             ///// TODO Debug. _drums_ch1.mid  _LoveSong.S474.sty  WICKGAME.MID
             //OpenFile(@"C:\Dev\repos\TestAudioFiles\WICKGAME.MID");
+
+            base.OnLoad(e);
         }
 
         /// <summary>
@@ -261,7 +263,7 @@ namespace Midifrier
         /// </summary>
         /// <param name="fn">The file to open.</param>
         /// <returns>Status.</returns>
-        public bool OpenFile(string fn) // TODO needs cleanup.
+        public bool OpenFile(string fn)
         {
             bool ok = true;
             UpdateState(ExplorerState.Stop);

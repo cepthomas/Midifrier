@@ -119,10 +119,10 @@ namespace Midifrier
             cmbDrumChannel2.SelectedIndex = 0;
 
             // Hook up some simple handlers.
-            btnRewind.Click += (_, __) => { UpdateState(ExplorerState.Rewind); };
-            btnKillMidi.Click += (_, __) => { _channels.Values.ForEach(ch => ch.Kill()); };
-            btnLogMidi.Click += (_, __) => { _outputDevice.LogEnable = btnLogMidi.Checked; };
-            sldBPM.ValueChanged += (_, __) => { SetTimer(); };
+            btnRewind.Click += (_, __) => UpdateState(ExplorerState.Rewind);
+            btnKillMidi.Click += (_, __) => _channels.Values.ForEach(ch => ch.Kill());
+            btnLogMidi.Click += (_, __) => _outputDevice.LogEnable = btnLogMidi.Checked;
+            sldBPM.ValueChanged += (_, __) => SetTimer();
             btnPlay.Click += Play_Click;
 
             // Set up output device.
@@ -155,9 +155,6 @@ namespace Midifrier
 
             // Initialize tree from user settings.
             InitNavigator();
-
-            ///// TODO Debug. _drums_ch1.mid  _LoveSong.S474.sty  WICKGAME.MID
-            //OpenFile(@"C:\Dev\repos\TestAudioFiles\WICKGAME.MID");
 
             base.OnLoad(e);
         }

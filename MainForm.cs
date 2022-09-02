@@ -70,16 +70,11 @@ namespace Midifrier
 
             Icon = Properties.Resources.zebra;
 
-            // Set up paths.
-            _outPath = Path.Combine(appDir, "out");
-            DirectoryInfo di = new(_outPath);
-            di.Create();
-
             // Init logging.
             LogManager.MinLevelFile = _settings.FileLogLevel;
             LogManager.MinLevelNotif = _settings.NotifLogLevel;
             LogManager.LogEvent += LogManager_LogEvent;
-            LogManager.Run();
+            LogManager.Run(Path.Join(appDir, "log.txt"), 100000);
 
             // Init main form from settings
             WindowState = FormWindowState.Normal;
@@ -123,6 +118,8 @@ namespace Midifrier
             btnKillMidi.Click += (_, __) => _channels.Values.ForEach(ch => ch.Kill());
             btnLogMidi.Click += (_, __) => _outputDevice.LogEnable = btnLogMidi.Checked;
             sldBPM.ValueChanged += (_, __) => SetTimer();
+            btnAutoplay.Click += (_, __) => _settings.Autoplay = btnAutoplay.Checked;
+            btnLoop.Click += (_, __) => _settings.Loop = btnLoop.Checked;
             btnPlay.Click += Play_Click;
 
             // Set up output device.

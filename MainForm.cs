@@ -68,8 +68,6 @@ namespace Midifrier
 
             InitializeComponent();
 
-            Icon = Properties.Resources.zebra;
-
             // Init logging.
             LogManager.MinLevelFile = _settings.FileLogLevel;
             LogManager.MinLevelNotif = _settings.NotifLogLevel;
@@ -143,7 +141,7 @@ namespace Midifrier
         /// <param name="e"></param>
         protected override void OnLoad(EventArgs e)
         {
-            _logger.Info($"OK to log now!!");
+            //_logger.Info($"OK to log now!!");
 
             if (!_outputDevice.Valid)
             {
@@ -466,7 +464,7 @@ namespace Midifrier
 
             foreach (var (name, cat) in changes)
             {
-                switch(name)
+                switch(name) //TODO check all these names
                 {
                     case "InputDevice":
                     case "OutputDevice":
@@ -490,9 +488,6 @@ namespace Midifrier
             {
                 InitNavigator();
             }
-
-            // Benign changes.
-            btnLoop.Checked = _settings.Loop;
 
             SaveSettings();
         }

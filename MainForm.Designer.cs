@@ -210,6 +210,7 @@
             // 
             this.sldVolume.AccessibleName = "sldVolume";
             this.sldVolume.AutoSize = false;
+            this.sldVolume.BorderStyle = System.Windows.Forms.BorderStyle.None;
             this.sldVolume.DrawColor = System.Drawing.Color.White;
             this.sldVolume.Label = "Volume";
             this.sldVolume.Maximum = 2D;
@@ -229,6 +230,7 @@
             // 
             this.sldBPM.AccessibleName = "sldBPM";
             this.sldBPM.AutoSize = false;
+            this.sldBPM.BorderStyle = System.Windows.Forms.BorderStyle.None;
             this.sldBPM.DrawColor = System.Drawing.Color.White;
             this.sldBPM.Label = "BPM";
             this.sldBPM.Maximum = 249D;
@@ -331,9 +333,10 @@
             this.ftree.Location = new System.Drawing.Point(8, 80);
             this.ftree.Margin = new System.Windows.Forms.Padding(3, 5, 3, 5);
             this.ftree.Name = "ftree";
-            this.ftree.SingleClickSelect = true;
+            this.ftree.SingleClickSelect = false;
             this.ftree.Size = new System.Drawing.Size(527, 488);
             this.ftree.TabIndex = 89;
+            this.toolTip.SetToolTip(this.ftree, "File selection");
             this.ftree.FileSelectedEvent += new System.EventHandler<string>(this.Navigator_FileSelectedEvent);
             // 
             // menuStrip
@@ -411,14 +414,14 @@
             // SettingsMenuItem
             // 
             this.SettingsMenuItem.Name = "SettingsMenuItem";
-            this.SettingsMenuItem.Size = new System.Drawing.Size(153, 26);
+            this.SettingsMenuItem.Size = new System.Drawing.Size(145, 26);
             this.SettingsMenuItem.Text = "Settings";
             this.SettingsMenuItem.Click += new System.EventHandler(this.Settings_Click);
             // 
             // AboutMenuItem
             // 
             this.AboutMenuItem.Name = "AboutMenuItem";
-            this.AboutMenuItem.Size = new System.Drawing.Size(153, 26);
+            this.AboutMenuItem.Size = new System.Drawing.Size(145, 26);
             this.AboutMenuItem.Text = "About";
             this.AboutMenuItem.Click += new System.EventHandler(this.About_Click);
             // 

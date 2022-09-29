@@ -1,6 +1,6 @@
-# Midifrier TODOdoc
+# Midifrier
 
-- A windows tool for playing midi files and Yamaha style files.
+- A windows tool for playing and editing plain midi files and Yamaha style files.
 - This is primarily intended to be used for auditioning parts for use in compositions created in a real DAW.
 - Because the windows multimedia timer has inadequate accuracy for midi notes, resolution is limited to 32nd notes.
 - Minimal attention has been paid to aesthetics over functionality.
@@ -8,8 +8,8 @@
 - Since midi files and NAudio use 1-based channel numbers, so does this application, except when used as an array index.
 - If midi file type is `1`, all tracks are combined. Because.
 - Tons of styles and info at https://psrtutorial.com/.
-
-Requires VS2022 and .NET6.
+- For more info and detail see [MidiLib](https://github.com/cepthomas/MidiLib).
+- Requires VS2022 and .NET6.
 
 # Usage
 

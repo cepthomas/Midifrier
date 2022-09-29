@@ -464,12 +464,14 @@ namespace Midifrier
 
             foreach (var (name, cat) in changes)
             {
-                switch(name) //TODO check all these names
+                switch (name)
                 {
                     case "InputDevice":
                     case "OutputDevice":
                     case "ControlColor":
                     case "TempoResolution":
+                    case "FileLogLevel":
+                    case "NotifLogLevel":
                         restart = true;
                         break;
 

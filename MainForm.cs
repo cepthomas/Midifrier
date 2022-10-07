@@ -337,9 +337,9 @@ namespace Midifrier
         void InitNavigator()
         {
             var s = MidiLibDefs.MIDI_FILE_TYPES + MidiLibDefs.STYLE_FILE_TYPES;
-            ftree.FilterExts = s.SplitByTokens("|;*");
-            ftree.RootDirs = _settings.RootDirs;
-            ftree.SingleClickSelect = true;
+            ftree.Settings.FilterExts = s.SplitByTokens("|;*");
+            ftree.Settings.RootDirs = _settings.RootDirs;
+            ftree.Settings.SingleClickSelect = true;
 
             try
             {
@@ -456,7 +456,7 @@ namespace Midifrier
         /// </summary>
         void Settings_Click(object? sender, EventArgs e)
         {
-            var changes = _settings.Edit("User Settings", 500);
+            var changes = SettingsEditor.Edit(_settings, "User Settings", 500);
 
             // Detect changes of interest.
             bool navChange = false;

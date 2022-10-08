@@ -61,7 +61,7 @@ namespace Midifrier
         public MainForm()
         {
             // Must do this first before initializing.
-            string appDir = MiscUtils.GetAppDataDir("Midifrier", "Ephemera"); //TODO1 also FilTree settings like NBagOfUis\Test\TestHost.cs
+            string appDir = MiscUtils.GetAppDataDir("Midifrier", "Ephemera");
             _settings = (UserSettings)UserSettings.Load(appDir, typeof(UserSettings));
             // Tell the libs about their settings.
             MidiSettings.LibSettings = _settings.MidiSettings;

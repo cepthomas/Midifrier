@@ -198,7 +198,7 @@
             this.cmbDrumChannel2.AutoSize = false;
             this.cmbDrumChannel2.Name = "cmbDrumChannel2";
             this.cmbDrumChannel2.Size = new System.Drawing.Size(50, 28);
-            this.cmbDrumChannel2.ToolTipText = "Drum channel - secndary";
+            this.cmbDrumChannel2.ToolTipText = "Drum channel - secondary";
             this.cmbDrumChannel2.SelectedIndexChanged += new System.EventHandler(this.DrumChannel_SelectedIndexChanged);
             // 
             // toolStripSeparator8
@@ -219,6 +219,7 @@
             this.sldVolume.Resolution = 0.05D;
             this.sldVolume.Size = new System.Drawing.Size(150, 40);
             this.sldVolume.Text = "vol";
+            this.sldVolume.ToolTipText = "How loud";
             this.sldVolume.Value = 1D;
             // 
             // toolStripSeparator11
@@ -239,6 +240,7 @@
             this.sldBPM.Resolution = 1D;
             this.sldBPM.Size = new System.Drawing.Size(150, 40);
             this.sldBPM.Text = "bpm";
+            this.sldBPM.ToolTipText = "How fast";
             this.sldBPM.Value = 100D;
             // 
             // toolStripSeparator9
@@ -257,6 +259,7 @@
             this.btnPlay.Name = "btnPlay";
             this.btnPlay.Size = new System.Drawing.Size(40, 40);
             this.btnPlay.Text = "toolStripButton1";
+            this.btnPlay.ToolTipText = "Play";
             // 
             // toolStripSeparator10
             // 
@@ -273,6 +276,7 @@
             this.btnRewind.Name = "btnRewind";
             this.btnRewind.Size = new System.Drawing.Size(40, 40);
             this.btnRewind.Text = "toolStripButton1";
+            this.btnRewind.ToolTipText = "Rewind";
             // 
             // toolStripSeparator12
             // 

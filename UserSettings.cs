@@ -23,12 +23,6 @@ namespace Midifrier
     public sealed class UserSettings : SettingsCore
     {
         #region Persisted Editable Properties
-        [DisplayName("Root Directories")]
-        [Description("Where to look in order as they appear.")]
-        [Browsable(true)]
-        [Editor(typeof(StringListEditor), typeof(UITypeEditor))] // Ideally a multi folder picker.
-        public List<string> RootDirs { get; set; } = new();
-
         [DisplayName("Control Color")]
         [Description("Pick what you like.")]
         [Browsable(true)]
@@ -68,11 +62,9 @@ namespace Midifrier
 
         [Browsable(false)]
         public double Volume { get; set; } = 0.5;
-        #endregion
 
-        #region Non-persisted Properties
         [Browsable(false)]
-        public bool Valid { get; set; } = false;
+        public FilTreeSettings FilTreeSettings { get; set; } = new();
         #endregion
     }
 }

@@ -97,6 +97,7 @@ namespace Midifrier
             barBar.ProgressColor = _settings.ControlColor;
 
             ftree.Settings = _settings.FilTreeSettings;
+            ftree.RecentFiles = _settings.RecentFiles;
             ftree.Init();
 
             sldBPM.Resolution = _settings.TempoResolution;

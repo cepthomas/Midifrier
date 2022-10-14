@@ -6,7 +6,7 @@ using System.Windows.Forms;
 using System.Resources;
 
 
-namespace Midifrier
+namespace Ephemera.Midifrier
 {
     static class Program
     {

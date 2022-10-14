@@ -11,13 +11,13 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using NAudio.Wave;
 using NAudio.Midi;
-using NBagOfTricks;
-using NBagOfUis;
-using NBagOfTricks.Slog;
-using MidiLib;
+using Ephemera.NBagOfTricks;
+using Ephemera.NBagOfUis;
+using Ephemera.NBagOfTricks.Slog;
+using Ephemera.MidiLib;
 
 
-namespace Midifrier
+namespace Ephemera.Midifrier
 {
     [Serializable]
     public sealed class UserSettings : SettingsCore

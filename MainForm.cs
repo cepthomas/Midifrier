@@ -11,13 +11,13 @@ using System.IO;
 using System.Diagnostics;
 using NAudio.Midi;
 using NAudio.Wave;
-using NBagOfTricks;
-using NBagOfTricks.Slog;
-using NBagOfUis;
-using MidiLib;
+using Ephemera.NBagOfTricks;
+using Ephemera.NBagOfTricks.Slog;
+using Ephemera.NBagOfUis;
+using Ephemera.MidiLib;
 
 
-namespace Midifrier
+namespace Ephemera.Midifrier
 {
     public partial class MainForm : Form
     {

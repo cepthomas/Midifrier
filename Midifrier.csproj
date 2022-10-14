@@ -3,7 +3,8 @@
     
     <PropertyGroup>
         <OutputType>WinExe</OutputType>
-        <AssemblyName>Midifrier</AssemblyName>
+        <RootNamespace>Ephemera.Midifrier</RootNamespace>
+        <AssemblyName>Ephemera.Midifrier</AssemblyName>
         <TargetFramework>net6.0-windows</TargetFramework>
         <UseWindowsForms>true</UseWindowsForms>
         <Deterministic>False</Deterministic>
@@ -52,14 +53,14 @@
     </ItemGroup>
 
     <ItemGroup>
-        <Reference Include="NBagOfTricks">
-            <HintPath>lib\NBagOfTricks.dll</HintPath>
+        <Reference Include="Ephemera.NBagOfTricks">
+            <HintPath>lib\Ephemera.NBagOfTricks.dll</HintPath>
         </Reference>
-        <Reference Include="NBagOfUis">
-            <HintPath>lib\NBagOfUis.dll</HintPath>
+        <Reference Include="Ephemera.NBagOfUis">
+            <HintPath>lib\Ephemera.NBagOfUis.dll</HintPath>
         </Reference>
-        <Reference Include="MidiLib">
-            <HintPath>lib\MidiLib.dll</HintPath>
+        <Reference Include="Ephemera.MidiLib">
+            <HintPath>lib\Ephemera.MidiLib.dll</HintPath>
         </Reference>
     </ItemGroup>
 

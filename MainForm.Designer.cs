@@ -46,7 +46,7 @@
             this.btnAllPatterns = new System.Windows.Forms.Button();
             this.btnClearPatterns = new System.Windows.Forms.Button();
             this.ftree = new NBagOfUis.FilTree();
-            this.menuStrip = new System.Windows.Forms.MenuStrip();
+            this.MenuStrip = new System.Windows.Forms.MenuStrip();
             this.FileMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.OpenMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator3 = new System.Windows.Forms.ToolStripSeparator();
@@ -60,7 +60,7 @@
             this.barBar = new MidiLib.BarBar();
             this.lblChLoc = new System.Windows.Forms.Label();
             this.toolStrip.SuspendLayout();
-            this.menuStrip.SuspendLayout();
+            this.MenuStrip.SuspendLayout();
             this.SuspendLayout();
             // 
             // toolStrip
@@ -344,15 +344,15 @@
             // 
             // menuStrip
             // 
-            this.menuStrip.ImageScalingSize = new System.Drawing.Size(20, 20);
-            this.menuStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.MenuStrip.ImageScalingSize = new System.Drawing.Size(20, 20);
+            this.MenuStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.FileMenuItem,
             this.ToolsMenuItem});
-            this.menuStrip.Location = new System.Drawing.Point(0, 0);
-            this.menuStrip.Name = "menuStrip";
-            this.menuStrip.Size = new System.Drawing.Size(1110, 28);
-            this.menuStrip.TabIndex = 90;
-            this.menuStrip.Text = "menuStrip";
+            this.MenuStrip.Location = new System.Drawing.Point(0, 0);
+            this.MenuStrip.Name = "menuStrip";
+            this.MenuStrip.Size = new System.Drawing.Size(1110, 28);
+            this.MenuStrip.TabIndex = 90;
+            this.MenuStrip.Text = "menuStrip";
             // 
             // FileMenuItem
             // 
@@ -465,16 +465,16 @@
             this.Controls.Add(this.ftree);
             this.Controls.Add(this.txtViewer);
             this.Controls.Add(this.toolStrip);
-            this.Controls.Add(this.menuStrip);
+            this.Controls.Add(this.MenuStrip);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
-            this.MainMenuStrip = this.menuStrip;
+            this.MainMenuStrip = this.MenuStrip;
             this.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.Name = "MainForm";
             this.Text = "Midifrier";
             this.toolStrip.ResumeLayout(false);
             this.toolStrip.PerformLayout();
-            this.menuStrip.ResumeLayout(false);
-            this.menuStrip.PerformLayout();
+            this.MenuStrip.ResumeLayout(false);
+            this.MenuStrip.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -482,7 +482,7 @@
         #endregion
 
         // new
-        private System.Windows.Forms.MenuStrip menuStrip;
+        private System.Windows.Forms.MenuStrip MenuStrip;
         private System.Windows.Forms.ToolStrip toolStrip;
         private System.Windows.Forms.ToolTip toolTip;
         private NBagOfUis.FilTree ftree;

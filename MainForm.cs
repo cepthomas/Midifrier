@@ -96,7 +96,13 @@ namespace Ephemera.Midifrier
             sldVolume.Value = _settings.Volume;
             barBar.ProgressColor = _settings.ControlColor;
 
-            ftree.Settings = _settings.FilTreeSettings;
+            // FilTree settings.
+            ftree.RootDirs = _settings.RootDirs;
+            var s = MidiLibDefs.MIDI_FILE_TYPES + MidiLibDefs.STYLE_FILE_TYPES;
+            ftree.FilterExts = s.SplitByTokens("|;*");
+            ftree.IgnoreDirs = _settings.IgnoreDirs;
+            ftree.SplitterPosition = _settings.SplitterPosition;
+            ftree.SingleClickSelect = _settings.SingleClickSelect;
             ftree.RecentFiles = _settings.RecentFiles;
             ftree.Init();
 
@@ -123,6 +129,7 @@ namespace Ephemera.Midifrier
             btnAutoplay.Click += (_, __) => _settings.Autoplay = btnAutoplay.Checked;
             btnLoop.Click += (_, __) => _settings.Loop = btnLoop.Checked;
             btnPlay.Click += Play_Click;
+            MenuStrip.MenuActivate += (_, __) => UpdateUi();
 
             // Set up output device.
             foreach (var dev in _settings.MidiSettings.OutputDevices)
@@ -263,6 +270,7 @@ namespace Ephemera.Midifrier
         {
             bool ok = true;
             UpdateState(ExplorerState.Stop);
+
             _logger.Info($"Opening file: {fn}");
 
             try
@@ -313,7 +321,7 @@ namespace Ephemera.Midifrier
 
                     // All good so far.
                     _fn = fn;
-                    _settings.RecentFiles.UpdateMru(fn);
+                    _settings.UpdateMru(fn);
 
                     if (_settings.Autoplay)
                     {
@@ -340,9 +348,6 @@ namespace Ephemera.Midifrier
         /// </summary>
         void InitNavigator()
         {
-            var s = MidiLibDefs.MIDI_FILE_TYPES + MidiLibDefs.STYLE_FILE_TYPES;
-            ftree.Settings.FilterExts = s.SplitByTokens("|;*");
-
             try
             {
                 ftree.Init();
@@ -645,6 +650,19 @@ namespace Ephemera.Midifrier
         void About_Click(object? sender, EventArgs e)
         {
             MiscUtils.ShowReadme("Midifrier");
+        }
+
+        /// <summary>
+        /// Set UI item enables according to system states.
+        /// </summary>
+        void UpdateUi()
+        {
+            btnRewind.Enabled = true;
+            btnPlay.Enabled = _mdata.GetPatternNames().Count > 0;
+
+            OpenMenuItem.Enabled = true;
+            AboutMenuItem.Enabled = true;
+            SettingsMenuItem.Enabled = true;
         }
         #endregion
 

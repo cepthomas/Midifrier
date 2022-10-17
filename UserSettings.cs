@@ -46,6 +46,23 @@ namespace Ephemera.Midifrier
         [JsonConverter(typeof(JsonStringEnumConverter))]
         public LogLevel NotifLogLevel { get; set; } = LogLevel.Debug;
 
+        [DisplayName("Root Paths")]
+        [Description("Your favorite places.")]
+        [Browsable(true)]
+        [Editor(typeof(StringListEditor), typeof(UITypeEditor))]
+        public List<string> RootDirs { get; set; } = new();
+
+        [DisplayName("Ignore Paths")]
+        [Description("Ignore these noisy directories.")]
+        [Browsable(true)]
+        [Editor(typeof(StringListEditor), typeof(UITypeEditor))]
+        public List<string> IgnoreDirs { get; set; } = new();
+
+        [DisplayName("Single Click Select")]
+        [Description("Generate event with single or double click.")]
+        [Browsable(true)]
+        public bool SingleClickSelect { get; set; } = false;
+
         [DisplayName("Midi Settings")]
         [Description("Edit midi settings.")]
         [Browsable(true)]
@@ -64,7 +81,7 @@ namespace Ephemera.Midifrier
         public double Volume { get; set; } = 0.5;
 
         [Browsable(false)]
-        public FilTreeSettings FilTreeSettings { get; set; } = new();
+        public int SplitterPosition { get; set; } = 30;
         #endregion
     }
 }

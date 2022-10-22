@@ -104,7 +104,7 @@ namespace Ephemera.Midifrier
             ftree.SplitterPosition = _settings.SplitterPosition;
             ftree.SingleClickSelect = _settings.SingleClickSelect;
             ftree.RecentFiles = _settings.RecentFiles;
-            ftree.Init();
+            ftree.InitTree();
 
             sldBPM.Resolution = _settings.TempoResolution;
             sldBPM.DrawColor = _settings.ControlColor;
@@ -350,7 +350,7 @@ namespace Ephemera.Midifrier
         {
             try
             {
-                ftree.Init();
+                ftree.InitTree();
             }
             catch (DirectoryNotFoundException)
             {

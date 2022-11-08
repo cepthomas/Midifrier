@@ -71,7 +71,7 @@ namespace Ephemera.Midifrier
             // Init logging.
             LogManager.MinLevelFile = _settings.FileLogLevel;
             LogManager.MinLevelNotif = _settings.NotifLogLevel;
-            LogManager.LogEvent += LogManager_LogEvent;
+            LogManager.LogMessage += LogManager_LogMessage;
             LogManager.Run(Path.Join(appDir, "log.txt"), 100000);
 
             // Init main form from settings
@@ -363,7 +363,7 @@ namespace Ephemera.Midifrier
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="fn"></param>
-        void Navigator_FileSelectedEvent(object? sender, string fn)
+        void Navigator_FileSelected(object? sender, string fn)
         {
             OpenFile(fn);
         }
@@ -610,7 +610,7 @@ namespace Ephemera.Midifrier
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        void Control_ChannelChangeEvent(object? sender, ChannelChangeEventArgs e)
+        void Control_ChannelChange(object? sender, ChannelChangeEventArgs e)
         {
             Channel channel = ((ChannelControl)sender!).BoundChannel;
 
@@ -732,7 +732,7 @@ namespace Ephemera.Midifrier
                             BoundChannel = channel,
                             SelectedColor = _settings.ControlColor
                         };
-                        control.ChannelChangeEvent += Control_ChannelChangeEvent;
+                        control.ChannelChange += Control_ChannelChange;
                         Controls.Add(control);
                         _channelControls.Add(control);
 
@@ -891,7 +891,7 @@ namespace Ephemera.Midifrier
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        void LogManager_LogEvent(object? sender, LogEventArgs e)
+        void LogManager_LogMessage(object? sender, LogMessageEventArgs e)
         {
             // Usually come from a different thread.
             if (IsHandleCreated)

@@ -156,7 +156,7 @@ namespace Ephemera.Midifrier
 
             if (!_outputDevice.Valid)
             {
-                _logger.Error($"Something wrong with your output device:{_outputDevice.DeviceName}");
+                _logger.Error($"Invalid midi output device:{_outputDevice.DeviceName}");
             }
 
             // Initialize tree from user settings.
@@ -306,7 +306,7 @@ namespace Ephemera.Midifrier
                     }
                     else
                     {
-                        throw new InvalidOperationException($"Something wrong with this file: {fn}");
+                        throw new InvalidOperationException($"Invalid file: {fn}");
                     }
 
                     Rewind();

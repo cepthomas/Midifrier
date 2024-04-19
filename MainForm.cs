@@ -535,7 +535,7 @@ namespace Ephemera.Midifrier
                 if (ch.State == ChannelState.Solo || (!anySolo && ch.State == ChannelState.Normal))
                 {
                     // Process any sequence steps.
-                    var playEvents = ch.GetEvents(barBar.Current.TotalSubdivs);
+                    var playEvents = ch.GetEvents(barBar.Current.TotalSubs);
                     foreach (var mevt in playEvents)
                     {
                         switch (mevt)
@@ -749,7 +749,7 @@ namespace Ephemera.Midifrier
             }
 
             // Update bar.
-            var tot = _channels.TotalSubdivs();
+            var tot = _channels.TotalSubs();
             barBar.Start = new(0);
             barBar.End = new(tot - 1);
             barBar.Length = new(tot);

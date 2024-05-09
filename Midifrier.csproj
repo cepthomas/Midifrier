@@ -3,8 +3,8 @@
     
     <PropertyGroup>
         <OutputType>WinExe</OutputType>
-        <RootNamespace>Ephemera.Midifrier</RootNamespace>
-        <AssemblyName>Ephemera.Midifrier</AssemblyName>
+        <RootNamespace>Midifrier</RootNamespace>
+        <AssemblyName>Midifrier</AssemblyName>
         <TargetFramework>net6.0-windows</TargetFramework>
         <UseWindowsForms>true</UseWindowsForms>
         <Deterministic>False</Deterministic>

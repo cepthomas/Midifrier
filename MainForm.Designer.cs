@@ -1,4 +1,4 @@
-﻿namespace Ephemera.Midifrier
+﻿namespace Midifrier
 {
     partial class MainForm
     {
@@ -100,7 +100,7 @@
             this.btnAutoplay.AutoSize = false;
             this.btnAutoplay.CheckOnClick = true;
             this.btnAutoplay.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.btnAutoplay.Image = global::Ephemera.Midifrier.Properties.Resources.glyphicons_221_play_button;
+            this.btnAutoplay.Image = global::Midifrier.Properties.Resources.glyphicons_221_play_button;
             this.btnAutoplay.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
             this.btnAutoplay.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.btnAutoplay.Name = "btnAutoplay";
@@ -118,7 +118,7 @@
             this.btnLoop.AutoSize = false;
             this.btnLoop.CheckOnClick = true;
             this.btnLoop.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.btnLoop.Image = global::Ephemera.Midifrier.Properties.Resources.glyphicons_82_refresh;
+            this.btnLoop.Image = global::Midifrier.Properties.Resources.glyphicons_82_refresh;
             this.btnLoop.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
             this.btnLoop.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.btnLoop.Name = "btnLoop";
@@ -136,7 +136,7 @@
             this.btnLogMidi.AutoSize = false;
             this.btnLogMidi.CheckOnClick = true;
             this.btnLogMidi.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.btnLogMidi.Image = global::Ephemera.Midifrier.Properties.Resources.glyphicons_170_record;
+            this.btnLogMidi.Image = global::Midifrier.Properties.Resources.glyphicons_170_record;
             this.btnLogMidi.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
             this.btnLogMidi.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.btnLogMidi.Name = "btnLogMidi";
@@ -153,7 +153,7 @@
             // 
             this.btnKillMidi.AutoSize = false;
             this.btnKillMidi.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.btnKillMidi.Image = global::Ephemera.Midifrier.Properties.Resources.glyphicons_242_flash;
+            this.btnKillMidi.Image = global::Midifrier.Properties.Resources.glyphicons_242_flash;
             this.btnKillMidi.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
             this.btnKillMidi.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.btnKillMidi.Name = "btnKillMidi";
@@ -253,7 +253,7 @@
             this.btnPlay.AutoSize = false;
             this.btnPlay.CheckOnClick = true;
             this.btnPlay.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.btnPlay.Image = global::Ephemera.Midifrier.Properties.Resources.glyphicons_174_play;
+            this.btnPlay.Image = global::Midifrier.Properties.Resources.glyphicons_174_play;
             this.btnPlay.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
             this.btnPlay.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.btnPlay.Name = "btnPlay";
@@ -270,7 +270,7 @@
             // 
             this.btnRewind.AutoSize = false;
             this.btnRewind.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.btnRewind.Image = global::Ephemera.Midifrier.Properties.Resources.glyphicons_173_rewind;
+            this.btnRewind.Image = global::Midifrier.Properties.Resources.glyphicons_173_rewind;
             this.btnRewind.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
             this.btnRewind.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.btnRewind.Name = "btnRewind";

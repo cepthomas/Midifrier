@@ -17,7 +17,7 @@ using Ephemera.NBagOfUis;
 using Ephemera.MidiLib;
 
 
-namespace Ephemera.Midifrier
+namespace Midifrier
 {
     public partial class MainForm : Form
     {

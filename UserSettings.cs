@@ -17,7 +17,7 @@ using Ephemera.NBagOfTricks.Slog;
 using Ephemera.MidiLib;
 
 
-namespace Ephemera.Midifrier
+namespace Midifrier
 {
     [Serializable]
     public sealed class UserSettings : SettingsCore

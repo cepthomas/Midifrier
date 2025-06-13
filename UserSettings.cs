@@ -13,7 +13,6 @@ using NAudio.Wave;
 using NAudio.Midi;
 using Ephemera.NBagOfTricks;
 using Ephemera.NBagOfUis;
-using Ephemera.NBagOfTricks.Slog;
 using Ephemera.MidiLib;
 
 
@@ -50,13 +49,13 @@ namespace Midifrier
         [Description("Your favorite places.")]
         [Browsable(true)]
         [Editor(typeof(StringListEditor), typeof(UITypeEditor))]
-        public List<string> RootDirs { get; set; } = new();
+        public List<string> RootDirs { get; set; } = [];
 
         [DisplayName("Ignore Paths")]
         [Description("Ignore these noisy directories.")]
         [Browsable(true)]
         [Editor(typeof(StringListEditor), typeof(UITypeEditor))]
-        public List<string> IgnoreDirs { get; set; } = new();
+        public List<string> IgnoreDirs { get; set; } = [];
 
         [DisplayName("Single Click Select")]
         [Description("Generate event with single or double click.")]

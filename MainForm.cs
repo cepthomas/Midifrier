@@ -12,7 +12,6 @@ using System.Diagnostics;
 using NAudio.Midi;
 using NAudio.Wave;
 using Ephemera.NBagOfTricks;
-using Ephemera.NBagOfTricks.Slog;
 using Ephemera.NBagOfUis;
 using Ephemera.MidiLib;
 
@@ -42,10 +41,10 @@ namespace Midifrier
         readonly IOutputDevice _outputDevice = new NullOutputDevice();
 
         /// <summary>All the channels - key is user assigned name.</summary>
-        readonly Dictionary<string, Channel> _channels = new();
+        readonly Dictionary<string, Channel> _channels = [];
 
         /// <summary>All the channel controls.</summary>
-        readonly List<ChannelControl> _channelControls = new();
+        readonly List<ChannelControl> _channelControls = [];
 
         /// <summary>The fast timer.</summary>
         readonly MmTimerEx _mmTimer = new();
@@ -89,7 +88,7 @@ namespace Midifrier
             txtViewer.MatchText.Add("WRN:", Color.Plum);
 
             // Other UI configs.
-            toolStrip.Renderer = new Ephemera.NBagOfUis.CheckBoxRenderer() { SelectedColor = _settings.ControlColor };
+            toolStrip.Renderer = new GraphicsUtils.CheckBoxRenderer() { SelectedColor = _settings.ControlColor };
             btnAutoplay.Checked = _settings.Autoplay;
             btnLoop.Checked = _settings.Loop;
             sldVolume.DrawColor = _settings.ControlColor;
@@ -703,7 +702,7 @@ namespace Midifrier
                 foreach (var (number, patch) in pinfo.GetChannels(true, true))
                 {
                     // Get events for the channel.
-                    var chEvents = pinfo.GetFilteredEvents(new List<int>() { number });
+                    var chEvents = pinfo.GetFilteredEvents([number]);
 
                     // Is this channel pertinent?
                     if (chEvents.Any())
@@ -765,15 +764,18 @@ namespace Midifrier
         /// <param name="e"></param>
         void Patterns_SelectedIndexChanged(object? sender, EventArgs e)
         {
-            var pinfo = _mdata.GetPattern(lbPatterns.SelectedItem.ToString()!);
-
-            LoadPattern(pinfo!);
-
-            Rewind();
-
-            if (_settings.Autoplay)
+            if (lbPatterns.SelectedItem is not null)
             {
-                Play();
+                var pinfo = _mdata.GetPattern(lbPatterns.SelectedItem.ToString()!);
+
+                LoadPattern(pinfo!);
+
+                Rewind();
+
+                if (_settings.Autoplay)
+                {
+                    Play();
+                }
             }
         }
 
@@ -820,12 +822,12 @@ namespace Midifrier
         /// </summary>
         void Export_Click(object? sender, EventArgs e)
         {
-            var stext = ((ToolStripMenuItem)sender!).Text;
+            var stext = ((ToolStripMenuItem)sender!).Text ?? "no text";
 
             try
             {
                 // Get selected patterns.
-                List<string> patternNames = new();
+                List<string> patternNames = [];
                 if (lbPatterns.Items.Count == 1)
                 {
                     patternNames.Add(lbPatterns.Items[0].ToString()!);
@@ -843,13 +845,13 @@ namespace Midifrier
                     return;
                 }
 
-                List<PatternInfo> patterns = new();
+                List<PatternInfo> patterns = [];
                 patternNames.ForEach(p => patterns.Add(_mdata.GetPattern(p)!));
 
                 // Get selected channels.
-                List<Channel> channels = new();
+                List<Channel> channels = [];
                 _channelControls.Where(cc => cc.Selected).ForEach(cc => channels.Add(cc.BoundChannel));
-                if (!channels.Any()) // grab them all.
+                if (channels.Count == 0) // grab them all.
                 {
                     _channelControls.ForEach(cc => channels.Add(cc.BoundChannel));
                 }

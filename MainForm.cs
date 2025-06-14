@@ -35,7 +35,7 @@ namespace Midifrier
         readonly UserSettings _settings;
 
         /// <summary>Where to put things.</summary>
-        readonly string _outPath = "TODO not in Ephemera";
+        readonly string _outPath = "TODOX not in Ephemera";
 
         /// <summary>Midi output.</summary>
         readonly IOutputDevice _outputDevice = new NullOutputDevice();

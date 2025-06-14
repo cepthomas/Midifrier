@@ -62,6 +62,11 @@ namespace Midifrier
         [Browsable(true)]
         public bool SingleClickSelect { get; set; } = false;
 
+        [DisplayName("Default Export Folder")]
+        [Description("Where to put exported files.")]
+        [Browsable(true)]
+        public string ExportFolder { get; set; } = "";
+
         [DisplayName("Midi Settings")]
         [Description("Edit midi settings.")]
         [Browsable(true)]

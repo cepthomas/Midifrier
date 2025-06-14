@@ -34,9 +34,6 @@ namespace Midifrier
         /// <summary>Current global user settings.</summary>
         readonly UserSettings _settings;
 
-        /// <summary>Where to put things.</summary>
-        readonly string _outPath = "TODOX not in Ephemera";
-
         /// <summary>Midi output.</summary>
         readonly IOutputDevice _outputDevice = new NullOutputDevice();
 
@@ -648,7 +645,7 @@ namespace Midifrier
         /// </summary>
         void About_Click(object? sender, EventArgs e)
         {
-            MiscUtils.ShowReadme("Midifrier");
+            Tools.ShowReadme("Midifrier");
         }
 
         /// <summary>
@@ -860,7 +857,7 @@ namespace Midifrier
                 {
                     case "export csv":
                         {
-                            var newfn = MiscUtils.MakeExportFileName(_outPath, _mdata.FileName, "export", "csv");
+                            var newfn = Tools.MakeExportFileName(_settings.ExportFolder, _mdata.FileName, "export", "csv");
                             MidiExport.ExportCsv(newfn, patterns, channels, _mdata.GetGlobal());
                             _logger.Info($"Exported to {newfn}");
                         }
@@ -869,7 +866,7 @@ namespace Midifrier
                     case "export midi":
                         foreach (var pattern in patterns)
                         {
-                            var newfn = MiscUtils.MakeExportFileName(_outPath, _mdata.FileName, pattern.PatternName, "mid");
+                            var newfn = Tools.MakeExportFileName(_settings.ExportFolder, _mdata.FileName, pattern.PatternName, "mid");
                             MidiExport.ExportMidi(newfn, pattern, channels, _mdata.GetGlobal());
                             _logger.Info($"Export midi to {newfn}");
                         }

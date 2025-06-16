@@ -85,7 +85,7 @@ namespace Midifrier
             txtViewer.MatchText.Add("WRN:", Color.Plum);
 
             // Other UI configs.
-            toolStrip.Renderer = new GraphicsUtils.CheckBoxRenderer() { SelectedColor = _settings.ControlColor };
+            toolStrip.Renderer = new ToolStripCheckBoxRenderer() { SelectedColor = _settings.ControlColor };
             btnAutoplay.Checked = _settings.Autoplay;
             btnLoop.Checked = _settings.Loop;
             sldVolume.DrawColor = _settings.ControlColor;

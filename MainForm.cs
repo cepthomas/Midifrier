@@ -711,7 +711,7 @@ namespace Midifrier
                             ChannelNumber = number,
                             Device = _outputDevice,
                             DeviceId = _outputDevice.DeviceName,
-                            Volume = MidiLibDefs.VOLUME_DEFAULT,
+                            Volume = MidiLibDefs.DEFAULT_VOLUME,
                             State = ChannelState.Normal,
                             Patch = patch,
                             IsDrums = number == MidiDefs.DEFAULT_DRUM_CHANNEL,

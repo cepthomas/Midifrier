@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.IO;
 using System.Diagnostics;
+using System.Reflection;
 using NAudio.Midi;
 using NAudio.Wave;
 using Ephemera.NBagOfTricks;
@@ -63,6 +64,8 @@ namespace Midifrier
             MidiSettings.LibSettings = _settings.MidiSettings;
 
             InitializeComponent();
+
+            Icon = Icon.ExtractAssociatedIcon(Assembly.GetExecutingAssembly().Location);
 
             // Init logging.
             LogManager.MinLevelFile = _settings.FileLogLevel;
@@ -726,7 +729,7 @@ namespace Midifrier
                             Location = new(x, y),
                             BorderStyle = BorderStyle.FixedSingle,
                             BoundChannel = channel,
-                            SelectedColor = _settings.ControlColor
+                            ControlColor = _settings.ControlColor
                         };
                         control.ChannelChange += Control_ChannelChange;
                         Controls.Add(control);

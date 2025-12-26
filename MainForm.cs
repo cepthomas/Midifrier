@@ -88,12 +88,12 @@ namespace Midifrier
             txtViewer.MatchText.Add("WRN:", Color.Plum);
 
             // Other UI configs.
-            toolStrip.Renderer = new ToolStripCheckBoxRenderer() { SelectedColor = _settings.ControlColor };
+            toolStrip.Renderer = new ToolStripCheckBoxRenderer() { SelectedColor = _settings.DrawColor };
             btnAutoplay.Checked = _settings.Autoplay;
             btnLoop.Checked = _settings.Loop;
-            sldVolume.DrawColor = _settings.ControlColor;
+            sldVolume.DrawColor = _settings.DrawColor;
             sldVolume.Value = _settings.Volume;
-            barBar.ProgressColor = _settings.ControlColor;
+            barBar.ProgressColor = _settings.DrawColor;
 
             // FilTree settings.
             ftree.RootDirs = _settings.RootDirs;
@@ -106,7 +106,7 @@ namespace Midifrier
             ftree.InitTree();
 
             sldBPM.Resolution = _settings.TempoResolution;
-            sldBPM.DrawColor = _settings.ControlColor;
+            sldBPM.DrawColor = _settings.DrawColor;
             sldBPM.Value = _settings.MidiSettings.DefaultTempo;
 
             // Init channels and selectors.
@@ -474,7 +474,7 @@ namespace Midifrier
                 {
                     case "InputDevice":
                     case "OutputDevice":
-                    case "ControlColor":
+                    case "DrawColor":
                     case "TempoResolution":
                     case "FileLogLevel":
                     case "NotifLogLevel":
@@ -729,7 +729,7 @@ namespace Midifrier
                             Location = new(x, y),
                             BorderStyle = BorderStyle.FixedSingle,
                             BoundChannel = channel,
-                            ControlColor = _settings.ControlColor
+                            DrawColor = _settings.DrawColor
                         };
                         control.ChannelChange += Control_ChannelChange;
                         Controls.Add(control);

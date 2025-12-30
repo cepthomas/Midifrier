@@ -15,468 +15,434 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.components = new System.ComponentModel.Container();
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainForm));
-            this.toolStrip = new System.Windows.Forms.ToolStrip();
-            this.btnAutoplay = new System.Windows.Forms.ToolStripButton();
-            this.toolStripSeparator4 = new System.Windows.Forms.ToolStripSeparator();
-            this.btnLoop = new System.Windows.Forms.ToolStripButton();
-            this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
-            this.btnLogMidi = new System.Windows.Forms.ToolStripButton();
-            this.toolStripSeparator5 = new System.Windows.Forms.ToolStripSeparator();
-            this.btnKillMidi = new System.Windows.Forms.ToolStripButton();
-            this.toolStripSeparator6 = new System.Windows.Forms.ToolStripSeparator();
-            this.toolStripLabel1 = new System.Windows.Forms.ToolStripLabel();
-            this.cmbDrumChannel1 = new System.Windows.Forms.ToolStripComboBox();
-            this.toolStripSeparator7 = new System.Windows.Forms.ToolStripSeparator();
-            this.toolStripLabel2 = new System.Windows.Forms.ToolStripLabel();
-            this.cmbDrumChannel2 = new System.Windows.Forms.ToolStripComboBox();
-            this.toolStripSeparator8 = new System.Windows.Forms.ToolStripSeparator();
-            this.sldVolume = new Ephemera.NBagOfUis.ToolStripSlider();
-            this.toolStripSeparator11 = new System.Windows.Forms.ToolStripSeparator();
-            this.sldBPM = new Ephemera.NBagOfUis.ToolStripSlider();
-            this.toolStripSeparator9 = new System.Windows.Forms.ToolStripSeparator();
-            this.btnPlay = new System.Windows.Forms.ToolStripButton();
-            this.toolStripSeparator10 = new System.Windows.Forms.ToolStripSeparator();
-            this.btnRewind = new System.Windows.Forms.ToolStripButton();
-            this.toolStripSeparator12 = new System.Windows.Forms.ToolStripSeparator();
-            this.txtViewer = new Ephemera.NBagOfUis.TextViewer();
-            this.toolTip = new System.Windows.Forms.ToolTip(this.components);
-            this.lbPatterns = new System.Windows.Forms.CheckedListBox();
-            this.btnAllPatterns = new System.Windows.Forms.Button();
-            this.btnClearPatterns = new System.Windows.Forms.Button();
-            this.ftree = new Ephemera.NBagOfUis.FilTree();
-            this.MenuStrip = new System.Windows.Forms.MenuStrip();
-            this.FileMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.OpenMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.toolStripSeparator3 = new System.Windows.Forms.ToolStripSeparator();
-            this.RecentMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
-            this.ExportCsvMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.ExportMidiMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.ToolsMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.SettingsMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.AboutMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.timeBar = new Ephemera.MidiLib.TimeBar();
-            this.lblChLoc = new System.Windows.Forms.Label();
-            this.toolStrip.SuspendLayout();
-            this.MenuStrip.SuspendLayout();
-            this.SuspendLayout();
+            components = new System.ComponentModel.Container();
+            toolStrip = new System.Windows.Forms.ToolStrip();
+            btnAutoplay = new System.Windows.Forms.ToolStripButton();
+            toolStripSeparator4 = new System.Windows.Forms.ToolStripSeparator();
+            btnLoop = new System.Windows.Forms.ToolStripButton();
+            toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
+            btnLogMidi = new System.Windows.Forms.ToolStripButton();
+            toolStripSeparator5 = new System.Windows.Forms.ToolStripSeparator();
+            btnKillMidi = new System.Windows.Forms.ToolStripButton();
+            toolStripSeparator6 = new System.Windows.Forms.ToolStripSeparator();
+            toolStripLabel1 = new System.Windows.Forms.ToolStripLabel();
+            cmbDrumChannel1 = new System.Windows.Forms.ToolStripComboBox();
+            toolStripSeparator7 = new System.Windows.Forms.ToolStripSeparator();
+            toolStripLabel2 = new System.Windows.Forms.ToolStripLabel();
+            cmbDrumChannel2 = new System.Windows.Forms.ToolStripComboBox();
+            toolStripSeparator8 = new System.Windows.Forms.ToolStripSeparator();
+            sldVolume = new Ephemera.NBagOfUis.ToolStripSlider();
+            toolStripSeparator11 = new System.Windows.Forms.ToolStripSeparator();
+            sldBPM = new Ephemera.NBagOfUis.ToolStripSlider();
+            toolStripSeparator9 = new System.Windows.Forms.ToolStripSeparator();
+            btnPlay = new System.Windows.Forms.ToolStripButton();
+            toolStripSeparator10 = new System.Windows.Forms.ToolStripSeparator();
+            btnRewind = new System.Windows.Forms.ToolStripButton();
+            toolStripSeparator12 = new System.Windows.Forms.ToolStripSeparator();
+            txtViewer = new Ephemera.NBagOfUis.TextViewer();
+            toolTip = new System.Windows.Forms.ToolTip(components);
+            lbPatterns = new System.Windows.Forms.CheckedListBox();
+            btnAllPatterns = new System.Windows.Forms.Button();
+            btnClearPatterns = new System.Windows.Forms.Button();
+            ftree = new Ephemera.NBagOfUis.FilTree();
+            MenuStrip = new System.Windows.Forms.MenuStrip();
+            FileMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            OpenMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            toolStripSeparator3 = new System.Windows.Forms.ToolStripSeparator();
+            RecentMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
+            ExportCsvMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            ExportMidiMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            ToolsMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            SettingsMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            AboutMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            timeBar = new Ephemera.MidiLib.TimeBar();
+            lblChLoc = new System.Windows.Forms.Label();
+            toolStrip.SuspendLayout();
+            MenuStrip.SuspendLayout();
+            SuspendLayout();
             // 
             // toolStrip
             // 
-            this.toolStrip.ImageScalingSize = new System.Drawing.Size(20, 20);
-            this.toolStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.btnAutoplay,
-            this.toolStripSeparator4,
-            this.btnLoop,
-            this.toolStripSeparator1,
-            this.btnLogMidi,
-            this.toolStripSeparator5,
-            this.btnKillMidi,
-            this.toolStripSeparator6,
-            this.toolStripLabel1,
-            this.cmbDrumChannel1,
-            this.toolStripSeparator7,
-            this.toolStripLabel2,
-            this.cmbDrumChannel2,
-            this.toolStripSeparator8,
-            this.sldVolume,
-            this.toolStripSeparator11,
-            this.sldBPM,
-            this.toolStripSeparator9,
-            this.btnPlay,
-            this.toolStripSeparator10,
-            this.btnRewind,
-            this.toolStripSeparator12});
-            this.toolStrip.Location = new System.Drawing.Point(0, 28);
-            this.toolStrip.Name = "toolStrip";
-            this.toolStrip.Size = new System.Drawing.Size(1110, 43);
-            this.toolStrip.TabIndex = 0;
-            this.toolStrip.Text = "toolStrip";
+            toolStrip.ImageScalingSize = new System.Drawing.Size(20, 20);
+            toolStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] { btnAutoplay, toolStripSeparator4, btnLoop, toolStripSeparator1, btnLogMidi, toolStripSeparator5, btnKillMidi, toolStripSeparator6, toolStripLabel1, cmbDrumChannel1, toolStripSeparator7, toolStripLabel2, cmbDrumChannel2, toolStripSeparator8, sldVolume, toolStripSeparator11, sldBPM, toolStripSeparator9, btnPlay, toolStripSeparator10, btnRewind, toolStripSeparator12 });
+            toolStrip.Location = new System.Drawing.Point(0, 27);
+            toolStrip.Name = "toolStrip";
+            toolStrip.Size = new System.Drawing.Size(959, 43);
+            toolStrip.TabIndex = 0;
+            toolStrip.Text = "toolStrip";
             // 
             // btnAutoplay
             // 
-            this.btnAutoplay.AutoSize = false;
-            this.btnAutoplay.CheckOnClick = true;
-            this.btnAutoplay.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.btnAutoplay.Image = global::Midifrier.Properties.Resources.glyphicons_221_play_button;
-            this.btnAutoplay.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
-            this.btnAutoplay.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.btnAutoplay.Name = "btnAutoplay";
-            this.btnAutoplay.Size = new System.Drawing.Size(40, 40);
-            this.btnAutoplay.Text = "toolStripButton1";
-            this.btnAutoplay.ToolTipText = "Autoplay the selection";
+            btnAutoplay.AutoSize = false;
+            btnAutoplay.CheckOnClick = true;
+            btnAutoplay.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            btnAutoplay.Image = Properties.Resources.glyphicons_221_play_button;
+            btnAutoplay.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
+            btnAutoplay.ImageTransparentColor = System.Drawing.Color.Magenta;
+            btnAutoplay.Name = "btnAutoplay";
+            btnAutoplay.Size = new System.Drawing.Size(40, 40);
+            btnAutoplay.Text = "toolStripButton1";
+            btnAutoplay.ToolTipText = "Autoplay the selection";
             // 
             // toolStripSeparator4
             // 
-            this.toolStripSeparator4.Name = "toolStripSeparator4";
-            this.toolStripSeparator4.Size = new System.Drawing.Size(6, 43);
+            toolStripSeparator4.Name = "toolStripSeparator4";
+            toolStripSeparator4.Size = new System.Drawing.Size(6, 43);
             // 
             // btnLoop
             // 
-            this.btnLoop.AutoSize = false;
-            this.btnLoop.CheckOnClick = true;
-            this.btnLoop.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.btnLoop.Image = global::Midifrier.Properties.Resources.glyphicons_82_refresh;
-            this.btnLoop.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
-            this.btnLoop.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.btnLoop.Name = "btnLoop";
-            this.btnLoop.Size = new System.Drawing.Size(40, 40);
-            this.btnLoop.Text = "toolStripButton1";
-            this.btnLoop.ToolTipText = "Loop forever";
+            btnLoop.AutoSize = false;
+            btnLoop.CheckOnClick = true;
+            btnLoop.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            btnLoop.Image = Properties.Resources.glyphicons_82_refresh;
+            btnLoop.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
+            btnLoop.ImageTransparentColor = System.Drawing.Color.Magenta;
+            btnLoop.Name = "btnLoop";
+            btnLoop.Size = new System.Drawing.Size(40, 40);
+            btnLoop.Text = "toolStripButton1";
+            btnLoop.ToolTipText = "Loop forever";
             // 
             // toolStripSeparator1
             // 
-            this.toolStripSeparator1.Name = "toolStripSeparator1";
-            this.toolStripSeparator1.Size = new System.Drawing.Size(6, 43);
+            toolStripSeparator1.Name = "toolStripSeparator1";
+            toolStripSeparator1.Size = new System.Drawing.Size(6, 43);
             // 
             // btnLogMidi
             // 
-            this.btnLogMidi.AutoSize = false;
-            this.btnLogMidi.CheckOnClick = true;
-            this.btnLogMidi.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.btnLogMidi.Image = global::Midifrier.Properties.Resources.glyphicons_170_record;
-            this.btnLogMidi.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
-            this.btnLogMidi.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.btnLogMidi.Name = "btnLogMidi";
-            this.btnLogMidi.Size = new System.Drawing.Size(40, 40);
-            this.btnLogMidi.Text = "toolStripButton1";
-            this.btnLogMidi.ToolTipText = "Enable logging midi events";
+            btnLogMidi.AutoSize = false;
+            btnLogMidi.CheckOnClick = true;
+            btnLogMidi.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            btnLogMidi.Image = Properties.Resources.glyphicons_170_record;
+            btnLogMidi.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
+            btnLogMidi.ImageTransparentColor = System.Drawing.Color.Magenta;
+            btnLogMidi.Name = "btnLogMidi";
+            btnLogMidi.Size = new System.Drawing.Size(40, 40);
+            btnLogMidi.Text = "toolStripButton1";
+            btnLogMidi.ToolTipText = "Enable logging midi events";
             // 
             // toolStripSeparator5
             // 
-            this.toolStripSeparator5.Name = "toolStripSeparator5";
-            this.toolStripSeparator5.Size = new System.Drawing.Size(6, 43);
+            toolStripSeparator5.Name = "toolStripSeparator5";
+            toolStripSeparator5.Size = new System.Drawing.Size(6, 43);
             // 
             // btnKillMidi
             // 
-            this.btnKillMidi.AutoSize = false;
-            this.btnKillMidi.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.btnKillMidi.Image = global::Midifrier.Properties.Resources.glyphicons_242_flash;
-            this.btnKillMidi.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
-            this.btnKillMidi.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.btnKillMidi.Name = "btnKillMidi";
-            this.btnKillMidi.Size = new System.Drawing.Size(40, 40);
-            this.btnKillMidi.Text = "toolStripButton1";
-            this.btnKillMidi.ToolTipText = "Kill all midi channels";
+            btnKillMidi.AutoSize = false;
+            btnKillMidi.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            btnKillMidi.Image = Properties.Resources.glyphicons_242_flash;
+            btnKillMidi.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
+            btnKillMidi.ImageTransparentColor = System.Drawing.Color.Magenta;
+            btnKillMidi.Name = "btnKillMidi";
+            btnKillMidi.Size = new System.Drawing.Size(40, 40);
+            btnKillMidi.Text = "toolStripButton1";
+            btnKillMidi.ToolTipText = "Kill all midi channels";
             // 
             // toolStripSeparator6
             // 
-            this.toolStripSeparator6.Name = "toolStripSeparator6";
-            this.toolStripSeparator6.Size = new System.Drawing.Size(6, 43);
+            toolStripSeparator6.Name = "toolStripSeparator6";
+            toolStripSeparator6.Size = new System.Drawing.Size(6, 43);
             // 
             // toolStripLabel1
             // 
-            this.toolStripLabel1.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
-            this.toolStripLabel1.Name = "toolStripLabel1";
-            this.toolStripLabel1.Size = new System.Drawing.Size(40, 40);
-            this.toolStripLabel1.Text = "DC1:";
+            toolStripLabel1.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+            toolStripLabel1.Name = "toolStripLabel1";
+            toolStripLabel1.Size = new System.Drawing.Size(39, 40);
+            toolStripLabel1.Text = "DC1:";
             // 
             // cmbDrumChannel1
             // 
-            this.cmbDrumChannel1.AutoSize = false;
-            this.cmbDrumChannel1.Name = "cmbDrumChannel1";
-            this.cmbDrumChannel1.Size = new System.Drawing.Size(50, 28);
-            this.cmbDrumChannel1.ToolTipText = "Drum Channel - main";
-            this.cmbDrumChannel1.SelectedIndexChanged += new System.EventHandler(this.DrumChannel_SelectedIndexChanged);
+            cmbDrumChannel1.AutoSize = false;
+            cmbDrumChannel1.Name = "cmbDrumChannel1";
+            cmbDrumChannel1.Size = new System.Drawing.Size(50, 27);
+            cmbDrumChannel1.ToolTipText = "Drum Channel - main";
+            cmbDrumChannel1.SelectedIndexChanged += DrumChannel_SelectedIndexChanged;
             // 
             // toolStripSeparator7
             // 
-            this.toolStripSeparator7.Name = "toolStripSeparator7";
-            this.toolStripSeparator7.Size = new System.Drawing.Size(6, 43);
+            toolStripSeparator7.Name = "toolStripSeparator7";
+            toolStripSeparator7.Size = new System.Drawing.Size(6, 43);
             // 
             // toolStripLabel2
             // 
-            this.toolStripLabel2.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
-            this.toolStripLabel2.Name = "toolStripLabel2";
-            this.toolStripLabel2.Size = new System.Drawing.Size(40, 40);
-            this.toolStripLabel2.Text = "DC2:";
+            toolStripLabel2.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+            toolStripLabel2.Name = "toolStripLabel2";
+            toolStripLabel2.Size = new System.Drawing.Size(39, 40);
+            toolStripLabel2.Text = "DC2:";
             // 
             // cmbDrumChannel2
             // 
-            this.cmbDrumChannel2.AutoSize = false;
-            this.cmbDrumChannel2.Name = "cmbDrumChannel2";
-            this.cmbDrumChannel2.Size = new System.Drawing.Size(50, 28);
-            this.cmbDrumChannel2.ToolTipText = "Drum channel - secondary";
-            this.cmbDrumChannel2.SelectedIndexChanged += new System.EventHandler(this.DrumChannel_SelectedIndexChanged);
+            cmbDrumChannel2.AutoSize = false;
+            cmbDrumChannel2.Name = "cmbDrumChannel2";
+            cmbDrumChannel2.Size = new System.Drawing.Size(50, 27);
+            cmbDrumChannel2.ToolTipText = "Drum channel - secondary";
+            cmbDrumChannel2.SelectedIndexChanged += DrumChannel_SelectedIndexChanged;
             // 
             // toolStripSeparator8
             // 
-            this.toolStripSeparator8.Name = "toolStripSeparator8";
-            this.toolStripSeparator8.Size = new System.Drawing.Size(6, 43);
+            toolStripSeparator8.Name = "toolStripSeparator8";
+            toolStripSeparator8.Size = new System.Drawing.Size(6, 43);
             // 
             // sldVolume
             // 
-            this.sldVolume.AccessibleName = "sldVolume";
-            this.sldVolume.AutoSize = false;
-            this.sldVolume.BorderStyle = System.Windows.Forms.BorderStyle.None;
-            this.sldVolume.DrawColor = System.Drawing.Color.White;
-            this.sldVolume.Label = "Volume";
-            this.sldVolume.Maximum = 2D;
-            this.sldVolume.Minimum = 0D;
-            this.sldVolume.Name = "sldVolume";
-            this.sldVolume.Resolution = 0.05D;
-            this.sldVolume.Size = new System.Drawing.Size(150, 40);
-            this.sldVolume.Text = "vol";
-            this.sldVolume.ToolTipText = "How loud";
-            this.sldVolume.Value = 1D;
+            sldVolume.AccessibleName = "sldVolume";
+            sldVolume.AutoSize = false;
+            sldVolume.BorderStyle = System.Windows.Forms.BorderStyle.None;
+            sldVolume.DrawColor = System.Drawing.Color.White;
+            sldVolume.Label = "Volume";
+            sldVolume.Maximum = 2D;
+            sldVolume.Minimum = 0D;
+            sldVolume.Name = "sldVolume";
+            sldVolume.Resolution = 0.05D;
+            sldVolume.Size = new System.Drawing.Size(150, 38);
+            sldVolume.Text = "vol";
+            sldVolume.ToolTipText = "How loud";
+            sldVolume.Value = 1D;
             // 
             // toolStripSeparator11
             // 
-            this.toolStripSeparator11.Name = "toolStripSeparator11";
-            this.toolStripSeparator11.Size = new System.Drawing.Size(6, 43);
+            toolStripSeparator11.Name = "toolStripSeparator11";
+            toolStripSeparator11.Size = new System.Drawing.Size(6, 43);
             // 
             // sldBPM
             // 
-            this.sldBPM.AccessibleName = "sldBPM";
-            this.sldBPM.AutoSize = false;
-            this.sldBPM.BorderStyle = System.Windows.Forms.BorderStyle.None;
-            this.sldBPM.DrawColor = System.Drawing.Color.White;
-            this.sldBPM.Label = "BPM";
-            this.sldBPM.Maximum = 249D;
-            this.sldBPM.Minimum = 40D;
-            this.sldBPM.Name = "sldBPM";
-            this.sldBPM.Resolution = 1D;
-            this.sldBPM.Size = new System.Drawing.Size(150, 40);
-            this.sldBPM.Text = "bpm";
-            this.sldBPM.ToolTipText = "How fast";
-            this.sldBPM.Value = 100D;
+            sldBPM.AccessibleName = "sldBPM";
+            sldBPM.AutoSize = false;
+            sldBPM.BorderStyle = System.Windows.Forms.BorderStyle.None;
+            sldBPM.DrawColor = System.Drawing.Color.White;
+            sldBPM.Label = "BPM";
+            sldBPM.Maximum = 249D;
+            sldBPM.Minimum = 40D;
+            sldBPM.Name = "sldBPM";
+            sldBPM.Resolution = 1D;
+            sldBPM.Size = new System.Drawing.Size(150, 38);
+            sldBPM.Text = "bpm";
+            sldBPM.ToolTipText = "How fast";
+            sldBPM.Value = 100D;
             // 
             // toolStripSeparator9
             // 
-            this.toolStripSeparator9.Name = "toolStripSeparator9";
-            this.toolStripSeparator9.Size = new System.Drawing.Size(6, 43);
+            toolStripSeparator9.Name = "toolStripSeparator9";
+            toolStripSeparator9.Size = new System.Drawing.Size(6, 43);
             // 
             // btnPlay
             // 
-            this.btnPlay.AutoSize = false;
-            this.btnPlay.CheckOnClick = true;
-            this.btnPlay.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.btnPlay.Image = global::Midifrier.Properties.Resources.glyphicons_174_play;
-            this.btnPlay.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
-            this.btnPlay.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.btnPlay.Name = "btnPlay";
-            this.btnPlay.Size = new System.Drawing.Size(40, 40);
-            this.btnPlay.Text = "toolStripButton1";
-            this.btnPlay.ToolTipText = "Play";
+            btnPlay.AutoSize = false;
+            btnPlay.CheckOnClick = true;
+            btnPlay.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            btnPlay.Image = Properties.Resources.glyphicons_174_play;
+            btnPlay.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
+            btnPlay.ImageTransparentColor = System.Drawing.Color.Magenta;
+            btnPlay.Name = "btnPlay";
+            btnPlay.Size = new System.Drawing.Size(40, 40);
+            btnPlay.Text = "toolStripButton1";
+            btnPlay.ToolTipText = "Play";
             // 
             // toolStripSeparator10
             // 
-            this.toolStripSeparator10.Name = "toolStripSeparator10";
-            this.toolStripSeparator10.Size = new System.Drawing.Size(6, 43);
+            toolStripSeparator10.Name = "toolStripSeparator10";
+            toolStripSeparator10.Size = new System.Drawing.Size(6, 43);
             // 
             // btnRewind
             // 
-            this.btnRewind.AutoSize = false;
-            this.btnRewind.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.btnRewind.Image = global::Midifrier.Properties.Resources.glyphicons_173_rewind;
-            this.btnRewind.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
-            this.btnRewind.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.btnRewind.Name = "btnRewind";
-            this.btnRewind.Size = new System.Drawing.Size(40, 40);
-            this.btnRewind.Text = "toolStripButton1";
-            this.btnRewind.ToolTipText = "Rewind";
+            btnRewind.AutoSize = false;
+            btnRewind.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            btnRewind.Image = Properties.Resources.glyphicons_173_rewind;
+            btnRewind.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
+            btnRewind.ImageTransparentColor = System.Drawing.Color.Magenta;
+            btnRewind.Name = "btnRewind";
+            btnRewind.Size = new System.Drawing.Size(40, 40);
+            btnRewind.Text = "toolStripButton1";
+            btnRewind.ToolTipText = "Rewind";
             // 
             // toolStripSeparator12
             // 
-            this.toolStripSeparator12.Name = "toolStripSeparator12";
-            this.toolStripSeparator12.Size = new System.Drawing.Size(6, 43);
+            toolStripSeparator12.Name = "toolStripSeparator12";
+            toolStripSeparator12.Size = new System.Drawing.Size(6, 43);
             // 
             // txtViewer
             // 
-            this.txtViewer.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left)));
-            this.txtViewer.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.txtViewer.Location = new System.Drawing.Point(8, 577);
-            this.txtViewer.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
-            this.txtViewer.MaxText = 5000;
-            this.txtViewer.Name = "txtViewer";
-            this.txtViewer.Prompt = "";
-            this.txtViewer.Size = new System.Drawing.Size(646, 128);
-            this.txtViewer.TabIndex = 58;
-            this.txtViewer.WordWrap = true;
+            txtViewer.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left;
+            txtViewer.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            txtViewer.Location = new System.Drawing.Point(8, 548);
+            txtViewer.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
+            txtViewer.MaxText = 5000;
+            txtViewer.Name = "txtViewer";
+            txtViewer.Prompt = "";
+            txtViewer.Size = new System.Drawing.Size(646, 122);
+            txtViewer.TabIndex = 58;
+            txtViewer.WordWrap = true;
             // 
             // lbPatterns
             // 
-            this.lbPatterns.BackColor = System.Drawing.SystemColors.Control;
-            this.lbPatterns.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.lbPatterns.FormattingEnabled = true;
-            this.lbPatterns.Location = new System.Drawing.Point(566, 174);
-            this.lbPatterns.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
-            this.lbPatterns.Name = "lbPatterns";
-            this.lbPatterns.Size = new System.Drawing.Size(88, 376);
-            this.lbPatterns.TabIndex = 94;
-            this.toolTip.SetToolTip(this.lbPatterns, "Select patterns in style file");
-            this.lbPatterns.SelectedIndexChanged += new System.EventHandler(this.Patterns_SelectedIndexChanged);
+            lbPatterns.BackColor = System.Drawing.SystemColors.Control;
+            lbPatterns.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            lbPatterns.FormattingEnabled = true;
+            lbPatterns.Location = new System.Drawing.Point(566, 165);
+            lbPatterns.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
+            lbPatterns.Name = "lbPatterns";
+            lbPatterns.Size = new System.Drawing.Size(88, 338);
+            lbPatterns.TabIndex = 94;
+            toolTip.SetToolTip(lbPatterns, "Select patterns in style file");
+            lbPatterns.SelectedIndexChanged += Patterns_SelectedIndexChanged;
             // 
             // btnAllPatterns
             // 
-            this.btnAllPatterns.Location = new System.Drawing.Point(566, 138);
-            this.btnAllPatterns.Name = "btnAllPatterns";
-            this.btnAllPatterns.Size = new System.Drawing.Size(33, 29);
-            this.btnAllPatterns.TabIndex = 95;
-            this.btnAllPatterns.Text = "+";
-            this.toolTip.SetToolTip(this.btnAllPatterns, "All patterns");
-            this.btnAllPatterns.UseVisualStyleBackColor = true;
-            this.btnAllPatterns.Click += new System.EventHandler(this.AllOrNone_Click);
+            btnAllPatterns.Location = new System.Drawing.Point(566, 131);
+            btnAllPatterns.Name = "btnAllPatterns";
+            btnAllPatterns.Size = new System.Drawing.Size(33, 28);
+            btnAllPatterns.TabIndex = 95;
+            btnAllPatterns.Text = "+";
+            toolTip.SetToolTip(btnAllPatterns, "All patterns");
+            btnAllPatterns.UseVisualStyleBackColor = true;
+            btnAllPatterns.Click += AllOrNone_Click;
             // 
             // btnClearPatterns
             // 
-            this.btnClearPatterns.Location = new System.Drawing.Point(622, 138);
-            this.btnClearPatterns.Name = "btnClearPatterns";
-            this.btnClearPatterns.Size = new System.Drawing.Size(33, 29);
-            this.btnClearPatterns.TabIndex = 96;
-            this.btnClearPatterns.Text = "-";
-            this.toolTip.SetToolTip(this.btnClearPatterns, "Clear patterns");
-            this.btnClearPatterns.UseVisualStyleBackColor = true;
-            this.btnClearPatterns.Click += new System.EventHandler(this.AllOrNone_Click);
+            btnClearPatterns.Location = new System.Drawing.Point(622, 131);
+            btnClearPatterns.Name = "btnClearPatterns";
+            btnClearPatterns.Size = new System.Drawing.Size(33, 28);
+            btnClearPatterns.TabIndex = 96;
+            btnClearPatterns.Text = "-";
+            toolTip.SetToolTip(btnClearPatterns, "Clear patterns");
+            btnClearPatterns.UseVisualStyleBackColor = true;
+            btnClearPatterns.Click += AllOrNone_Click;
             // 
             // ftree
             // 
-            this.ftree.Location = new System.Drawing.Point(8, 80);
-            this.ftree.Margin = new System.Windows.Forms.Padding(3, 5, 3, 5);
-            this.ftree.Name = "ftree";
-            this.ftree.Size = new System.Drawing.Size(527, 488);
-            this.ftree.TabIndex = 89;
-            this.toolTip.SetToolTip(this.ftree, "File selection");
-            this.ftree.FileSelected += new System.EventHandler<string>(this.Navigator_FileSelected);
+            ftree.Location = new System.Drawing.Point(8, 76);
+            ftree.Margin = new System.Windows.Forms.Padding(3, 5, 3, 5);
+            ftree.Name = "ftree";
+            ftree.Size = new System.Drawing.Size(527, 464);
+            ftree.TabIndex = 89;
+            toolTip.SetToolTip(ftree, "File selection");
+            ftree.FileSelected += Navigator_FileSelected;
             // 
-            // menuStrip
+            // MenuStrip
             // 
-            this.MenuStrip.ImageScalingSize = new System.Drawing.Size(20, 20);
-            this.MenuStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.FileMenuItem,
-            this.ToolsMenuItem});
-            this.MenuStrip.Location = new System.Drawing.Point(0, 0);
-            this.MenuStrip.Name = "menuStrip";
-            this.MenuStrip.Size = new System.Drawing.Size(1110, 28);
-            this.MenuStrip.TabIndex = 90;
-            this.MenuStrip.Text = "menuStrip";
+            MenuStrip.ImageScalingSize = new System.Drawing.Size(20, 20);
+            MenuStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] { FileMenuItem, ToolsMenuItem });
+            MenuStrip.Location = new System.Drawing.Point(0, 0);
+            MenuStrip.Name = "MenuStrip";
+            MenuStrip.Size = new System.Drawing.Size(959, 27);
+            MenuStrip.TabIndex = 90;
+            MenuStrip.Text = "menuStrip";
             // 
             // FileMenuItem
             // 
-            this.FileMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.OpenMenuItem,
-            this.toolStripSeparator3,
-            this.RecentMenuItem,
-            this.toolStripSeparator2,
-            this.ExportCsvMenuItem,
-            this.ExportMidiMenuItem});
-            this.FileMenuItem.Name = "FileMenuItem";
-            this.FileMenuItem.Size = new System.Drawing.Size(46, 24);
-            this.FileMenuItem.Text = "File";
-            this.FileMenuItem.DropDownOpening += new System.EventHandler(this.File_DropDownOpening);
+            FileMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] { OpenMenuItem, toolStripSeparator3, RecentMenuItem, toolStripSeparator2, ExportCsvMenuItem, ExportMidiMenuItem });
+            FileMenuItem.Name = "FileMenuItem";
+            FileMenuItem.Size = new System.Drawing.Size(43, 23);
+            FileMenuItem.Text = "File";
+            FileMenuItem.DropDownOpening += File_DropDownOpening;
             // 
             // OpenMenuItem
             // 
-            this.OpenMenuItem.Name = "OpenMenuItem";
-            this.OpenMenuItem.Size = new System.Drawing.Size(169, 26);
-            this.OpenMenuItem.Text = "Open";
-            this.OpenMenuItem.Click += new System.EventHandler(this.Open_Click);
+            OpenMenuItem.Name = "OpenMenuItem";
+            OpenMenuItem.Size = new System.Drawing.Size(156, 24);
+            OpenMenuItem.Text = "Open";
+            OpenMenuItem.Click += Open_Click;
             // 
             // toolStripSeparator3
             // 
-            this.toolStripSeparator3.Name = "toolStripSeparator3";
-            this.toolStripSeparator3.Size = new System.Drawing.Size(166, 6);
+            toolStripSeparator3.Name = "toolStripSeparator3";
+            toolStripSeparator3.Size = new System.Drawing.Size(153, 6);
             // 
             // RecentMenuItem
             // 
-            this.RecentMenuItem.Name = "RecentMenuItem";
-            this.RecentMenuItem.Size = new System.Drawing.Size(169, 26);
-            this.RecentMenuItem.Text = "Recent";
+            RecentMenuItem.Name = "RecentMenuItem";
+            RecentMenuItem.Size = new System.Drawing.Size(156, 24);
+            RecentMenuItem.Text = "Recent";
             // 
             // toolStripSeparator2
             // 
-            this.toolStripSeparator2.Name = "toolStripSeparator2";
-            this.toolStripSeparator2.Size = new System.Drawing.Size(166, 6);
+            toolStripSeparator2.Name = "toolStripSeparator2";
+            toolStripSeparator2.Size = new System.Drawing.Size(153, 6);
             // 
             // ExportCsvMenuItem
             // 
-            this.ExportCsvMenuItem.Name = "ExportCsvMenuItem";
-            this.ExportCsvMenuItem.Size = new System.Drawing.Size(169, 26);
-            this.ExportCsvMenuItem.Text = "Export CSV";
-            this.ExportCsvMenuItem.Click += new System.EventHandler(this.Export_Click);
+            ExportCsvMenuItem.Name = "ExportCsvMenuItem";
+            ExportCsvMenuItem.Size = new System.Drawing.Size(156, 24);
+            ExportCsvMenuItem.Text = "Export CSV";
+            ExportCsvMenuItem.Click += Export_Click;
             // 
             // ExportMidiMenuItem
             // 
-            this.ExportMidiMenuItem.Name = "ExportMidiMenuItem";
-            this.ExportMidiMenuItem.Size = new System.Drawing.Size(169, 26);
-            this.ExportMidiMenuItem.Text = "Export Midi";
-            this.ExportMidiMenuItem.Click += new System.EventHandler(this.Export_Click);
+            ExportMidiMenuItem.Name = "ExportMidiMenuItem";
+            ExportMidiMenuItem.Size = new System.Drawing.Size(156, 24);
+            ExportMidiMenuItem.Text = "Export Midi";
+            ExportMidiMenuItem.Click += Export_Click;
             // 
             // ToolsMenuItem
             // 
-            this.ToolsMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.SettingsMenuItem,
-            this.AboutMenuItem});
-            this.ToolsMenuItem.Name = "ToolsMenuItem";
-            this.ToolsMenuItem.Size = new System.Drawing.Size(58, 24);
-            this.ToolsMenuItem.Text = "Tools";
+            ToolsMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] { SettingsMenuItem, AboutMenuItem });
+            ToolsMenuItem.Name = "ToolsMenuItem";
+            ToolsMenuItem.Size = new System.Drawing.Size(54, 23);
+            ToolsMenuItem.Text = "Tools";
             // 
             // SettingsMenuItem
             // 
-            this.SettingsMenuItem.Name = "SettingsMenuItem";
-            this.SettingsMenuItem.Size = new System.Drawing.Size(145, 26);
-            this.SettingsMenuItem.Text = "Settings";
-            this.SettingsMenuItem.Click += new System.EventHandler(this.Settings_Click);
+            SettingsMenuItem.Name = "SettingsMenuItem";
+            SettingsMenuItem.Size = new System.Drawing.Size(135, 24);
+            SettingsMenuItem.Text = "Settings";
+            SettingsMenuItem.Click += Settings_Click;
             // 
             // AboutMenuItem
             // 
-            this.AboutMenuItem.Name = "AboutMenuItem";
-            this.AboutMenuItem.Size = new System.Drawing.Size(145, 26);
-            this.AboutMenuItem.Text = "About";
-            this.AboutMenuItem.Click += new System.EventHandler(this.About_Click);
+            AboutMenuItem.Name = "AboutMenuItem";
+            AboutMenuItem.Size = new System.Drawing.Size(135, 24);
+            AboutMenuItem.Text = "About";
+            AboutMenuItem.Click += About_Click;
             // 
             // timeBar
             // 
-            this.timeBar.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.timeBar.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.timeBar.FontLarge = new System.Drawing.Font("Microsoft Sans Serif", 20F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            this.timeBar.FontSmall = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            this.timeBar.Location = new System.Drawing.Point(566, 80);
-            this.timeBar.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
-            this.timeBar.DrawColor = System.Drawing.Color.Black;
-            this.timeBar.Name = "timeBar";
-            this.timeBar.SelectedColor = System.Drawing.Color.White;
-            this.timeBar.Size = new System.Drawing.Size(532, 49);
-            this.timeBar.TabIndex = 93;
+            timeBar.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
+            timeBar.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            timeBar.DoLoop = false;
+            timeBar.DrawColor = System.Drawing.Color.Black;
+            timeBar.FontLarge = new System.Drawing.Font("Microsoft Sans Serif", 20F);
+            timeBar.FontSmall = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            timeBar.Location = new System.Drawing.Point(566, 76);
+            timeBar.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
+            timeBar.Name = "timeBar";
+            timeBar.SelectedColor = System.Drawing.Color.White;
+            timeBar.Size = new System.Drawing.Size(381, 47);
+            timeBar.Snap = Ephemera.MidiLib.SnapType.Beat;
+            timeBar.TabIndex = 93;
             // 
             // lblChLoc
             // 
-            this.lblChLoc.AutoSize = true;
-            this.lblChLoc.Location = new System.Drawing.Point(666, 138);
-            this.lblChLoc.Name = "lblChLoc";
-            this.lblChLoc.Size = new System.Drawing.Size(50, 20);
-            this.lblChLoc.TabIndex = 97;
-            this.lblChLoc.Text = "label1";
+            lblChLoc.AutoSize = true;
+            lblChLoc.Location = new System.Drawing.Point(666, 131);
+            lblChLoc.Name = "lblChLoc";
+            lblChLoc.Size = new System.Drawing.Size(45, 19);
+            lblChLoc.TabIndex = 97;
+            lblChLoc.Text = "label1";
             // 
             // MainForm
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 20F);
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1110, 709);
-            this.Controls.Add(this.lblChLoc);
-            this.Controls.Add(this.lbPatterns);
-            this.Controls.Add(this.btnAllPatterns);
-            this.Controls.Add(this.btnClearPatterns);
-            this.Controls.Add(this.timeBar);
-            this.Controls.Add(this.ftree);
-            this.Controls.Add(this.txtViewer);
-            this.Controls.Add(this.toolStrip);
-            this.Controls.Add(this.MenuStrip);
-            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
-            this.MainMenuStrip = this.MenuStrip;
-            this.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
-            this.Name = "MainForm";
-            this.Text = "Midifrier";
-            this.toolStrip.ResumeLayout(false);
-            this.toolStrip.PerformLayout();
-            this.MenuStrip.ResumeLayout(false);
-            this.MenuStrip.PerformLayout();
-            this.ResumeLayout(false);
-            this.PerformLayout();
+            AutoScaleDimensions = new System.Drawing.SizeF(8F, 19F);
+            AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            ClientSize = new System.Drawing.Size(959, 674);
+            Controls.Add(lblChLoc);
+            Controls.Add(lbPatterns);
+            Controls.Add(btnAllPatterns);
+            Controls.Add(btnClearPatterns);
+            Controls.Add(timeBar);
+            Controls.Add(ftree);
+            Controls.Add(txtViewer);
+            Controls.Add(toolStrip);
+            Controls.Add(MenuStrip);
+            MainMenuStrip = MenuStrip;
+            Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
+            Name = "MainForm";
+            Text = "Midifrier";
+            toolStrip.ResumeLayout(false);
+            toolStrip.PerformLayout();
+            MenuStrip.ResumeLayout(false);
+            MenuStrip.PerformLayout();
+            ResumeLayout(false);
+            PerformLayout();
 
         }
         #endregion

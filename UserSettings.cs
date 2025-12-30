@@ -36,7 +36,13 @@ namespace Midifrier
         [Description("The color used for active control surfaces.")]
         [Browsable(true)]
         [JsonConverter(typeof(JsonColorConverter))]
-        public Color DrawColor { get; set; } = Color.MediumOrchid;
+        public Color DrawColor { get; set; } = Color.Red;
+
+        [DisplayName("Selected Color")]
+        [Description("The color used for control selections.")]
+        [Browsable(true)]
+        [JsonConverter(typeof(JsonColorConverter))]
+        public Color SelectedColor { get; set; } = Color.Blue;
 
         [DisplayName("File Log Level")]
         [Description("Log level for file write.")]
@@ -79,6 +85,9 @@ namespace Midifrier
 
         [Browsable(false)]
         public bool Loop { get; set; } = false;
+
+        [Browsable(false)]
+        public bool LogMidi { get; set; } = false;
 
         [Browsable(false)]
         public double Volume { get; set; } = 0.5;

@@ -9,7 +9,6 @@ using System.ComponentModel.Design;
 using System.Windows.Forms.Design;
 using System.Text.Json;
 using System.Text.Json.Serialization;
-using NAudio.Wave;
 using NAudio.Midi;
 using Ephemera.NBagOfTricks;
 using Ephemera.NBagOfUis;
@@ -22,16 +21,22 @@ namespace Midifrier
     public sealed class UserSettings : SettingsCore
     {
         #region Persisted Editable Properties
-        [DisplayName("Control Color")]
-        [Description("The color used for active control surfaces.")]
+        [DisplayName("Output Device")]
+        [Description("Valid output device.")]
         [Browsable(true)]
-        [JsonConverter(typeof(JsonColorConverter))]
-        public Color DrawColor { get; set; } = Color.MediumOrchid;
+        [Editor(typeof(GenericListTypeEditor), typeof(UITypeEditor))]
+        public string OutputDevice { get; set; } = "???";
 
         [DisplayName("Tempo Resolution")]
         [Description("Adjust tempo in UI.")]
         [Browsable(true)]
         public int TempoResolution { get; set; } = 5;
+
+        [DisplayName("Draw Color")]
+        [Description("The color used for active control surfaces.")]
+        [Browsable(true)]
+        [JsonConverter(typeof(JsonColorConverter))]
+        public Color DrawColor { get; set; } = Color.MediumOrchid;
 
         [DisplayName("File Log Level")]
         [Description("Log level for file write.")]
@@ -66,12 +71,6 @@ namespace Midifrier
         [Description("Where to put exported files.")]
         [Browsable(true)]
         public string ExportFolder { get; set; } = "";
-
-        [DisplayName("Midi Settings")]
-        [Description("Edit midi settings.")]
-        [Browsable(true)]
-        [TypeConverter(typeof(ExpandableObjectConverter))]
-        public MidiSettings MidiSettings { get; set; } = new();
         #endregion
 
         #region Persisted Non-editable Persisted Properties

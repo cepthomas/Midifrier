@@ -11,10 +11,10 @@ using System.IO;
 using System.Diagnostics;
 using System.Reflection;
 using NAudio.Midi;
-using NAudio.Wave;
 using Ephemera.NBagOfTricks;
 using Ephemera.NBagOfUis;
 using Ephemera.MidiLib;
+using Ephemera.MidiLibEx;
 
 
 namespace Midifrier
@@ -29,17 +29,20 @@ namespace Midifrier
         /// <summary>My logger.</summary>
         readonly Logger _logger = LogManager.CreateLogger("MainForm");
 
-        /// <summary>Current file.</summary>
-        string _fn = "";
+        /// <summary>Midi boss.</summary>
+        readonly Manager _mgr = new();
 
         /// <summary>Current global user settings.</summary>
         readonly UserSettings _settings;
 
-        /// <summary>Midi output.</summary>
-        readonly IOutputDevice _outputDevice = new NullOutputDevice();
+        /// <summary>Current file.</summary>
+        string _fn = "";
 
-        /// <summary>All the channels - key is user assigned name.</summary>
-        readonly Dictionary<string, Channel> _channels = [];
+        // /// <summary>Midi output.</summary>
+        // readonly IOutputDevice _outputDevice = new NullOutputDevice();
+
+        // /// <summary>All the channels - key is user assigned name.</summary>
+        // readonly Dictionary<string, OutputChannel> _channels = [];
 
         /// <summary>All the channel controls.</summary>
         readonly List<ChannelControl> _channelControls = [];
@@ -49,6 +52,8 @@ namespace Midifrier
 
         /// <summary>Midi events from the input file.</summary>
         MidiDataFile _mdata = new();
+
+        const int DEFAULT_TEMPO = 100;
         #endregion
 
         #region Lifecycle
@@ -60,8 +65,6 @@ namespace Midifrier
             // Must do this first before initializing.
             string appDir = MiscUtils.GetAppDataDir("Midifrier", "Ephemera");
             _settings = (UserSettings)UserSettings.Load(appDir, typeof(UserSettings));
-            // Tell the libs about their settings.
-            MidiSettings.LibSettings = _settings.MidiSettings;
 
             InitializeComponent();
 
@@ -93,11 +96,11 @@ namespace Midifrier
             btnLoop.Checked = _settings.Loop;
             sldVolume.DrawColor = _settings.DrawColor;
             sldVolume.Value = _settings.Volume;
-            barBar.ProgressColor = _settings.DrawColor;
+            timeBar.ProgressColor = _settings.DrawColor;
 
             // FilTree settings.
             ftree.RootDirs = _settings.RootDirs;
-            var s = MidiLibDefs.MIDI_FILE_TYPES + MidiLibDefs.STYLE_FILE_TYPES;
+            var s = MidiDataFile.MIDI_FILE_TYPES + MidiDataFile.STYLE_FILE_TYPES;
             ftree.FilterExts = s.SplitByTokens("|;*");
             ftree.IgnoreDirs = _settings.IgnoreDirs;
             ftree.SplitterPosition = _settings.SplitterPosition;
@@ -107,7 +110,7 @@ namespace Midifrier
 
             sldBPM.Resolution = _settings.TempoResolution;
             sldBPM.DrawColor = _settings.DrawColor;
-            sldBPM.Value = _settings.MidiSettings.DefaultTempo;
+            sldBPM.Value = DEFAULT_TEMPO;
 
             // Init channels and selectors.
             cmbDrumChannel1.Items.Add("NA");
@@ -122,24 +125,14 @@ namespace Midifrier
 
             // Hook up some simple handlers.
             btnRewind.Click += (_, __) => UpdateState(ExplorerState.Rewind);
-            btnKillMidi.Click += (_, __) => _channels.Values.ForEach(ch => ch.Kill());
-            btnLogMidi.Click += (_, __) => _outputDevice.LogEnable = btnLogMidi.Checked;
+            btnKillMidi.Click += (_, __) => _mgr.Kill();
+            btnLogMidi.Checked = _settings.LogMidi;
+            btnLogMidi.Click += (_, __) => _settings.LogMidi = btnLogMidi.Checked;
             sldBPM.ValueChanged += (_, __) => SetTimer();
             btnAutoplay.Click += (_, __) => _settings.Autoplay = btnAutoplay.Checked;
             btnLoop.Click += (_, __) => _settings.Loop = btnLoop.Checked;
             btnPlay.Click += Play_Click;
             MenuStrip.MenuActivate += (_, __) => UpdateUi();
-
-            // Set up output device.
-            foreach (var dev in _settings.MidiSettings.OutputDevices)
-            {
-                // Try midi.
-                _outputDevice = new MidiOutput(dev.DeviceName);
-                if (_outputDevice.Valid)
-                {
-                    break;
-                }
-            }
 
             // Run timer.
             SetTimer();
@@ -151,11 +144,10 @@ namespace Midifrier
         /// <param name="e"></param>
         protected override void OnLoad(EventArgs e)
         {
-            //_logger.Info($"OK to log now!!");
-
-            if (!_outputDevice.Valid)
+            // Set up output device.
+            if (_mgr.GetOutputDevice(_settings.OutputDevice) is null)
             {
-                _logger.Error($"Invalid midi output device:{_outputDevice.DeviceName}");
+                _logger.Error($"Invalid midi output device:{_settings.OutputDevice}");
             }
 
             // Initialize tree from user settings.
@@ -187,7 +179,7 @@ namespace Midifrier
             // Resources.
             _mmTimer.Stop();
             _mmTimer.Dispose();
-            _outputDevice.Dispose();
+            _mgr.DestroyDevices();
 
             // Wait a bit in case there are some lingering events.
             System.Threading.Thread.Sleep(100);
@@ -198,6 +190,62 @@ namespace Midifrier
             }
 
             base.Dispose(disposing);
+        }
+        #endregion
+
+        #region User settings
+        /// <summary>
+        /// Edit the common options in a property grid.
+        /// </summary>
+        void Settings_Click(object? sender, EventArgs e)
+        {
+            GenericListTypeEditor.SetOptions("OutputDevice", MidiOutputDevice.GetAvailableDevices());
+
+            var changes = SettingsEditor.Edit(_settings, "User Settings", 500);
+
+            // Detect changes of interest.
+            bool navChange = false;
+            bool restart = false;
+
+            foreach (var (name, cat) in changes)
+            {
+                switch (name)
+                {
+                    case "OutputDevice":
+                    case "DrawColor":
+                    case "TempoResolution":
+                    case "FileLogLevel":
+                    case "NotifLogLevel":
+                        restart = true;
+                        break;
+                }
+            }
+
+            if (restart)
+            {
+                MessageBox.Show("Restart required for device changes to take effect");
+            }
+
+            if (navChange)
+            {
+                InitNavigator();
+            }
+
+            SaveSettings();
+        }
+
+        /// <summary>
+        /// Collect and save user settings.
+        /// </summary>
+        void SaveSettings()
+        {
+            _settings.FormGeometry = new Rectangle(Location.X, Location.Y, Width, Height);
+            _settings.Volume = sldVolume.Value;
+            _settings.Autoplay = btnAutoplay.Checked;
+            _settings.Loop = btnLoop.Checked;
+            _settings.TempoResolution = (int)sldBPM.Resolution;
+            _settings.Volume = sldVolume.Value;
+            _settings.Save();
         }
         #endregion
 
@@ -280,7 +328,7 @@ namespace Midifrier
                 }
 
                 var ext = Path.GetExtension(fn).ToLower();
-                if (!MidiLibDefs.MIDI_FILE_TYPES.Contains(ext) && !MidiLibDefs.STYLE_FILE_TYPES.Contains(ext))
+                if (!MidiDataFile.MIDI_FILE_TYPES.Contains(ext) && !MidiDataFile.STYLE_FILE_TYPES.Contains(ext))
                 {
                     throw new InvalidOperationException($"Invalid file type: {fn}");
                 }
@@ -293,7 +341,7 @@ namespace Midifrier
                     _mdata = new MidiDataFile();
 
                     // Process the file. Set the default tempo from preferences.
-                    _mdata.Read(fn, _settings.MidiSettings.DefaultTempo, false);
+                    _mdata.Read(fn, DEFAULT_TEMPO, false);
 
                     // Init new stuff with contents of file/pattern.
                     lbPatterns.Items.Clear();
@@ -399,7 +447,7 @@ namespace Midifrier
         /// </summary>
         void Open_Click(object? sender, EventArgs e)
         {
-            var fileTypes = $"Midi Files|{MidiLibDefs.MIDI_FILE_TYPES}|Style Files|{MidiLibDefs.STYLE_FILE_TYPES}";
+            var fileTypes = $"Midi Files|{MidiDataFile.MIDI_FILE_TYPES}|Style Files|{MidiDataFile.STYLE_FILE_TYPES}";
             using OpenFileDialog openDlg = new()
             {
                 Filter = fileTypes,
@@ -438,64 +486,15 @@ namespace Midifrier
         /// </summary>
         public void Rewind()
         {
-            barBar.Current = new(0);
+            timeBar.Current = new(0);
         }
         #endregion
 
-        #region User settings
-        /// <summary>
-        /// Collect and save user settings.
-        /// </summary>
-        void SaveSettings()
-        {
-            _settings.FormGeometry = new Rectangle(Location.X, Location.Y, Width, Height);
-            _settings.Volume = sldVolume.Value;
-            _settings.Autoplay = btnAutoplay.Checked;
-            _settings.Loop = btnLoop.Checked;
-            _settings.TempoResolution = (int)sldBPM.Resolution;
-            _settings.Volume = sldVolume.Value;
-            _settings.Save();
-        }
+////////////////////////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-        /// <summary>
-        /// Edit the common options in a property grid.
-        /// </summary>
-        void Settings_Click(object? sender, EventArgs e)
-        {
-            var changes = SettingsEditor.Edit(_settings, "User Settings", 500);
 
-            // Detect changes of interest.
-            bool navChange = false;
-            bool restart = false;
-
-            foreach (var (name, cat) in changes)
-            {
-                switch (name)
-                {
-                    case "InputDevice":
-                    case "OutputDevice":
-                    case "DrawColor":
-                    case "TempoResolution":
-                    case "FileLogLevel":
-                    case "NotifLogLevel":
-                        restart = true;
-                        break;
-                }
-            }
-
-            if (restart)
-            {
-                MessageBox.Show("Restart required for device changes to take effect");
-            }
-
-            if (navChange)
-            {
-                InitNavigator();
-            }
-
-            SaveSettings();
-        }
-        #endregion
 
         #region Midi send
         /// <summary>
@@ -525,16 +524,18 @@ namespace Midifrier
         public bool DoNextStep()
         {
             // Any soloes?
-            bool anySolo = _channels.AnySolo();
+            bool anySolo = _channelControls.AnySolo();
 
             // Process each channel.
-            foreach (var ch in _channels.Values)
+            foreach (var cc in _channelControls)
             {
+                var ch = cc!.BoundChannel!;
+
                 // Look for events to send. Any explicit solos?
                 if (ch.State == ChannelState.Solo || (!anySolo && ch.State == ChannelState.Normal))
                 {
                     // Process any sequence steps.
-                    var playEvents = ch.GetEvents(barBar.Current.TotalSubs);
+                    var playEvents = ch.GetEvents(timeBar.Current.TotalSubs);
                     foreach (var mevt in playEvents)
                     {
                         switch (mevt)
@@ -579,7 +580,7 @@ namespace Midifrier
             }
 
             // Bump time. Check for end of play.
-            bool done = barBar.IncrementCurrent(1);
+            bool done = timeBar.IncrementCurrent(1);
 
             return done;
         }
@@ -649,6 +650,37 @@ namespace Midifrier
         void About_Click(object? sender, EventArgs e)
         {
             Tools.ShowReadme("Midifrier");
+
+
+            // Show them what they have. TODO1 put this in MidiLib
+            var outs = MidiOutputDevice.GetAvailableDevices();
+            var ins = MidiInputDevice.GetAvailableDevices();
+
+            ls.Add($"# Your Midi Devices");
+
+            ls.Add($"");
+            ls.Add($"## Inputs");
+            ls.Add($"");
+
+            if (ins.Count == 0)
+            {
+                ls.Add($"- None");
+            }
+            else
+            {
+                ins.ForEach(d => ls.Add($"- [{d}]"));
+            }
+
+            ls.Add($"## Outputs");
+            if (outs.Count == 0)
+            {
+                ls.Add($"- None");
+            }
+            else
+            {
+                outs.ForEach(d => ls.Add($"- [{d}]"));
+            }
+
         }
 
         /// <summary>
@@ -696,7 +728,7 @@ namespace Midifrier
                 lblChLoc.Hide();
 
                 // For scaling subdivs to internal.
-                MidiTimeConverter mt = new(_mdata.DeltaTicksPerQuarterNote, _settings.MidiSettings.DefaultTempo);
+                MidiTimeConverter mt = new(_mdata.DeltaTicksPerQuarterNote, DEFAULT_TEMPO);
                 sldBPM.Value = pinfo.Tempo;
 
                 foreach (var (number, patch) in pinfo.GetChannels(true, true))
@@ -749,10 +781,10 @@ namespace Midifrier
 
             // Update bar.
             var tot = _channels.TotalSubs();
-            barBar.Start = new(0);
-            barBar.End = new(tot - 1);
-            barBar.Length = new(tot);
-            barBar.Current = new(0);
+            timeBar.Start = new(0);
+            timeBar.End = new(tot - 1);
+            timeBar.Length = new(tot);
+            timeBar.Current = new(0);
 
             UpdateDrumChannels();
         }
@@ -849,7 +881,7 @@ namespace Midifrier
                 patternNames.ForEach(p => patterns.Add(_mdata.GetPattern(p)!));
 
                 // Get selected channels.
-                List<Channel> channels = [];
+                List<OutputChannel> channels = [];
                 _channelControls.Where(cc => cc.Selected).ForEach(cc => channels.Add(cc.BoundChannel));
                 if (channels.Count == 0) // grab them all.
                 {
@@ -919,23 +951,6 @@ namespace Midifrier
         {
             var s = _fn == "" ? "No file loaded" : _fn;
             Text = $"Midifrier {MiscUtils.GetVersionString()} - {s}";
-        }
-
-        /// <summary>
-        /// Debug stuff.
-        /// </summary>
-        void DumpDevices()
-        {
-            for (int id = -1; id < WaveOut.DeviceCount; id++)
-            {
-                var cap = WaveOut.GetCapabilities(id);
-                _logger.Info($"WaveOut {id} {cap.ProductName}");
-            }
-            for (int id = -1; id < WaveIn.DeviceCount; id++)
-            {
-                var cap = WaveIn.GetCapabilities(id);
-                _logger.Info($"WaveIn {id} {cap.ProductName}");
-            }
         }
         #endregion
     }

@@ -111,12 +111,11 @@ namespace Midifrier
             sldBPM.Value = DEFAULT_TEMPO;
 
             // Init channels and selectors.
-            cmbDrumChannel.Items.Add("NA");
             for (int i = 1; i <= MidiDefs.NUM_CHANNELS; i++)
             {
                 cmbDrumChannel.Items.Add(i);
             }
-            cmbDrumChannel.SelectedIndex = MidiDefs.DEFAULT_DRUM_CHANNEL;
+            cmbDrumChannel.SelectedIndex = MidiDefs.DEFAULT_DRUM_CHANNEL - 1;
 
             // Hook up some simple handlers.
             btnRewind.Click += (_, __) => UpdateState(ExplorerState.Rewind);
@@ -330,7 +329,7 @@ namespace Midifrier
                 using (new WaitCursor())
                 {
                     // Reset stuff.
-                    cmbDrumChannel.SelectedIndex = MidiDefs.DEFAULT_DRUM_CHANNEL;
+                    cmbDrumChannel.SelectedIndex = MidiDefs.DEFAULT_DRUM_CHANNEL - 1;
                     _mdata = new MidiDataFile();
 
                     // Process the file.
@@ -353,9 +352,10 @@ namespace Midifrier
 
                     // Default to first.
                     lbPatterns.SelectedIndex = 0;
+                    Patterns_SelectedIndexChanged(null, new());
 
                     // Set up timer.
-                    sldBPM.Value = DEFAULT_TEMPO;
+                    // sldBPM.Value = DEFAULT_TEMPO;
 
                     ExportMidiMenuItem.Enabled = _mdata.IsStyleFile;
 
@@ -512,6 +512,9 @@ namespace Midifrier
             // Update all channels. Any soloes?
             bool anySolo = _channelControls.Where(c => c.State == ChannelState.Solo).Any();
 
+            // Converter for scaling.
+ //           MidiTimeConverter mt = new(_mdata.DeltaTicksPerQuarterNote);
+
             // Process each channel.
             foreach (var cc in _channelControls)
             {
@@ -521,17 +524,25 @@ namespace Midifrier
                 if (cc.State == ChannelState.Solo || (!anySolo && cc.State == ChannelState.Normal))
                 {
                     // Process any sequence steps.
-                    var playEvents = (ch.Tag as IEnumerable<MidiEventDesc>)!.Where(e => e.ScaledTime == timeBar.Current.Tick);
+                    //long absTick = mt.InternalToMidi(timeBar.Current.Tick);
+                    //var playEvents = (ch.Tag as IEnumerable<MidiEvent>)!.Where(e => e.AbsoluteTime == absTick);
+                    var playEvents = (ch.Tag as IEnumerable<MidiEvent>)!.Where(e => e.AbsoluteTime == timeBar.Current.Tick);
 
                     foreach (var mevt in playEvents)
                     {
-                        switch (mevt.RawEvent)
+                        var mch = ch.IsDrums ? MidiDefs.DEFAULT_DRUM_CHANNEL : mevt.Channel;
+
+                        switch (mevt)
                         {
                             case NoteOnEvent evt:
-                                if (!(ch.IsDrums && evt.Velocity == 0)) // Skip drum noteoffs as windows GM doesn't like them.
+                                if (ch.IsDrums && evt.Velocity == 0) // Skip drum noteoffs as windows GM doesn't like them.
+                                {
+
+                                }
+                                else
                                 {
                                     // Adjust volume. Redirect drum channel to default.
-                                    NoteOn non = new(ch.IsDrums ? MidiDefs.DEFAULT_DRUM_CHANNEL : evt.Channel,
+                                    NoteOn non = new(mch,
                                         evt.NoteNumber,
                                         MathUtils.Constrain((int)(evt.Velocity * sldVolume.Value * ch.Volume), 0, MidiDefs.MAX_MIDI));
                                     ch.Device.Send(non);
@@ -539,17 +550,21 @@ namespace Midifrier
                                 break;
 
                             case NoteEvent evt: // aka NoteOff
-                                if (!ch.IsDrums) // Skip drum noteoffs as windows GM doesn't like them.
+                                if (ch.IsDrums) // Skip drum noteoffs as windows GM doesn't like them.
                                 {
-                                    // Adjust volume. Redirect drum channel to default.
-                                    NoteOff noff = new(ch.IsDrums ? MidiDefs.DEFAULT_DRUM_CHANNEL : evt.Channel, evt.NoteNumber);
+
+                                }
+                                else
+                                {
+                                    NoteOff noff = new(mch, evt.NoteNumber);
                                     ch.Device.Send(noff);
                                 }
                                 break;
 
                             default:
                                 // Everything else as is.
-                                ch.SendEvent(mevt); //TODO1
+                                Other other = new(mch, mevt.GetAsShortMessage());
+                                ch.Device.Send(other);
                                 break;
                         }
                     }
@@ -684,22 +699,22 @@ namespace Midifrier
             int y = lblChLoc.Top;
             lblChLoc.Hide();
 
-            // For scaling subdivs to internal.
-            MidiTimeConverter mt = new(_mdata.DeltaTicksPerQuarterNote, DEFAULT_TEMPO);
             sldBPM.Value = pinfo.Tempo;
-            int maxTick = 0;
+            // For scaling midi to internal.
+            long maxTick = 0;
 
             foreach (var (chnum, patch) in pinfo.GetChannels(true, true))
             {
                 // Get events for the channel.
                 var chEvents = pinfo.GetFilteredEvents([chnum]).ToList();
-                maxTick = Math.Max(chEvents.Last().ScaledTime, maxTick);
+                maxTick = Math.Max(chEvents.Last().AbsoluteTime, maxTick);
 
                 // Is this channel pertinent?
-                if (chEvents.Any())
+                if (chEvents.Count != 0)
                 {
                     // Make new channel. Attach corresponding events in a less-than-elegant fashion.
                     var channel = _mgr.OpenOutputChannel(_settings.OutputDevice, chnum, $"chan{chnum}", patch);
+                    channel.IsDrums = chnum == cmbDrumChannel.SelectedIndex + 1;
                     channel.Tag = chEvents;
 
                     // Make new control and bind to channel.
@@ -725,9 +740,11 @@ namespace Midifrier
             sldBPM.Value = pinfo.Tempo;
 
             // Update bar.
+            //MidiTimeConverter mt = new(_mdata.DeltaTicksPerQuarterNote);
             Dictionary<int, string> sectInfo = [];
             sectInfo.Add(0, "sect1");
-            sectInfo.Add(maxTick, "END");
+            //sectInfo.Add(mt.MidiToInternal(maxTick), "END");
+            sectInfo.Add((int)maxTick, "END");
             timeBar.InitSectionInfo(sectInfo);
             timeBar.Current.Set(0);
             timeBar.Invalidate();
@@ -788,7 +805,7 @@ namespace Midifrier
         /// </summary>
         void UpdateDrumChannels()
         {
-            _channelControls.ForEach(ctl => ctl.BoundChannel.IsDrums = (ctl.ChannelNumber == cmbDrumChannel.SelectedIndex));
+            _channelControls.ForEach(ctl => ctl.BoundChannel.IsDrums = ctl.BoundChannel.ChannelNumber == cmbDrumChannel.SelectedIndex + 1);
         }
         #endregion
 

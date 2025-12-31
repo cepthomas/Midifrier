@@ -26,11 +26,8 @@
             btnKillMidi = new System.Windows.Forms.ToolStripButton();
             toolStripSeparator6 = new System.Windows.Forms.ToolStripSeparator();
             toolStripLabel1 = new System.Windows.Forms.ToolStripLabel();
-            cmbDrumChannel1 = new System.Windows.Forms.ToolStripComboBox();
+            cmbDrumChannel = new System.Windows.Forms.ToolStripComboBox();
             toolStripSeparator7 = new System.Windows.Forms.ToolStripSeparator();
-            toolStripLabel2 = new System.Windows.Forms.ToolStripLabel();
-            cmbDrumChannel2 = new System.Windows.Forms.ToolStripComboBox();
-            toolStripSeparator8 = new System.Windows.Forms.ToolStripSeparator();
             sldVolume = new Ephemera.NBagOfUis.ToolStripSlider();
             toolStripSeparator11 = new System.Windows.Forms.ToolStripSeparator();
             sldBPM = new Ephemera.NBagOfUis.ToolStripSlider();
@@ -65,7 +62,7 @@
             // toolStrip
             // 
             toolStrip.ImageScalingSize = new System.Drawing.Size(20, 20);
-            toolStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] { btnAutoplay, toolStripSeparator4, btnLoop, toolStripSeparator1, btnLogMidi, toolStripSeparator5, btnKillMidi, toolStripSeparator6, toolStripLabel1, cmbDrumChannel1, toolStripSeparator7, toolStripLabel2, cmbDrumChannel2, toolStripSeparator8, sldVolume, toolStripSeparator11, sldBPM, toolStripSeparator9, btnPlay, toolStripSeparator10, btnRewind, toolStripSeparator12 });
+            toolStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] { btnAutoplay, toolStripSeparator4, btnLoop, toolStripSeparator1, btnLogMidi, toolStripSeparator5, btnKillMidi, toolStripSeparator6, toolStripLabel1, cmbDrumChannel, toolStripSeparator7, sldVolume, toolStripSeparator11, sldBPM, toolStripSeparator9, btnPlay, toolStripSeparator10, btnRewind, toolStripSeparator12 });
             toolStrip.Location = new System.Drawing.Point(0, 27);
             toolStrip.Name = "toolStrip";
             toolStrip.Size = new System.Drawing.Size(959, 43);
@@ -147,41 +144,22 @@
             // 
             toolStripLabel1.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
             toolStripLabel1.Name = "toolStripLabel1";
-            toolStripLabel1.Size = new System.Drawing.Size(39, 40);
-            toolStripLabel1.Text = "DC1:";
+            toolStripLabel1.Size = new System.Drawing.Size(28, 40);
+            toolStripLabel1.Text = "DC";
+            toolStripLabel1.ToolTipText = "Alternate drum channel";
             // 
-            // cmbDrumChannel1
+            // cmbDrumChannel
             // 
-            cmbDrumChannel1.AutoSize = false;
-            cmbDrumChannel1.Name = "cmbDrumChannel1";
-            cmbDrumChannel1.Size = new System.Drawing.Size(50, 27);
-            cmbDrumChannel1.ToolTipText = "Drum Channel - main";
-            cmbDrumChannel1.SelectedIndexChanged += DrumChannel_SelectedIndexChanged;
+            cmbDrumChannel.AutoSize = false;
+            cmbDrumChannel.Name = "cmbDrumChannel";
+            cmbDrumChannel.Size = new System.Drawing.Size(50, 27);
+            cmbDrumChannel.ToolTipText = "Drum Channel - main";
+            cmbDrumChannel.SelectedIndexChanged += DrumChannel_SelectedIndexChanged;
             // 
             // toolStripSeparator7
             // 
             toolStripSeparator7.Name = "toolStripSeparator7";
             toolStripSeparator7.Size = new System.Drawing.Size(6, 43);
-            // 
-            // toolStripLabel2
-            // 
-            toolStripLabel2.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
-            toolStripLabel2.Name = "toolStripLabel2";
-            toolStripLabel2.Size = new System.Drawing.Size(39, 40);
-            toolStripLabel2.Text = "DC2:";
-            // 
-            // cmbDrumChannel2
-            // 
-            cmbDrumChannel2.AutoSize = false;
-            cmbDrumChannel2.Name = "cmbDrumChannel2";
-            cmbDrumChannel2.Size = new System.Drawing.Size(50, 27);
-            cmbDrumChannel2.ToolTipText = "Drum channel - secondary";
-            cmbDrumChannel2.SelectedIndexChanged += DrumChannel_SelectedIndexChanged;
-            // 
-            // toolStripSeparator8
-            // 
-            toolStripSeparator8.Name = "toolStripSeparator8";
-            toolStripSeparator8.Size = new System.Drawing.Size(6, 43);
             // 
             // sldVolume
             // 
@@ -471,9 +449,7 @@
         private System.Windows.Forms.ToolStripMenuItem SettingsMenuItem;
         private System.Windows.Forms.ToolStripMenuItem AboutMenuItem;
         private System.Windows.Forms.ToolStripLabel toolStripLabel1;
-        private System.Windows.Forms.ToolStripComboBox cmbDrumChannel1;
-        private System.Windows.Forms.ToolStripLabel toolStripLabel2;
-        private System.Windows.Forms.ToolStripComboBox cmbDrumChannel2;
+        private System.Windows.Forms.ToolStripComboBox cmbDrumChannel;
         private System.Windows.Forms.ToolStripButton btnLogMidi;
         private System.Windows.Forms.ToolStripButton btnKillMidi;
         private System.Windows.Forms.Label lblChLoc;
@@ -481,7 +457,6 @@
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator5;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator6;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator7;
-        private System.Windows.Forms.ToolStripSeparator toolStripSeparator8;
         private Ephemera.NBagOfUis.ToolStripSlider sldVolume;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator11;
         private Ephemera.NBagOfUis.ToolStripSlider sldBPM;

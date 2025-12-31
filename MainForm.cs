@@ -111,15 +111,12 @@ namespace Midifrier
             sldBPM.Value = DEFAULT_TEMPO;
 
             // Init channels and selectors.
-            cmbDrumChannel1.Items.Add("NA");
-            cmbDrumChannel2.Items.Add("NA");
+            cmbDrumChannel.Items.Add("NA");
             for (int i = 1; i <= MidiDefs.NUM_CHANNELS; i++)
             {
-                cmbDrumChannel1.Items.Add(i);
-                cmbDrumChannel2.Items.Add(i);
+                cmbDrumChannel.Items.Add(i);
             }
-            cmbDrumChannel1.SelectedIndex = MidiDefs.DEFAULT_DRUM_CHANNEL;
-            cmbDrumChannel2.SelectedIndex = 0;
+            cmbDrumChannel.SelectedIndex = MidiDefs.DEFAULT_DRUM_CHANNEL;
 
             // Hook up some simple handlers.
             btnRewind.Click += (_, __) => UpdateState(ExplorerState.Rewind);
@@ -333,11 +330,10 @@ namespace Midifrier
                 using (new WaitCursor())
                 {
                     // Reset stuff.
-                    cmbDrumChannel1.SelectedIndex = MidiDefs.DEFAULT_DRUM_CHANNEL;
-                    cmbDrumChannel2.SelectedIndex = 0;
+                    cmbDrumChannel.SelectedIndex = MidiDefs.DEFAULT_DRUM_CHANNEL;
                     _mdata = new MidiDataFile();
 
-                    // Process the file. Set the default tempo from preferences.
+                    // Process the file.
                     _mdata.Read(fn, DEFAULT_TEMPO, false);
 
                     // Init new stuff with contents of file/pattern.
@@ -358,7 +354,7 @@ namespace Midifrier
                     // Default to first.
                     lbPatterns.SelectedIndex = 0;
 
-                    // Set up timer default.
+                    // Set up timer.
                     sldBPM.Value = DEFAULT_TEMPO;
 
                     ExportMidiMenuItem.Enabled = _mdata.IsStyleFile;
@@ -532,13 +528,9 @@ namespace Midifrier
                         switch (mevt.RawEvent)
                         {
                             case NoteOnEvent evt:
-                                if (ch.IsDrums && evt.Velocity == 0)
+                                if (!(ch.IsDrums && evt.Velocity == 0)) // Skip drum noteoffs as windows GM doesn't like them.
                                 {
-                                    // Skip drum noteoffs as windows GM doesn't like them.
-                                }
-                                else
-                                {
-                                    // Adjust volume. Redirect drum channel to default. TODO1??
+                                    // Adjust volume. Redirect drum channel to default.
                                     NoteOn non = new(ch.IsDrums ? MidiDefs.DEFAULT_DRUM_CHANNEL : evt.Channel,
                                         evt.NoteNumber,
                                         MathUtils.Constrain((int)(evt.Velocity * sldVolume.Value * ch.Volume), 0, MidiDefs.MAX_MIDI));
@@ -547,12 +539,9 @@ namespace Midifrier
                                 break;
 
                             case NoteEvent evt: // aka NoteOff
-                                if (ch.IsDrums)
+                                if (!ch.IsDrums) // Skip drum noteoffs as windows GM doesn't like them.
                                 {
-                                    // Skip drum noteoffs as windows GM doesn't like them.
-                                }
-                                else
-                                {
+                                    // Adjust volume. Redirect drum channel to default.
                                     NoteOff noff = new(ch.IsDrums ? MidiDefs.DEFAULT_DRUM_CHANNEL : evt.Channel, evt.NoteNumber);
                                     ch.Device.Send(noff);
                                 }
@@ -560,7 +549,7 @@ namespace Midifrier
 
                             default:
                                 // Everything else as is.
-                        //TODO1        ch.SendEvent(mevt);
+                                ch.SendEvent(mevt); //TODO1
                                 break;
                         }
                     }
@@ -709,9 +698,9 @@ namespace Midifrier
                 // Is this channel pertinent?
                 if (chEvents.Any())
                 {
-                    // Make new channel.
-                    var channel = _mgr.OpenOutputChannel    (_settings.OutputDevice, chnum, $"chan{chnum}", patch);
-                    channel.Tag = chEvents; // TODO1 kinda cheesy??
+                    // Make new channel. Attach corresponding events in a less-than-elegant fashion.
+                    var channel = _mgr.OpenOutputChannel(_settings.OutputDevice, chnum, $"chan{chnum}", patch);
+                    channel.Tag = chEvents;
 
                     // Make new control and bind to channel.
                     ChannelControl control = new()
@@ -795,13 +784,11 @@ namespace Midifrier
         }
 
         /// <summary>
-        /// Update all channels based on current UI.
+        /// Update all channels based on drum channel selection.
         /// </summary>
-        void UpdateDrumChannels()//TODO1??
+        void UpdateDrumChannels()
         {
-            //_channelControls.ForEach(ctl => ctl.BoundChannel.IsDrums =
-            //    (ctl.ChannelNumber == cmbDrumChannel1.SelectedIndex) ||
-            //    (ctl.ChannelNumber == cmbDrumChannel2.SelectedIndex));
+            _channelControls.ForEach(ctl => ctl.BoundChannel.IsDrums = (ctl.ChannelNumber == cmbDrumChannel.SelectedIndex));
         }
         #endregion
 

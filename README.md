@@ -17,10 +17,9 @@
 - Opens style files and plays the individual sections.
 - Export style files as their component parts.
 - Export current selection(s) and channel(s) to a new midi file. Useful for snipping style patterns.
-- Some midi files with single instruments are sloppy with channel numbers so there are a couple of options for simple remapping.
+- Some midi files don't use 10 for drum channel so there is an option to remap.
 - Click on the settings icon to edit your options. Note that not all midi options pertain to this application.
 - In the log view: C for clear, W for word wrap toggle.
-- TODO1 Figure out/discuss drum mapping...
 
 # External Components
 

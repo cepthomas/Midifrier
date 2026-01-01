@@ -170,6 +170,7 @@ namespace Midifrier
         {
             // Stop and destroy mmtimer.
             Stop();
+            _mgr.Kill();
 
             // Resources.
             _mmTimer.Stop();
@@ -512,9 +513,6 @@ namespace Midifrier
             // Update all channels. Any soloes?
             bool anySolo = _channelControls.Where(c => c.State == ChannelState.Solo).Any();
 
-            // Converter for scaling.
- //           MidiTimeConverter mt = new(_mdata.DeltaTicksPerQuarterNote);
-
             // Process each channel.
             foreach (var cc in _channelControls)
             {
@@ -524,8 +522,6 @@ namespace Midifrier
                 if (cc.State == ChannelState.Solo || (!anySolo && cc.State == ChannelState.Normal))
                 {
                     // Process any sequence steps.
-                    //long absTick = mt.InternalToMidi(timeBar.Current.Tick);
-                    //var playEvents = (ch.Tag as IEnumerable<MidiEvent>)!.Where(e => e.AbsoluteTime == absTick);
                     var playEvents = (ch.Tag as IEnumerable<MidiEvent>)!.Where(e => e.AbsoluteTime == timeBar.Current.Tick);
 
                     foreach (var mevt in playEvents)

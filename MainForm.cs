@@ -10,7 +10,6 @@ using System.Windows.Forms;
 using System.IO;
 using System.Diagnostics;
 using System.Reflection;
-using NAudio.Midi;
 using Ephemera.NBagOfTricks;
 using Ephemera.NBagOfUis;
 using Ephemera.MidiLib;
@@ -28,9 +27,6 @@ namespace Midifrier
         #region Fields
         /// <summary>My logger.</summary>
         readonly Logger _logger = LogManager.CreateLogger("MainForm");
-
-        /// <summary>Midi boss.</summary>
-        readonly Manager _mgr = new();
 
         /// <summary>Current global user settings.</summary>
         readonly UserSettings _settings;
@@ -119,7 +115,7 @@ namespace Midifrier
 
             // Hook up some simple handlers.
             btnRewind.Click += (_, __) => UpdateState(ExplorerState.Rewind);
-            btnKillMidi.Click += (_, __) => _mgr.Kill();
+            btnKillMidi.Click += (_, __) => Manager.Instance.Kill();
             btnLogMidi.Checked = _settings.LogMidi;
             btnLogMidi.Click += (_, __) => _settings.LogMidi = btnLogMidi.Checked;
             sldBPM.ValueChanged += (_, __) => SetTimer();
@@ -139,7 +135,7 @@ namespace Midifrier
         protected override void OnLoad(EventArgs e)
         {
             // Set up output device.
-            if (_mgr.GetOutputDevice(_settings.OutputDevice) is null)
+            if (Manager.Instance.GetOutputDevice(_settings.OutputDevice) is null)
             {
                 _logger.Error($"Invalid midi output device:{_settings.OutputDevice}");
             }
@@ -170,13 +166,13 @@ namespace Midifrier
         {
             // Stop and destroy mmtimer.
             Stop();
-            _mgr.Kill();
+            Manager.Instance.Kill();
 
             // Resources.
             _mmTimer.Stop();
             _mmTimer.Dispose();
             DestroyControls();
-            _mgr.DestroyDevices();
+            Manager.Instance.DestroyDevices();
 
             // Wait a bit in case there are some lingering events.
             System.Threading.Thread.Sleep(100);
@@ -471,7 +467,7 @@ namespace Midifrier
         public void Stop()
         {
             _mmTimer.Stop();
-            _mgr.Kill();
+            Manager.Instance.Kill();
         }
 
         /// <summary>
@@ -522,45 +518,32 @@ namespace Midifrier
                 if (cc.State == ChannelState.Solo || (!anySolo && cc.State == ChannelState.Normal))
                 {
                     // Process any sequence steps.
-                    var playEvents = (ch.Tag as IEnumerable<MidiEvent>)!.Where(e => e.AbsoluteTime == timeBar.Current.Tick);
+                    var playEvents = ch.Events.Where(e => e.When == timeBar.Current);
 
                     foreach (var mevt in playEvents)
                     {
-                        var mch = ch.IsDrums ? MidiDefs.DEFAULT_DRUM_CHANNEL : mevt.Channel;
+                        var mch = ch.IsDrums ? MidiDefs.DEFAULT_DRUM_CHANNEL : mevt.ChannelNumber;
 
                         switch (mevt)
                         {
-                            case NoteOnEvent evt:
-                                if (ch.IsDrums && evt.Velocity == 0) // Skip drum noteoffs as windows GM doesn't like them.
-                                {
-
-                                }
-                                else
-                                {
-                                    // Adjust volume. Redirect drum channel to default.
-                                    NoteOn non = new(mch,
-                                        evt.NoteNumber,
-                                        MathUtils.Constrain((int)(evt.Velocity * sldVolume.Value * ch.Volume), 0, MidiDefs.MAX_MIDI));
-                                    ch.Device.Send(non);
-                                }
+                            case NoteOn evt:
+                                // Adjust volume.
+                                evt.Velocity = MathUtils.Constrain((int)(evt.Velocity * ch.Volume), 0, MidiDefs.MAX_MIDI);
+                                // Adjust channel.
+                                evt.ChannelNumber = mch;
+                                ch.Device.Send(evt);
                                 break;
 
-                            case NoteEvent evt: // aka NoteOff
-                                if (ch.IsDrums) // Skip drum noteoffs as windows GM doesn't like them.
-                                {
-
-                                }
-                                else
-                                {
-                                    NoteOff noff = new(mch, evt.NoteNumber);
-                                    ch.Device.Send(noff);
-                                }
+                            case NoteOff evt:
+                                evt.ChannelNumber = mch;
+                                // Adjust channel.
+                                ch.Device.Send(evt);
                                 break;
 
-                            default:
+                            _:
                                 // Everything else as is.
-                                Other other = new(mch, mevt.GetAsShortMessage());
-                                ch.Device.Send(other);
+                                //Other other = new(mch, mevt.GetAsShortMessage());
+                                ch.Device.Send(mevt);
                                 break;
                         }
                     }
@@ -612,17 +595,17 @@ namespace Midifrier
 
                     case ChannelState.Solo:
                         // Mute any other non-solo channels.
-                        _mgr.OutputChannels.ForEach(ch =>
+                        Manager.Instance.OutputChannels.ForEach(ch =>
                         {
                             if (channel.ChannelNumber != ch.ChannelNumber && cc.State != ChannelState.Solo)
                             {
-                                _mgr.Kill(channel);
+                                Manager.Instance.Kill(channel);
                             }
                         });
                         break;
 
                     case ChannelState.Mute:
-                        _mgr.Kill(channel);
+                        Manager.Instance.Kill(channel);
                         break;
                 }
             }
@@ -634,7 +617,7 @@ namespace Midifrier
         void About_Click(object? sender, EventArgs e)
         {
             Tools.ShowReadme("Midifrier");
-            txtViewer.AppendLine(MidiUtils.GenUserDeviceInfo());
+            txtViewer.AppendLine(string.Join(Environment.NewLine, MidiDefs.Instance.GenUserDeviceInfo()));
         }
 
         /// <summary>
@@ -657,7 +640,7 @@ namespace Midifrier
         /// </summary>
         void DestroyControls()
         {
-            _mgr.Kill();
+            Manager.Instance.Kill();
 
             // Clean out our current elements.
             _channelControls.ForEach(c =>
@@ -680,7 +663,7 @@ namespace Midifrier
         {
             Stop();
             DestroyControls();
-            _mgr.DestroyChannels();
+            Manager.Instance.DestroyChannels();
 
             // Load the new one.
             if (pinfo is null)
@@ -709,9 +692,9 @@ namespace Midifrier
                 if (chEvents.Count != 0)
                 {
                     // Make new channel. Attach corresponding events in a less-than-elegant fashion.
-                    var channel = _mgr.OpenOutputChannel(_settings.OutputDevice, chnum, $"chan{chnum}", patch);
+                    var channel = Manager.Instance.OpenOutputChannel(_settings.OutputDevice, chnum, $"chan{chnum}", patch);
                     channel.IsDrums = chnum == cmbDrumChannel.SelectedIndex + 1;
-                    channel.Tag = chEvents;
+                    channel.Events = chEvents;
 
                     // Make new control and bind to channel.
                     ChannelControl control = new()
@@ -742,7 +725,7 @@ namespace Midifrier
             //sectInfo.Add(mt.MidiToInternal(maxTick), "END");
             sectInfo.Add((int)maxTick, "END");
             timeBar.InitSectionInfo(sectInfo);
-            timeBar.Current.Set(0);
+            timeBar.Current.Reset();
             timeBar.Invalidate();
 
             UpdateDrumChannels();

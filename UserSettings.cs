@@ -9,7 +9,6 @@ using System.ComponentModel.Design;
 using System.Windows.Forms.Design;
 using System.Text.Json;
 using System.Text.Json.Serialization;
-using NAudio.Midi;
 using Ephemera.NBagOfTricks;
 using Ephemera.NBagOfUis;
 using Ephemera.MidiLib;

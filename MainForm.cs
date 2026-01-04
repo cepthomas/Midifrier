@@ -336,7 +336,7 @@ namespace Midifrier
                     lbPatterns.Items.Clear();
                     var pnames = _mdata.GetPatternNames();
 
-                    if (pnames.Count > 0)
+                    if (pnames.Any())
                     {
                         pnames.ForEach(pn => { lbPatterns.Items.Add(pn); });
                     }
@@ -626,7 +626,7 @@ namespace Midifrier
         void UpdateUi()
         {
             btnRewind.Enabled = true;
-            btnPlay.Enabled = _mdata.GetPatternNames().Count > 0;
+            btnPlay.Enabled = _mdata.GetPatternNames().Any();
 
             OpenMenuItem.Enabled = true;
             AboutMenuItem.Enabled = true;
@@ -689,7 +689,7 @@ namespace Midifrier
                 maxTick = Math.Max(chEvents.Last().AbsoluteTime, maxTick);
 
                 // Is this channel pertinent?
-                if (chEvents.Count != 0)
+                if (chEvents.Any())
                 {
                     // Make new channel. Attach corresponding events in a less-than-elegant fashion.
                     var channel = Manager.Instance.OpenOutputChannel(_settings.OutputDevice, chnum, $"chan{chnum}", patch);
@@ -804,7 +804,7 @@ namespace Midifrier
                 {
                     patternNames.Add(lbPatterns.Items[0].ToString()!);
                 }
-                else if (lbPatterns.CheckedItems.Count > 0)
+                else if (lbPatterns.CheckedItems.Any())
                 {
                     foreach (var p in lbPatterns.CheckedItems)
                     {
@@ -822,7 +822,7 @@ namespace Midifrier
 
                 // Get selected channels.
                 var selControls = _channelControls.Where(cc => cc.Selected).ToList();
-                if (selControls.Count == 0) // grab them all.
+                if (!selControls.Any()) // grab them all.
                 {
                     _channelControls.ForEach(cc => selControls.Add(cc));
                 }

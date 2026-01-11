@@ -115,7 +115,7 @@ namespace Midifrier
 
             // Hook up some simple handlers.
             btnRewind.Click += (_, __) => UpdateState(ExplorerState.Rewind);
-            btnKillMidi.Click += (_, __) => Manager.Instance.Kill();
+            btnKillMidi.Click += (_, __) => MidiManager.Instance.Kill();
             btnLogMidi.Checked = _settings.LogMidi;
             btnLogMidi.Click += (_, __) => _settings.LogMidi = btnLogMidi.Checked;
             sldBPM.ValueChanged += (_, __) => SetTimer();
@@ -135,7 +135,7 @@ namespace Midifrier
         protected override void OnLoad(EventArgs e)
         {
             // Set up output device.
-            if (Manager.Instance.GetOutputDevice(_settings.OutputDevice) is null)
+            if (MidiManager.Instance.GetOutputDevice(_settings.OutputDevice) is null)
             {
                 _logger.Error($"Invalid midi output device:{_settings.OutputDevice}");
             }
@@ -166,13 +166,13 @@ namespace Midifrier
         {
             // Stop and destroy mmtimer.
             Stop();
-            Manager.Instance.Kill();
+            MidiManager.Instance.Kill();
 
             // Resources.
             _mmTimer.Stop();
             _mmTimer.Dispose();
             DestroyControls();
-            Manager.Instance.DestroyDevices();
+            MidiManager.Instance.DestroyDevices();
 
             // Wait a bit in case there are some lingering events.
             System.Threading.Thread.Sleep(100);
@@ -467,7 +467,7 @@ namespace Midifrier
         public void Stop()
         {
             _mmTimer.Stop();
-            Manager.Instance.Kill();
+            MidiManager.Instance.Kill();
         }
 
         /// <summary>
@@ -595,17 +595,17 @@ namespace Midifrier
 
                     case ChannelState.Solo:
                         // Mute any other non-solo channels.
-                        Manager.Instance.OutputChannels.ForEach(ch =>
+                        MidiManager.Instance.OutputChannels.ForEach(ch =>
                         {
                             if (channel.ChannelNumber != ch.ChannelNumber && cc.State != ChannelState.Solo)
                             {
-                                Manager.Instance.Kill(channel);
+                                MidiManager.Instance.Kill(channel);
                             }
                         });
                         break;
 
                     case ChannelState.Mute:
-                        Manager.Instance.Kill(channel);
+                        MidiManager.Instance.Kill(channel);
                         break;
                 }
             }
@@ -617,7 +617,7 @@ namespace Midifrier
         void About_Click(object? sender, EventArgs e)
         {
             Tools.ShowReadme("Midifrier");
-            txtViewer.AppendLine(string.Join(Environment.NewLine, MidiDefs.Instance.GenUserDeviceInfo()));
+            txtViewer.AppendLine(string.Join(Environment.NewLine, MidiDefs.GenUserDeviceInfo()));
         }
 
         /// <summary>
@@ -640,7 +640,7 @@ namespace Midifrier
         /// </summary>
         void DestroyControls()
         {
-            Manager.Instance.Kill();
+            MidiManager.Instance.Kill();
 
             // Clean out our current elements.
             _channelControls.ForEach(c =>
@@ -663,7 +663,7 @@ namespace Midifrier
         {
             Stop();
             DestroyControls();
-            Manager.Instance.DestroyChannels();
+            MidiManager.Instance.DestroyChannels();
 
             // Load the new one.
             if (pinfo is null)
@@ -692,7 +692,7 @@ namespace Midifrier
                 if (chEvents.Any())
                 {
                     // Make new channel. Attach corresponding events in a less-than-elegant fashion.
-                    var channel = Manager.Instance.OpenOutputChannel(_settings.OutputDevice, chnum, $"chan{chnum}", patch);
+                    var channel = MidiManager.Instance.OpenOutputChannel(_settings.OutputDevice, chnum, $"chan{chnum}", patch);
                     channel.IsDrums = chnum == cmbDrumChannel.SelectedIndex + 1;
                     channel.Events = chEvents;
 

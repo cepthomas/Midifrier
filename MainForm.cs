@@ -522,7 +522,7 @@ namespace Midifrier
 
                     foreach (var mevt in playEvents)
                     {
-                        var mch = ch.IsDrums ? MidiDefs.DEFAULT_DRUM_CHANNEL : mevt.ChannelNumber;
+                        var mch = ch.Flavor == ChannelFlavor.Drums ? MidiDefs.DEFAULT_DRUM_CHANNEL : mevt.ChannelNumber;
 
                         switch (mevt)
                         {
@@ -691,9 +691,10 @@ namespace Midifrier
                 // Is this channel pertinent?
                 if (chEvents.Any())
                 {
-                    // Make new channel. Attach corresponding events in a less-than-elegant fashion.
-                    var channel = MidiManager.Instance.OpenOutputChannel(_settings.OutputDevice, chnum, $"chan{chnum}", patch);
-                    channel.IsDrums = chnum == cmbDrumChannel.SelectedIndex + 1;
+                    // Make new channel. Attach corresponding events.
+                    var channel = (chnum == cmbDrumChannel.SelectedIndex + 1) ?
+                        MidiManager.Instance.OpenOutputChannelDrums(_settings.OutputDevice, chnum, $"chan{chnum}", patchName) :
+                        MidiManager.Instance.OpenOutputChannel(_settings.OutputDevice, chnum, $"chan{chnum}", patchName);
                     channel.Events = chEvents;
 
                     // Make new control and bind to channel.

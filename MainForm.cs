@@ -518,7 +518,7 @@ namespace Midifrier
                 if (cc.State == ChannelState.Solo || (!anySolo && cc.State == ChannelState.Normal))
                 {
                     // Process any sequence steps.
-                    var playEvents = ch.Events.Where(e => e.When == timeBar.Current);
+                    var playEvents = ch.Events.Get(timeBar.Current);
 
                     foreach (var mevt in playEvents)
                     {
@@ -531,19 +531,19 @@ namespace Midifrier
                                 evt.Velocity = MathUtils.Constrain((int)(evt.Velocity * ch.Volume), 0, MidiDefs.MAX_MIDI);
                                 // Adjust channel.
                                 evt.ChannelNumber = mch;
-                                ch.Device.Send(evt);
+                                ch.Send(evt);
                                 break;
 
                             case NoteOff evt:
                                 evt.ChannelNumber = mch;
                                 // Adjust channel.
-                                ch.Device.Send(evt);
+                                ch.Send(evt);
                                 break;
 
-                            _:
+                            default:
                                 // Everything else as is.
                                 //Other other = new(mch, mevt.GetAsShortMessage());
-                                ch.Device.Send(mevt);
+                                ch.Send(mevt);
                                 break;
                         }
                     }
@@ -692,9 +692,13 @@ namespace Midifrier
                 if (chEvents.Any())
                 {
                     // Make new channel. Attach corresponding events.
-                    var channel = (chnum == cmbDrumChannel.SelectedIndex + 1) ?
-                        MidiManager.Instance.OpenOutputChannelDrums(_settings.OutputDevice, chnum, $"chan{chnum}", patchName) :
-                        MidiManager.Instance.OpenOutputChannel(_settings.OutputDevice, chnum, $"chan{chnum}", patchName);
+                    //var channel = (chnum == cmbDrumChannel.SelectedIndex + 1) ?
+                    //    MidiManager.Instance.OpenOutputChannel(_settings.OutputDevice, chnum, $"chan{chnum}", patch) :
+                    //    MidiManager.Instance.OpenOutputChannel(_settings.OutputDevice, chnum, $"chan{chnum}", patch);
+
+                    var channel = MidiManager.Instance.OpenOutputChannel(_settings.OutputDevice, chnum,
+                        $"chan{chnum}", patch); // $"PATCH_{patch}"); // TODO1 patch name will break.
+
                     channel.Events = chEvents;
 
                     // Make new control and bind to channel.
@@ -827,15 +831,16 @@ namespace Midifrier
                 {
                     _channelControls.ForEach(cc => selControls.Add(cc));
                 }
-                List<int> channels = [.. selControls.Select(cc => cc.BoundChannel.ChannelNumber)];
-                List<int> drums = [.. selControls.Where(cc => cc.BoundChannel.IsDrums).Select(cc => cc.BoundChannel.ChannelNumber)];
+                List<OutputChannel> channels = [.. selControls.Select(cc => cc.BoundChannel)];
+                //List<int> channels = [.. selControls.Select(cc => cc.BoundChannel.ChannelNumber)];
+                //List<int> drums = [.. selControls.Where(cc => cc.BoundChannel.IsDrums).Select(cc => cc.BoundChannel.ChannelNumber)];
 
                 switch (stext.ToLower())
                 {
                     case "export csv":
                         {
                             var newfn = Tools.MakeExportFileName(_settings.ExportFolder, _mdata.FileName, "export", "csv");
-                            MidiExport.ExportCsv(newfn, patterns, channels, drums, _mdata.GetGlobal());
+                            MidiExport.ExportCsv(newfn, patterns, channels, _mdata.GetGlobal());
                             _logger.Info($"Exported to {newfn}");
                         }
                         break;

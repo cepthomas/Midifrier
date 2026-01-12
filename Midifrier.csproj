@@ -21,7 +21,7 @@
         <!-- en none -->
         <!-- <DefineConstants>DEBUG;TRACE</DefineConstants> -->
         <WarningLevel>4</WarningLevel>
-        <NoWarn>CS1591;CA1822</NoWarn>
+        <NoWarn>CS1591;CA1822;CA1860</NoWarn>
         
     </PropertyGroup>
     

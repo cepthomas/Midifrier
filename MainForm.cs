@@ -47,6 +47,9 @@ namespace Midifrier
         /// <summary>Constant.</summary>
         const int DEFAULT_TEMPO = 100;
 
+        /// <summary>Drums may be on unusual channel.</summary>
+        int _drumChannel = MidiDefs.DEFAULT_DRUM_CHANNEL;
+
         /// <summary>Not used currently.</summary>
         PatternInfo? _currentPattern = null;
         #endregion
@@ -112,7 +115,7 @@ namespace Midifrier
             {
                 cmbDrumChannel.Items.Add(i);
             }
-            cmbDrumChannel.SelectedIndex = MidiDefs.DEFAULT_DRUM_CHANNEL - 1;
+            cmbDrumChannel.SelectedIndex = _drumChannel - 1;
 
             // Hook up some simple handlers.
             btnRewind.Click += (_, __) => UpdateState(ExplorerState.Rewind);
@@ -327,7 +330,7 @@ namespace Midifrier
                 using (new WaitCursor())
                 {
                     // Reset stuff.
-                    cmbDrumChannel.SelectedIndex = MidiDefs.DEFAULT_DRUM_CHANNEL - 1;
+                    cmbDrumChannel.SelectedIndex = _drumChannel - 1;
                     _mdata = new MidiDataFile();
 
                     // Process the file.
@@ -351,9 +354,6 @@ namespace Midifrier
                     // Default to first.
                     lbPatterns.SelectedIndex = 0;
                     Patterns_SelectedIndexChanged(null, new());
-
-                    // Set up timer.
-                    // sldBPM.Value = DEFAULT_TEMPO;
 
                     ExportMidiMenuItem.Enabled = _mdata.IsStyleFile;
 
@@ -523,22 +523,19 @@ namespace Midifrier
 
                     foreach (var mevt in playEvents)
                     {
-                        //var mch = ch.Flavor == ChannelFlavor.Drums ? MidiDefs.DEFAULT_DRUM_CHANNEL : mevt.ChannelNumber;
-                        var mch = mevt.ChannelNumber; // TODO1 is drums??
-
                         switch (mevt)
                         {
                             case NoteOn evt:
                                 // Adjust volume.
                                 evt.Velocity = MathUtils.Constrain((int)(evt.Velocity * ch.Volume), 0, MidiDefs.MAX_MIDI);
                                 // Adjust channel.
-                                evt.ChannelNumber = mch;
+                                evt.ChannelNumber =  evt.ChannelNumber == _drumChannel ? MidiDefs.DEFAULT_DRUM_CHANNEL : _drumChannel;
                                 ch.Send(evt);
                                 break;
 
                             case NoteOff evt:
                                 // Adjust channel.
-                                evt.ChannelNumber = mch;
+                                evt.ChannelNumber =  evt.ChannelNumber == _drumChannel ? MidiDefs.DEFAULT_DRUM_CHANNEL : _drumChannel;
                                 ch.Send(evt);
                                 break;
 
@@ -647,7 +644,6 @@ namespace Midifrier
             _channelControls.ForEach(c =>
             {
                 c.ChannelChange -= Control_ChannelChange;
-                //c.SendMidi -= ChannelControl_SendMidi;
                 Controls.Remove(c);
                 c.Dispose();
             });
@@ -698,11 +694,6 @@ namespace Midifrier
                 {
                     MusicTime when = new(mevt.AbsoluteTime);
                     maxTick = Math.Max(when.Tick, maxTick);
-
-                    if (maxTick > 1000)
-                    {
-
-                    }
 
                     switch (mevt)
                     {
@@ -762,7 +753,6 @@ namespace Midifrier
             sldBPM.Value = pinfo.Tempo;
 
             // Update bar.
-            //MidiTimeConverter mt = new(_mdata.DeltaTicksPerQuarterNote);
             Dictionary<int, string> sectInfo = [];
             sectInfo.Add(0, "sect1");
             sectInfo.Add((int)maxTick / MusicTime.TicksPerBeat, "END");
@@ -771,8 +761,6 @@ namespace Midifrier
             timeBar.InitSectionInfo(sectInfo);
             timeBar.Current.Reset();
             timeBar.Invalidate();
-
-            //UpdateDrumChannels();
         }
 
         /// <summary>
@@ -820,16 +808,8 @@ namespace Midifrier
         /// <param name="e"></param>
         void DrumChannel_SelectedIndexChanged(object? sender, EventArgs e)
         {
-            //UpdateDrumChannels();
+            _drumChannel = cmbDrumChannel.SelectedIndex + 1;
         }
-
-        ///// <summary>
-        ///// Update all channels based on drum channel selection.
-        ///// </summary>
-        //void UpdateDrumChannels()
-        //{
-        //    _channelControls.ForEach(ctl => ctl.BoundChannel.IsDrums = ctl.BoundChannel.ChannelNumber == cmbDrumChannel.SelectedIndex + 1);
-        //}
         #endregion
 
         #region Export
@@ -871,8 +851,6 @@ namespace Midifrier
                     _channelControls.ForEach(cc => selControls.Add(cc));
                 }
                 List<OutputChannel> channels = [.. selControls.Select(cc => cc.BoundChannel)];
-                //List<int> channels = [.. selControls.Select(cc => cc.BoundChannel.ChannelNumber)];
-                //List<int> drums = [.. selControls.Where(cc => cc.BoundChannel.IsDrums).Select(cc => cc.BoundChannel.ChannelNumber)];
 
                 switch (stext.ToLower())
                 {

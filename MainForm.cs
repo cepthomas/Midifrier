@@ -10,6 +10,7 @@ using System.Windows.Forms;
 using System.IO;
 using System.Diagnostics;
 using System.Reflection;
+using NAudio.Midi;
 using Ephemera.NBagOfTricks;
 using Ephemera.NBagOfUis;
 using Ephemera.MidiLib;
@@ -522,7 +523,8 @@ namespace Midifrier
 
                     foreach (var mevt in playEvents)
                     {
-                        var mch = ch.Flavor == ChannelFlavor.Drums ? MidiDefs.DEFAULT_DRUM_CHANNEL : mevt.ChannelNumber;
+                        //var mch = ch.Flavor == ChannelFlavor.Drums ? MidiDefs.DEFAULT_DRUM_CHANNEL : mevt.ChannelNumber;
+                        var mch = mevt.ChannelNumber; // TODO1 is drums??
 
                         switch (mevt)
                         {
@@ -535,14 +537,13 @@ namespace Midifrier
                                 break;
 
                             case NoteOff evt:
-                                evt.ChannelNumber = mch;
                                 // Adjust channel.
+                                evt.ChannelNumber = mch;
                                 ch.Send(evt);
                                 break;
 
                             default:
                                 // Everything else as is.
-                                //Other other = new(mch, mevt.GetAsShortMessage());
                                 ch.Send(mevt);
                                 break;
                         }
@@ -679,45 +680,82 @@ namespace Midifrier
             lblChLoc.Hide();
 
             sldBPM.Value = pinfo.Tempo;
-            // For scaling midi to internal.
+
             long maxTick = 0;
 
             foreach (var (chnum, patch) in pinfo.GetChannels(true, true))
             {
                 // Get events for the channel.
-                var chEvents = pinfo.GetFilteredEvents([chnum]).ToList();
-                maxTick = Math.Max(chEvents.Last().AbsoluteTime, maxTick);
+                var midiEvents = pinfo.GetFilteredEvents([chnum]).ToList();
 
                 // Is this channel pertinent?
-                if (chEvents.Any())
+                if (!midiEvents.Any()) continue;
+
+                // Convert events to internal.
+                EventCollection chEvents = new();
+
+                foreach (var mevt in midiEvents)
                 {
-                    // Make new channel. Attach corresponding events.
-                    //var channel = (chnum == cmbDrumChannel.SelectedIndex + 1) ?
-                    //    MidiManager.Instance.OpenOutputChannel(_settings.OutputDevice, chnum, $"chan{chnum}", patch) :
-                    //    MidiManager.Instance.OpenOutputChannel(_settings.OutputDevice, chnum, $"chan{chnum}", patch);
+                    MusicTime when = new(mevt.AbsoluteTime);
+                    maxTick = Math.Max(when.Tick, maxTick);
 
-                    var channel = MidiManager.Instance.OpenOutputChannel(_settings.OutputDevice, chnum,
-                        $"chan{chnum}", patch); // $"PATCH_{patch}"); // TODO1 patch name will break.
-
-                    channel.Events = chEvents;
-
-                    // Make new control and bind to channel.
-                    ChannelControl control = new()
+                    if (maxTick > 1000)
                     {
-                        Location = new(x, y),
-                        BorderStyle = BorderStyle.FixedSingle,
-                        BoundChannel = channel,
-                        DrawColor = _settings.DrawColor,
-                        SelectedColor = _settings.SelectedColor,
-                        Options = DisplayOptions.SoloMute
-                    };
-                    control.ChannelChange += Control_ChannelChange;
-                    Controls.Add(control);
-                    _channelControls.Add(control);
 
-                    // Adjust positioning.
-                    y += control.Height + 5;
+                    }
+
+                    switch (mevt)
+                    {
+                        case NoteOnEvent onevt:
+                            chEvents.Add(new NoteOn(chnum, onevt.NoteNumber, onevt.Velocity, when));
+                            break;
+
+                        case NoteEvent nevt:
+                            if (nevt.CommandCode == MidiCommandCode.NoteOff)
+                            {
+                                chEvents.Add(new NoteOff(chnum, nevt.NoteNumber, when));
+                            }
+                            else if (nevt.CommandCode == MidiCommandCode.NoteOn)
+                            {
+                                chEvents.Add(new NoteOn(chnum, nevt.NoteNumber, nevt.Velocity, when));
+                            }
+                            break;
+
+                        case PatchChangeEvent pevt:
+                            chEvents.Add(new Patch(chnum, pevt.Patch, when));
+                            break;
+
+                        case ControlChangeEvent ctlevt:
+                            chEvents.Add(new Controller(chnum, (int)ctlevt.Controller, ctlevt.ControllerValue, when));
+                            break;
+
+                        default:
+                            // As is.
+                            chEvents.Add(new Other(chnum, mevt.GetAsShortMessage(), when));
+                            break;
+                    }
                 }
+
+                // Make new channel. Attach corresponding events.
+                var channel = MidiManager.Instance.OpenOutputChannel(_settings.OutputDevice, chnum, $"ch{chnum}", patch);
+                channel.Events = chEvents;
+
+                // Make new control and bind to channel.
+                ChannelControl control = new()
+                {
+                    Location = new(x, y),
+                    BorderStyle = BorderStyle.FixedSingle,
+                    BoundChannel = channel,
+                    DrawColor = _settings.DrawColor,
+                    SelectedColor = _settings.SelectedColor,
+                    Options = DisplayOptions.SoloMute
+                };
+                control.ChannelChange += Control_ChannelChange;
+                Controls.Add(control);
+                _channelControls.Add(control);
+
+                // Adjust positioning.
+                y += control.Height + 5;
             }
 
             // Set timer.
@@ -727,13 +765,14 @@ namespace Midifrier
             //MidiTimeConverter mt = new(_mdata.DeltaTicksPerQuarterNote);
             Dictionary<int, string> sectInfo = [];
             sectInfo.Add(0, "sect1");
-            //sectInfo.Add(mt.MidiToInternal(maxTick), "END");
-            sectInfo.Add((int)maxTick, "END");
+            sectInfo.Add((int)maxTick / MusicTime.TicksPerBeat, "END");
+            timeBar.Snap = SnapType.FourBar;
+            timeBar.GridLines = 4 * MusicTime.TicksPerBar;
             timeBar.InitSectionInfo(sectInfo);
             timeBar.Current.Reset();
             timeBar.Invalidate();
 
-            UpdateDrumChannels();
+            //UpdateDrumChannels();
         }
 
         /// <summary>
@@ -781,16 +820,16 @@ namespace Midifrier
         /// <param name="e"></param>
         void DrumChannel_SelectedIndexChanged(object? sender, EventArgs e)
         {
-            UpdateDrumChannels();
+            //UpdateDrumChannels();
         }
 
-        /// <summary>
-        /// Update all channels based on drum channel selection.
-        /// </summary>
-        void UpdateDrumChannels()
-        {
-            _channelControls.ForEach(ctl => ctl.BoundChannel.IsDrums = ctl.BoundChannel.ChannelNumber == cmbDrumChannel.SelectedIndex + 1);
-        }
+        ///// <summary>
+        ///// Update all channels based on drum channel selection.
+        ///// </summary>
+        //void UpdateDrumChannels()
+        //{
+        //    _channelControls.ForEach(ctl => ctl.BoundChannel.IsDrums = ctl.BoundChannel.ChannelNumber == cmbDrumChannel.SelectedIndex + 1);
+        //}
         #endregion
 
         #region Export
@@ -809,7 +848,7 @@ namespace Midifrier
                 {
                     patternNames.Add(lbPatterns.Items[0].ToString()!);
                 }
-                else if (lbPatterns.CheckedItems.Any())
+                else if (lbPatterns.CheckedItems.Count > 0)
                 {
                     foreach (var p in lbPatterns.CheckedItems)
                     {

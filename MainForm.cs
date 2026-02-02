@@ -856,7 +856,7 @@ namespace Midifrier
                 {
                     case "export csv":
                         {
-                            var newfn = Tools.MakeExportFileName(_settings.ExportFolder, _mdata.FileName, "export", "csv");
+                            var newfn = MakeExportFileName(_settings.ExportFolder, _mdata.FileName, "export", "csv");
                             MidiExport.ExportCsv(newfn, patterns, channels, _mdata.GetGlobal());
                             _logger.Info($"Exported to {newfn}");
                         }
@@ -865,7 +865,7 @@ namespace Midifrier
                     case "export midi":
                         foreach (var pattern in patterns)
                         {
-                            var newfn = Tools.MakeExportFileName(_settings.ExportFolder, _mdata.FileName, pattern.PatternName, "mid");
+                            var newfn = MakeExportFileName(_settings.ExportFolder, _mdata.FileName, pattern.PatternName, "mid");
                             MidiExport.ExportMidi(newfn, pattern, channels, _mdata.GetGlobal());
                             _logger.Info($"Export midi to {newfn}");
                         }
@@ -880,6 +880,25 @@ namespace Midifrier
             {
                 _logger.Error($"{ex.Message}");
             }
+        }
+
+        /// <summary>
+        /// Create a new clean filename for export. Creates path if it doesn't exist.
+        /// </summary>
+        /// <param name="path">Export path</param>
+        /// <param name="baseFn">Root of the new file name</param>
+        /// <param name="mod">Modifier</param>
+        /// <param name="ext">File extension</param>
+        /// <returns></returns>
+        string MakeExportFileName(string path, string baseFn, string mod, string ext)
+        {
+            string name = Path.GetFileNameWithoutExtension(baseFn);
+
+            // Clean the file name.
+            name = name.Replace('.', '-').Replace(' ', '_');
+            mod = mod == "" ? "default" : mod.Replace(' ', '_');
+            var newfn = Path.Join(path, $"{name}_{mod}.{ext}");
+            return newfn;
         }
         #endregion
 

@@ -36,7 +36,7 @@
             toolStripSeparator10 = new System.Windows.Forms.ToolStripSeparator();
             btnRewind = new System.Windows.Forms.ToolStripButton();
             toolStripSeparator12 = new System.Windows.Forms.ToolStripSeparator();
-            txtViewer = new Ephemera.NBagOfUis.TextViewer();
+            tvInfo = new Ephemera.NBagOfUis.TextViewer();
             toolTip = new System.Windows.Forms.ToolTip(components);
             lbPatterns = new System.Windows.Forms.CheckedListBox();
             btnAllPatterns = new System.Windows.Forms.Button();
@@ -240,16 +240,16 @@
             // 
             // txtViewer
             // 
-            txtViewer.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left;
-            txtViewer.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            txtViewer.Location = new System.Drawing.Point(8, 548);
-            txtViewer.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
-            txtViewer.MaxText = 5000;
-            txtViewer.Name = "txtViewer";
-            txtViewer.Prompt = "";
-            txtViewer.Size = new System.Drawing.Size(646, 122);
-            txtViewer.TabIndex = 58;
-            txtViewer.WordWrap = true;
+            tvInfo.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left;
+            tvInfo.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            tvInfo.Location = new System.Drawing.Point(8, 548);
+            tvInfo.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
+            tvInfo.MaxText = 5000;
+            tvInfo.Name = "txtViewer";
+            tvInfo.Prompt = "";
+            tvInfo.Size = new System.Drawing.Size(646, 122);
+            tvInfo.TabIndex = 58;
+            tvInfo.WordWrap = true;
             // 
             // lbPatterns
             // 
@@ -408,7 +408,7 @@
             Controls.Add(btnClearPatterns);
             Controls.Add(timeBar);
             Controls.Add(ftree);
-            Controls.Add(txtViewer);
+            Controls.Add(tvInfo);
             Controls.Add(toolStrip);
             Controls.Add(MenuStrip);
             MainMenuStrip = MenuStrip;
@@ -430,7 +430,7 @@
         private System.Windows.Forms.ToolStrip toolStrip;
         private System.Windows.Forms.ToolTip toolTip;
         private Ephemera.NBagOfUis.FilTree ftree;
-        private Ephemera.NBagOfUis.TextViewer txtViewer;
+        private Ephemera.NBagOfUis.TextViewer tvInfo;
         private Ephemera.MidiLib.TimeBar timeBar;
         private System.Windows.Forms.CheckedListBox lbPatterns;
         private System.Windows.Forms.Button btnAllPatterns;

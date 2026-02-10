@@ -83,10 +83,14 @@ namespace Midifrier
             SetText();
 
             // The text output.
-            txtViewer.Font = Font;
-            txtViewer.WordWrap = true;
-            txtViewer.MatchText.Add("ERR", Color.LightPink);
-            txtViewer.MatchText.Add("WRN:", Color.Plum);
+            tvInfo.Font = Font;
+            tvInfo.WordWrap = true;
+            List<TextViewer.Matcher> matchers =
+            [
+                new("ERR", Color.Red),
+                new("WRN", Color.Green),
+            ];
+            tvInfo.Matchers = matchers;
 
             // Other UI configs.
             toolStrip.Renderer = new ToolStripCheckBoxRenderer() { SelectedColor = _settings.DrawColor };
@@ -615,7 +619,7 @@ namespace Midifrier
         void About_Click(object? sender, EventArgs e)
         {
             Tools.ShowReadme("Midifrier");
-            txtViewer.AppendLine(string.Join(Environment.NewLine, MidiDefs.GenUserDeviceInfo()));
+            tvInfo.Append(string.Join(Environment.NewLine, MidiDefs.GenUserDeviceInfo()));
         }
 
         /// <summary>
@@ -913,7 +917,7 @@ namespace Midifrier
             // Usually come from a different thread.
             if (IsHandleCreated)
             {
-                this.InvokeIfRequired(_ => { txtViewer.AppendLine($"{e.Message}"); });
+                this.InvokeIfRequired(_ => { tvInfo.Append($"{e.Message}"); });
             }
         }
 

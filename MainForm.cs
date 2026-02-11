@@ -85,12 +85,11 @@ namespace Midifrier
             // The text output.
             tvInfo.Font = Font;
             tvInfo.WordWrap = true;
-            List<TextViewer.Matcher> matchers =
+            tvInfo.Matchers =
             [
                 new("ERR", Color.Red),
                 new("WRN", Color.Green),
             ];
-            tvInfo.Matchers = matchers;
 
             // Other UI configs.
             toolStrip.Renderer = new ToolStripCheckBoxRenderer() { SelectedColor = _settings.DrawColor };

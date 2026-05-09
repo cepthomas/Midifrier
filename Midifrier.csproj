@@ -17,7 +17,7 @@
         <Nullable>enable</Nullable>
         <!--<GenerateDocumentationFile>true</GenerateDocumentationFile>-->
         <SatelliteResourceLanguages>none</SatelliteResourceLanguages>
-        <ApplicationIcon>Resources\zebra.ico</ApplicationIcon>
+        <ApplicationIcon>zebra.ico</ApplicationIcon>
         <!-- en none -->
         <!-- <DefineConstants>DEBUG;TRACE</DefineConstants> -->
         <WarningLevel>4</WarningLevel>

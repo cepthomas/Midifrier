@@ -27,7 +27,7 @@ namespace Midifrier
 
         #region Fields
         /// <summary>My logger.</summary>
-        readonly Logger _logger = LogManager.CreateLogger("MainForm");
+        readonly Logger _logger = LogManager.CreateLogger("Main");
 
         /// <summary>Current global user settings.</summary>
         readonly UserSettings _settings;
@@ -123,8 +123,6 @@ namespace Midifrier
             // Hook up some simple handlers.
             btnRewind.Click += (_, __) => UpdateState(ExplorerState.Rewind);
             btnKillMidi.Click += (_, __) => MidiManager.Instance.Kill();
-            btnLogMidi.Checked = _settings.LogMidi;
-            btnLogMidi.Click += (_, __) => _settings.LogMidi = btnLogMidi.Checked;
             sldBPM.ValueChanged += (_, __) => SetTimer();
             btnAutoplay.Click += (_, __) => _settings.Autoplay = btnAutoplay.Checked;
             btnLoop.Click += (_, __) => _settings.Loop = btnLoop.Checked;
@@ -444,7 +442,7 @@ namespace Midifrier
             var fileTypes = $"Midi Files|{MidiDataFile.MIDI_FILE_TYPES}|Style Files|{MidiDataFile.STYLE_FILE_TYPES}";
             using OpenFileDialog openDlg = new()
             {
-                Filter = fileTypes,
+                //Filter = fileTypes,
                 Title = "Select a file"
             };
 
@@ -532,13 +530,13 @@ namespace Midifrier
                                 // Adjust volume.
                                 evt.Velocity = MathUtils.Constrain((int)(evt.Velocity * ch.Volume), 0, MidiDefs.MAX_MIDI);
                                 // Adjust channel.
-                                evt.ChannelNumber =  evt.ChannelNumber == _drumChannel ? MidiDefs.DEFAULT_DRUM_CHANNEL : _drumChannel;
+                                evt.ChannelNumber = evt.ChannelNumber == _drumChannel ? MidiDefs.DEFAULT_DRUM_CHANNEL : evt.ChannelNumber;
                                 ch.Send(evt);
                                 break;
 
                             case NoteOff evt:
                                 // Adjust channel.
-                                evt.ChannelNumber =  evt.ChannelNumber == _drumChannel ? MidiDefs.DEFAULT_DRUM_CHANNEL : _drumChannel;
+                                evt.ChannelNumber = evt.ChannelNumber == _drumChannel ? MidiDefs.DEFAULT_DRUM_CHANNEL : evt.ChannelNumber;
                                 ch.Send(evt);
                                 break;
 

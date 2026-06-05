@@ -21,8 +21,6 @@
             toolStripSeparator4 = new System.Windows.Forms.ToolStripSeparator();
             btnLoop = new System.Windows.Forms.ToolStripButton();
             toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
-            btnLogMidi = new System.Windows.Forms.ToolStripButton();
-            toolStripSeparator5 = new System.Windows.Forms.ToolStripSeparator();
             btnKillMidi = new System.Windows.Forms.ToolStripButton();
             toolStripSeparator6 = new System.Windows.Forms.ToolStripSeparator();
             toolStripLabel1 = new System.Windows.Forms.ToolStripLabel();
@@ -62,7 +60,7 @@
             // toolStrip
             // 
             toolStrip.ImageScalingSize = new System.Drawing.Size(20, 20);
-            toolStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] { btnAutoplay, toolStripSeparator4, btnLoop, toolStripSeparator1, btnLogMidi, toolStripSeparator5, btnKillMidi, toolStripSeparator6, toolStripLabel1, cmbDrumChannel, toolStripSeparator7, sldVolume, toolStripSeparator11, sldBPM, toolStripSeparator9, btnPlay, toolStripSeparator10, btnRewind, toolStripSeparator12 });
+            toolStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] { btnAutoplay, toolStripSeparator4, btnLoop, toolStripSeparator1, btnKillMidi, toolStripSeparator6, toolStripLabel1, cmbDrumChannel, toolStripSeparator7, sldVolume, toolStripSeparator11, sldBPM, toolStripSeparator9, btnPlay, toolStripSeparator10, btnRewind, toolStripSeparator12 });
             toolStrip.Location = new System.Drawing.Point(0, 27);
             toolStrip.Name = "toolStrip";
             toolStrip.Size = new System.Drawing.Size(959, 43);
@@ -104,24 +102,6 @@
             // 
             toolStripSeparator1.Name = "toolStripSeparator1";
             toolStripSeparator1.Size = new System.Drawing.Size(6, 43);
-            // 
-            // btnLogMidi
-            // 
-            btnLogMidi.AutoSize = false;
-            btnLogMidi.CheckOnClick = true;
-            btnLogMidi.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            btnLogMidi.Image = Properties.Resources.glyphicons_170_record;
-            btnLogMidi.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
-            btnLogMidi.ImageTransparentColor = System.Drawing.Color.Magenta;
-            btnLogMidi.Name = "btnLogMidi";
-            btnLogMidi.Size = new System.Drawing.Size(40, 40);
-            btnLogMidi.Text = "toolStripButton1";
-            btnLogMidi.ToolTipText = "Enable logging midi events";
-            // 
-            // toolStripSeparator5
-            // 
-            toolStripSeparator5.Name = "toolStripSeparator5";
-            toolStripSeparator5.Size = new System.Drawing.Size(6, 43);
             // 
             // btnKillMidi
             // 
@@ -238,14 +218,15 @@
             toolStripSeparator12.Name = "toolStripSeparator12";
             toolStripSeparator12.Size = new System.Drawing.Size(6, 43);
             // 
-            // txtViewer
+            // tvInfo
             // 
             tvInfo.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left;
             tvInfo.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             tvInfo.Location = new System.Drawing.Point(8, 548);
             tvInfo.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
+            tvInfo.MatchUseBackground = true;
             tvInfo.MaxText = 5000;
-            tvInfo.Name = "txtViewer";
+            tvInfo.Name = "tvInfo";
             tvInfo.Prompt = "";
             tvInfo.Size = new System.Drawing.Size(646, 122);
             tvInfo.TabIndex = 58;
@@ -376,10 +357,8 @@
             // 
             timeBar.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
             timeBar.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            timeBar.DoLoop = false;
             timeBar.DrawColor = System.Drawing.Color.Black;
-            timeBar.FontLarge = new System.Drawing.Font("Microsoft Sans Serif", 20F);
-            timeBar.FontSmall = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            timeBar.GridLines = 0;
             timeBar.Location = new System.Drawing.Point(566, 76);
             timeBar.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             timeBar.Name = "timeBar";
@@ -450,11 +429,9 @@
         private System.Windows.Forms.ToolStripMenuItem AboutMenuItem;
         private System.Windows.Forms.ToolStripLabel toolStripLabel1;
         private System.Windows.Forms.ToolStripComboBox cmbDrumChannel;
-        private System.Windows.Forms.ToolStripButton btnLogMidi;
         private System.Windows.Forms.ToolStripButton btnKillMidi;
         private System.Windows.Forms.Label lblChLoc;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator4;
-        private System.Windows.Forms.ToolStripSeparator toolStripSeparator5;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator6;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator7;
         private Ephemera.NBagOfUis.ToolStripSlider sldVolume;

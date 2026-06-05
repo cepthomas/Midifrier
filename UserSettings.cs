@@ -86,9 +86,6 @@ namespace Midifrier
         public bool Loop { get; set; } = false;
 
         [Browsable(false)]
-        public bool LogMidi { get; set; } = false;
-
-        [Browsable(false)]
         public double Volume { get; set; } = 0.5;
 
         [Browsable(false)]

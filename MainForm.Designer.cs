@@ -26,8 +26,6 @@
             toolStripLabel1 = new System.Windows.Forms.ToolStripLabel();
             cmbDrumChannel = new System.Windows.Forms.ToolStripComboBox();
             toolStripSeparator7 = new System.Windows.Forms.ToolStripSeparator();
-            sldVolume = new Ephemera.NBagOfUis.ToolStripSlider();
-            toolStripSeparator11 = new System.Windows.Forms.ToolStripSeparator();
             sldBPM = new Ephemera.NBagOfUis.ToolStripSlider();
             toolStripSeparator9 = new System.Windows.Forms.ToolStripSeparator();
             btnPlay = new System.Windows.Forms.ToolStripButton();
@@ -51,7 +49,7 @@
             ToolsMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             SettingsMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             AboutMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            timeBar = new Ephemera.MidiLib.TimeBar();
+            progBar = new ProgressBar();
             lblChLoc = new System.Windows.Forms.Label();
             toolStrip.SuspendLayout();
             MenuStrip.SuspendLayout();
@@ -60,10 +58,10 @@
             // toolStrip
             // 
             toolStrip.ImageScalingSize = new System.Drawing.Size(20, 20);
-            toolStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] { btnAutoplay, toolStripSeparator4, btnLoop, toolStripSeparator1, btnKillMidi, toolStripSeparator6, toolStripLabel1, cmbDrumChannel, toolStripSeparator7, sldVolume, toolStripSeparator11, sldBPM, toolStripSeparator9, btnPlay, toolStripSeparator10, btnRewind, toolStripSeparator12 });
+            toolStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] { btnAutoplay, toolStripSeparator4, btnLoop, toolStripSeparator1, btnKillMidi, toolStripSeparator6, toolStripLabel1, cmbDrumChannel, toolStripSeparator7, sldBPM, toolStripSeparator9, btnPlay, toolStripSeparator10, btnRewind, toolStripSeparator12 });
             toolStrip.Location = new System.Drawing.Point(0, 27);
             toolStrip.Name = "toolStrip";
-            toolStrip.Size = new System.Drawing.Size(959, 43);
+            toolStrip.Size = new System.Drawing.Size(1034, 43);
             toolStrip.TabIndex = 0;
             toolStrip.Text = "toolStrip";
             // 
@@ -141,27 +139,6 @@
             toolStripSeparator7.Name = "toolStripSeparator7";
             toolStripSeparator7.Size = new System.Drawing.Size(6, 43);
             // 
-            // sldVolume
-            // 
-            sldVolume.AccessibleName = "sldVolume";
-            sldVolume.AutoSize = false;
-            sldVolume.BorderStyle = System.Windows.Forms.BorderStyle.None;
-            sldVolume.DrawColor = System.Drawing.Color.White;
-            sldVolume.Label = "Volume";
-            sldVolume.Maximum = 2D;
-            sldVolume.Minimum = 0D;
-            sldVolume.Name = "sldVolume";
-            sldVolume.Resolution = 0.05D;
-            sldVolume.Size = new System.Drawing.Size(150, 38);
-            sldVolume.Text = "vol";
-            sldVolume.ToolTipText = "How loud";
-            sldVolume.Value = 1D;
-            // 
-            // toolStripSeparator11
-            // 
-            toolStripSeparator11.Name = "toolStripSeparator11";
-            toolStripSeparator11.Size = new System.Drawing.Size(6, 43);
-            // 
             // sldBPM
             // 
             sldBPM.AccessibleName = "sldBPM";
@@ -220,7 +197,7 @@
             // 
             // tvInfo
             // 
-            tvInfo.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left;
+            tvInfo.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
             tvInfo.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             tvInfo.Location = new System.Drawing.Point(8, 548);
             tvInfo.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
@@ -228,26 +205,28 @@
             tvInfo.MaxText = 5000;
             tvInfo.Name = "tvInfo";
             tvInfo.Prompt = "";
-            tvInfo.Size = new System.Drawing.Size(646, 122);
+            tvInfo.Size = new System.Drawing.Size(604, 122);
             tvInfo.TabIndex = 58;
             tvInfo.WordWrap = true;
             // 
             // lbPatterns
             // 
+            lbPatterns.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right;
             lbPatterns.BackColor = System.Drawing.SystemColors.Control;
             lbPatterns.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             lbPatterns.FormattingEnabled = true;
-            lbPatterns.Location = new System.Drawing.Point(566, 165);
+            lbPatterns.Location = new System.Drawing.Point(643, 165);
             lbPatterns.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             lbPatterns.Name = "lbPatterns";
-            lbPatterns.Size = new System.Drawing.Size(88, 338);
+            lbPatterns.Size = new System.Drawing.Size(88, 359);
             lbPatterns.TabIndex = 94;
             toolTip.SetToolTip(lbPatterns, "Select patterns in style file");
             lbPatterns.SelectedIndexChanged += Patterns_SelectedIndexChanged;
             // 
             // btnAllPatterns
             // 
-            btnAllPatterns.Location = new System.Drawing.Point(566, 131);
+            btnAllPatterns.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right;
+            btnAllPatterns.Location = new System.Drawing.Point(643, 131);
             btnAllPatterns.Name = "btnAllPatterns";
             btnAllPatterns.Size = new System.Drawing.Size(33, 28);
             btnAllPatterns.TabIndex = 95;
@@ -258,7 +237,8 @@
             // 
             // btnClearPatterns
             // 
-            btnClearPatterns.Location = new System.Drawing.Point(622, 131);
+            btnClearPatterns.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right;
+            btnClearPatterns.Location = new System.Drawing.Point(699, 131);
             btnClearPatterns.Name = "btnClearPatterns";
             btnClearPatterns.Size = new System.Drawing.Size(33, 28);
             btnClearPatterns.TabIndex = 96;
@@ -269,10 +249,11 @@
             // 
             // ftree
             // 
+            ftree.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
             ftree.Location = new System.Drawing.Point(8, 76);
             ftree.Margin = new System.Windows.Forms.Padding(3, 5, 3, 5);
             ftree.Name = "ftree";
-            ftree.Size = new System.Drawing.Size(527, 464);
+            ftree.Size = new System.Drawing.Size(604, 464);
             ftree.TabIndex = 89;
             toolTip.SetToolTip(ftree, "File selection");
             ftree.FileSelected += Navigator_FileSelected;
@@ -283,7 +264,7 @@
             MenuStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] { FileMenuItem, ToolsMenuItem });
             MenuStrip.Location = new System.Drawing.Point(0, 0);
             MenuStrip.Name = "MenuStrip";
-            MenuStrip.Size = new System.Drawing.Size(959, 27);
+            MenuStrip.Size = new System.Drawing.Size(1034, 27);
             MenuStrip.TabIndex = 90;
             MenuStrip.Text = "menuStrip";
             // 
@@ -353,24 +334,22 @@
             AboutMenuItem.Text = "About";
             AboutMenuItem.Click += About_Click;
             // 
-            // timeBar
+            // progBar
             // 
-            timeBar.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
-            timeBar.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            timeBar.DrawColor = System.Drawing.Color.Black;
-            timeBar.GridLines = 0;
-            timeBar.Location = new System.Drawing.Point(566, 76);
-            timeBar.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
-            timeBar.Name = "timeBar";
-            timeBar.SelectedColor = System.Drawing.Color.White;
-            timeBar.Size = new System.Drawing.Size(381, 47);
-            timeBar.Snap = Ephemera.MidiLib.SnapType.Beat;
-            timeBar.TabIndex = 93;
+            progBar.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right;
+            progBar.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            progBar.DrawColor = System.Drawing.Color.Black;
+            progBar.Location = new System.Drawing.Point(643, 76);
+            progBar.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
+            progBar.Name = "progBar";
+            progBar.Size = new System.Drawing.Size(379, 47);
+            progBar.TabIndex = 93;
             // 
             // lblChLoc
             // 
+            lblChLoc.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right;
             lblChLoc.AutoSize = true;
-            lblChLoc.Location = new System.Drawing.Point(666, 131);
+            lblChLoc.Location = new System.Drawing.Point(743, 131);
             lblChLoc.Name = "lblChLoc";
             lblChLoc.Size = new System.Drawing.Size(45, 19);
             lblChLoc.TabIndex = 97;
@@ -380,12 +359,12 @@
             // 
             AutoScaleDimensions = new System.Drawing.SizeF(8F, 19F);
             AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            ClientSize = new System.Drawing.Size(959, 674);
+            ClientSize = new System.Drawing.Size(1034, 674);
             Controls.Add(lblChLoc);
             Controls.Add(lbPatterns);
             Controls.Add(btnAllPatterns);
             Controls.Add(btnClearPatterns);
-            Controls.Add(timeBar);
+            Controls.Add(progBar);
             Controls.Add(ftree);
             Controls.Add(tvInfo);
             Controls.Add(toolStrip);
@@ -410,7 +389,7 @@
         private System.Windows.Forms.ToolTip toolTip;
         private Ephemera.NBagOfUis.FilTree ftree;
         private Ephemera.NBagOfUis.TextViewer tvInfo;
-        private Ephemera.MidiLib.TimeBar timeBar;
+        private ProgressBar progBar;
         private System.Windows.Forms.CheckedListBox lbPatterns;
         private System.Windows.Forms.Button btnAllPatterns;
         private System.Windows.Forms.Button btnClearPatterns;
@@ -434,8 +413,6 @@
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator4;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator6;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator7;
-        private Ephemera.NBagOfUis.ToolStripSlider sldVolume;
-        private System.Windows.Forms.ToolStripSeparator toolStripSeparator11;
         private Ephemera.NBagOfUis.ToolStripSlider sldBPM;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator9;
         private System.Windows.Forms.ToolStripButton btnPlay;

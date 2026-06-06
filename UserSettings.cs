@@ -37,12 +37,6 @@ namespace Midifrier
         [JsonConverter(typeof(JsonColorConverter))]
         public Color DrawColor { get; set; } = Color.Red;
 
-        [DisplayName("Selected Color")]
-        [Description("The color used for control selections.")]
-        [Browsable(true)]
-        [JsonConverter(typeof(JsonColorConverter))]
-        public Color SelectedColor { get; set; } = Color.Blue;
-
         [DisplayName("File Log Level")]
         [Description("Log level for file write.")]
         [Browsable(true)]
@@ -61,17 +55,6 @@ namespace Midifrier
         [Editor(typeof(StringListEditor), typeof(UITypeEditor))]
         public List<string> RootDirs { get; set; } = [];
 
-        [DisplayName("Ignore Paths")]
-        [Description("Ignore these noisy directories.")]
-        [Browsable(true)]
-        [Editor(typeof(StringListEditor), typeof(UITypeEditor))]
-        public List<string> IgnoreDirs { get; set; } = [];
-
-        [DisplayName("Single Click Select")]
-        [Description("Generate event with single or double click.")]
-        [Browsable(true)]
-        public bool SingleClickSelect { get; set; } = false;
-
         [DisplayName("Default Export Folder")]
         [Description("Where to put exported files.")]
         [Browsable(true)]
@@ -84,9 +67,6 @@ namespace Midifrier
 
         [Browsable(false)]
         public bool Loop { get; set; } = false;
-
-        [Browsable(false)]
-        public double Volume { get; set; } = 0.5;
 
         [Browsable(false)]
         public int SplitterPosition { get; set; } = 30;

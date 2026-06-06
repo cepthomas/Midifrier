@@ -79,7 +79,9 @@ namespace Midifrier
             StartPosition = FormStartPosition.Manual;
             Location = new Point(_settings.FormGeometry.X, _settings.FormGeometry.Y);
             Size = new Size(_settings.FormGeometry.Width, _settings.FormGeometry.Height);
-            KeyPreview = true; // for routing kbd strokes through OnKeyDown
+
+            // Other inits.
+            KeyPreview = true; // for routing kbd strokes through OnKeyDown - TODO also checks listbox, they're fighting.
             SetText();
 
             // The text output.
@@ -95,17 +97,14 @@ namespace Midifrier
             toolStrip.Renderer = new ToolStripCheckBoxRenderer() { SelectedColor = _settings.DrawColor };
             btnAutoplay.Checked = _settings.Autoplay;
             btnLoop.Checked = _settings.Loop;
-            sldVolume.DrawColor = _settings.DrawColor;
-            sldVolume.Value = _settings.Volume;
-            timeBar.DrawColor = _settings.DrawColor;
+            progBar.DrawColor = _settings.DrawColor;
 
             // FilTree settings.
             ftree.RootDirs = _settings.RootDirs;
             var s = MidiDataFile.MIDI_FILE_TYPES + MidiDataFile.STYLE_FILE_TYPES;
             ftree.FilterExts = s.SplitByTokens("|;*");
-            ftree.IgnoreDirs = _settings.IgnoreDirs;
             ftree.SplitterPosition = _settings.SplitterPosition;
-            ftree.SingleClickSelect = _settings.SingleClickSelect;
+            //ftree.SingleClickSelect = _settings.SingleClickSelect;
             ftree.RecentFiles = _settings.RecentFiles;
             ftree.InitTree();
 
@@ -188,62 +187,6 @@ namespace Midifrier
             }
 
             base.Dispose(disposing);
-        }
-        #endregion
-
-        #region User settings
-        /// <summary>
-        /// Edit the common options in a property grid.
-        /// </summary>
-        void Settings_Click(object? sender, EventArgs e)
-        {
-            GenericListTypeEditor.SetOptions("OutputDevice", MidiOutputDevice.GetAvailableDevices());
-
-            var changes = SettingsEditor.Edit(_settings, "User Settings", 500);
-
-            // Detect changes of interest.
-            bool navChange = false;
-            bool restart = false;
-
-            foreach (var (name, cat) in changes)
-            {
-                switch (name)
-                {
-                    case "OutputDevice":
-                    case "DrawColor":
-                    case "TempoResolution":
-                    case "FileLogLevel":
-                    case "NotifLogLevel":
-                        restart = true;
-                        break;
-                }
-            }
-
-            if (restart)
-            {
-                MessageBox.Show("Restart required for device changes to take effect");
-            }
-
-            if (navChange)
-            {
-                InitNavigator();
-            }
-
-            SaveSettings();
-        }
-
-        /// <summary>
-        /// Collect and save user settings.
-        /// </summary>
-        void SaveSettings()
-        {
-            _settings.FormGeometry = new Rectangle(Location.X, Location.Y, Width, Height);
-            _settings.Volume = sldVolume.Value;
-            _settings.Autoplay = btnAutoplay.Checked;
-            _settings.Loop = btnLoop.Checked;
-            _settings.TempoResolution = (int)sldBPM.Resolution;
-            _settings.Volume = sldVolume.Value;
-            _settings.Save();
         }
         #endregion
 
@@ -442,7 +385,7 @@ namespace Midifrier
             var fileTypes = $"Midi Files|{MidiDataFile.MIDI_FILE_TYPES}|Style Files|{MidiDataFile.STYLE_FILE_TYPES}";
             using OpenFileDialog openDlg = new()
             {
-                //Filter = fileTypes,
+                Filter = fileTypes,
                 Title = "Select a file"
             };
 
@@ -477,7 +420,7 @@ namespace Midifrier
         /// </summary>
         public void Rewind()
         {
-            timeBar.Rewind();
+            progBar.Rewind();
         }
         #endregion
 
@@ -520,7 +463,7 @@ namespace Midifrier
                 if (cc.State == ChannelState.Solo || (!anySolo && cc.State == ChannelState.Normal))
                 {
                     // Process any sequence steps.
-                    var playEvents = ch.Events.Get(timeBar.Current);
+                    var playEvents = ch.Events.Get(progBar.Current);
 
                     foreach (var mevt in playEvents)
                     {
@@ -550,7 +493,7 @@ namespace Midifrier
             }
 
             // Bump time. Check for end of play.
-            bool done = !timeBar.Increment();
+            bool done = !progBar.Increment();
 
             return done;
         }
@@ -572,6 +515,7 @@ namespace Midifrier
                     e.Handled = true;
                     break;
             }
+
             base.OnKeyDown(e);
         }
 
@@ -688,7 +632,7 @@ namespace Midifrier
                 // Is this channel pertinent?
                 if (!midiEvents.Any()) continue;
 
-                // Convert events to internal.
+                // Convert native events to internal.
                 EventCollection chEvents = new();
 
                 foreach (var mevt in midiEvents)
@@ -737,9 +681,9 @@ namespace Midifrier
                 {
                     Location = new(x, y),
                     BorderStyle = BorderStyle.FixedSingle,
+                    Anchor = AnchorStyles.Right | AnchorStyles.Top,
                     BoundChannel = channel,
                     DrawColor = _settings.DrawColor,
-                    SelectedColor = _settings.SelectedColor,
                     Options = DisplayOptions.SoloMute
                 };
                 control.ChannelChange += Control_ChannelChange;
@@ -754,14 +698,9 @@ namespace Midifrier
             sldBPM.Value = pinfo.Tempo;
 
             // Update bar.
-            Dictionary<int, string> sectInfo = [];
-            sectInfo.Add(0, "sect1");
-            sectInfo.Add((int)maxTick / MusicTime.TicksPerBeat, "END");
-            timeBar.Snap = SnapType.FourBar;
-            timeBar.GridLines = 4 * MusicTime.TicksPerBar;
-            timeBar.InitSectionInfo(sectInfo);
-            timeBar.Current.Reset();
-            timeBar.Invalidate();
+            progBar.Length = new((int)maxTick);
+            progBar.Current.Reset();
+            progBar.Invalidate();
         }
 
         /// <summary>
@@ -900,6 +839,69 @@ namespace Midifrier
             mod = mod == "" ? "default" : mod.Replace(' ', '_');
             var newfn = Path.Join(path, $"{name}_{mod}.{ext}");
             return newfn;
+        }
+        #endregion
+
+        #region User settings
+        /// <summary>
+        /// Edit the common options in a property grid.
+        /// </summary>
+        void Settings_Click(object? sender, EventArgs e)
+        {
+            GenericListTypeEditor.SetOptions("OutputDevice", MidiOutputDevice.GetAvailableDevices());
+
+            var changes = SettingsEditor.Edit(_settings, "User Settings", 500);
+
+            // Detect changes of interest.
+            bool navChange = false;
+            bool restart = false;
+
+            foreach (var (name, cat) in changes)
+            {
+                switch (name)
+                {
+                    case "OutputDevice":
+                    case "DrawColor":
+                    case "TempoResolution":
+                    case "FileLogLevel":
+                    case "NotifLogLevel":
+                        restart = true;
+                        break;
+
+                    case "RootDirs":
+                    case "IgnoreDirs":
+                        navChange = true;
+                        break;
+
+                    default:
+                        break;
+                }
+            }
+
+            if (restart)
+            {
+                MessageBox.Show("Restart required for device changes to take effect");
+            }
+
+            if (navChange)
+            {
+                InitNavigator();
+            }
+
+            SaveSettings();
+        }
+
+        /// <summary>
+        /// Collect and save user settings.
+        /// </summary>
+        void SaveSettings()
+        {
+            _settings.FormGeometry = new Rectangle(Location.X, Location.Y, Width, Height);
+            _settings.Autoplay = btnAutoplay.Checked;
+            _settings.Loop = btnLoop.Checked;
+            _settings.TempoResolution = (int)sldBPM.Resolution;
+            _settings.SplitterPosition = ftree.SplitterPosition;
+            _settings.Save();
         }
         #endregion
 

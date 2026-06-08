@@ -204,7 +204,6 @@
         <member name="M:Ephemera.MidiLibEx.PatternInfo.AddEvent(NAudio.Midi.MidiEvent)">
             <summary>
             Add an event to the collection.
-            Note!! this replaces the original file AbsoluteTime with the value scaled for internal use.
             </summary>
             <param name="evt">The event to add.</param>
         </member>

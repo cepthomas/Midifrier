@@ -17,6 +17,9 @@ using Ephemera.MidiLib;
 using Ephemera.MidiLibEx;
 
 
+// TODO  .mix files have channel names?
+
+
 namespace Midifrier
 {
     public partial class MainForm : Form

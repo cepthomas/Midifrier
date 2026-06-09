@@ -17,7 +17,7 @@ using Ephemera.MidiLib;
 using Ephemera.MidiLibEx;
 
 
-// TODO  .mix files have channel names?
+// TODO1  .mix files have channel names?
 
 
 namespace Midifrier
@@ -84,7 +84,7 @@ namespace Midifrier
             Size = new Size(_settings.FormGeometry.Width, _settings.FormGeometry.Height);
 
             // Other inits.
-            KeyPreview = true; // for routing kbd strokes through OnKeyDown - TODO also checks listbox, they're fighting.
+            KeyPreview = true; // for routing kbd strokes through OnKeyDown - TODO1 also checks listbox, they're fighting.
             SetText();
 
             // The text output.

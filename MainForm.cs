@@ -800,7 +800,7 @@ namespace Midifrier
                     case "export csv":
                         {
                             var newfn = MakeExportFileName(_settings.ExportFolder, _mdata.FileName, "export", "csv");
-                            MidiExport.ExportCsv(newfn, patterns, channels, _mdata.GetGlobal());
+                            MidiExport.ExportCsv(newfn, patterns, channels, _mdata.Header);
                             _logger.Info($"Exported to {newfn}");
                         }
                         break;
@@ -809,7 +809,7 @@ namespace Midifrier
                         foreach (var pattern in patterns)
                         {
                             var newfn = MakeExportFileName(_settings.ExportFolder, _mdata.FileName, pattern.PatternName, "mid");
-                            MidiExport.ExportMidi(newfn, pattern, channels, _mdata.GetGlobal());
+                            MidiExport.ExportMidi(newfn, pattern, channels, _mdata.Header);
                             _logger.Info($"Export midi to {newfn}");
                         }
                         break;

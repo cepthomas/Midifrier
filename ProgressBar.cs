@@ -37,30 +37,24 @@ namespace Midifrier
         #region Properties
         /// <summary>Big font.</summary>
         [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-        [EditorBrowsable(EditorBrowsableState.Never)]
         public Font FontLarge { get; set; } = new("Microsoft Sans Serif", 16, FontStyle.Regular, GraphicsUnit.Point, 0);
 
         /// <summary>Baby font.</summary>
         [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-        [EditorBrowsable(EditorBrowsableState.Never)]
         public Font FontSmall { get; set; } = new("Microsoft Sans Serif", 10, FontStyle.Regular, GraphicsUnit.Point, 0);
 
         /// <summary>Drawing the active elements of a control.</summary>
         public Color DrawColor { get; set; } = Color.Red;
 
         /// <summary>Keep going at end.</summary>
-        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-        [EditorBrowsable(EditorBrowsableState.Never)]
         public bool DoLoop { get; set; } = false;
 
         /// <summary>Convenience for readability.</summary>
         [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-        [EditorBrowsable(EditorBrowsableState.Never)]
         public MusicTime Length { get; set; } = MusicTime.ZERO;
 
         /// <summary>Convenience for readability.</summary>
         [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-        [EditorBrowsable(EditorBrowsableState.Never)]
         public MusicTime Current { get; } = MusicTime.ZERO;
         #endregion
 

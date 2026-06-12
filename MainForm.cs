@@ -54,7 +54,7 @@ namespace Midifrier
         int _drumChannel = MidiDefs.DEFAULT_DRUM_CHANNEL;
 
         /// <summary>Not used currently.</summary>
-        PatternInfo? _currentPattern = null;
+        Pattern? _currentPattern = null;
         #endregion
 
         #region Lifecycle
@@ -281,7 +281,7 @@ namespace Midifrier
                     _mdata = new MidiDataFile();
 
                     // Process the file.
-                    _mdata.Read(fn, DEFAULT_TEMPO, false);
+                    _mdata.Read(fn, false);
 
                     // Init new stuff with contents of file/pattern.
                     lbPatterns.Items.Clear();
@@ -603,102 +603,107 @@ namespace Midifrier
         /// <summary>
         /// Load the requested pattern and create controls.
         /// </summary>
-        /// <param name="pinfo"></param>
-        void LoadPattern(PatternInfo pinfo)
+        /// <param name="pattern"></param>
+        void LoadPattern(Pattern pattern)
         {
             Stop();
             DestroyControls();
             MidiManager.Instance.DestroyChannels();
 
             // Load the new one.
-            if (pinfo is null)
+            if (pattern is null)
             {
                 _logger.Error($"Invalid pattern!");
                 return;
             }
-            _currentPattern = pinfo;
+
+            _currentPattern = pattern;
 
             // Create the new controls.
             int x = lblChLoc.Left;
             int y = lblChLoc.Top;
             lblChLoc.Hide();
 
-            sldBPM.Value = pinfo.Tempo;
+            sldBPM.Value = pattern.Tempo;
 
             long maxTick = 0;
 
-            foreach (var (chnum, patch) in pinfo.GetChannels(true, true))
+            for (int i = 0; i < pattern.Tracks.Count; i++)
             {
-                // Get events for the channel.
-                var midiEvents = pinfo.GetFilteredEvents([chnum]).ToList();
+                var track = pattern.Tracks[i];
 
-                // Is this channel pertinent?
-                if (!midiEvents.Any()) continue;
-
-                // Convert native events to internal.
-                EventCollection chEvents = new();
-
-                foreach (var mevt in midiEvents)
+                // Get events for the channels.
+                for (int chNum = 0; chNum < track.ChannelStates.Length; chNum++)
                 {
-                    MusicTime when = new(mevt.AbsoluteTime);
-                    maxTick = Math.Max(when.Tick, maxTick);
+                    if (!track.ChannelStates[chNum].HasNotes) continue;
 
-                    switch (mevt)
+                    var midiEvents = track.GetFilteredEvents([chNum]);
+
+                    // Convert native events to internal.
+                    EventCollection chEvents = new();
+
+                    foreach (var mevt in midiEvents)
                     {
-                        case NoteOnEvent onevt:
-                            chEvents.Add(new NoteOn(chnum, onevt.NoteNumber, onevt.Velocity, when));
-                            break;
+                        MusicTime when = new(mevt.AbsoluteTime);
+                        maxTick = Math.Max(when.Tick, maxTick);
 
-                        case NoteEvent nevt:
-                            if (nevt.CommandCode == MidiCommandCode.NoteOff)
-                            {
-                                chEvents.Add(new NoteOff(chnum, nevt.NoteNumber, when));
-                            }
-                            else if (nevt.CommandCode == MidiCommandCode.NoteOn)
-                            {
-                                chEvents.Add(new NoteOn(chnum, nevt.NoteNumber, nevt.Velocity, when));
-                            }
-                            break;
+                        switch (mevt)
+                        {
+                            case NoteOnEvent onevt:
+                                chEvents.Add(new NoteOn(chNum, onevt.NoteNumber, onevt.Velocity, when));
+                                break;
 
-                        case PatchChangeEvent pevt:
-                            chEvents.Add(new Patch(chnum, pevt.Patch, when));
-                            break;
+                            case NoteEvent nevt:
+                                if (nevt.CommandCode == MidiCommandCode.NoteOff)
+                                {
+                                    chEvents.Add(new NoteOff(chNum, nevt.NoteNumber, when));
+                                }
+                                else if (nevt.CommandCode == MidiCommandCode.NoteOn)
+                                {
+                                    chEvents.Add(new NoteOn(chNum, nevt.NoteNumber, nevt.Velocity, when));
+                                }
+                                break;
 
-                        case ControlChangeEvent ctlevt:
-                            chEvents.Add(new Controller(chnum, (int)ctlevt.Controller, ctlevt.ControllerValue, when));
-                            break;
+                            case PatchChangeEvent pevt:
+                                chEvents.Add(new Patch(chNum, pevt.Patch, when));
+                                break;
 
-                        default:
-                            // As is.
-                            chEvents.Add(new Other(chnum, mevt.GetAsShortMessage(), when));
-                            break;
+                            case ControlChangeEvent ctlevt:
+                                chEvents.Add(new Controller(chNum, (int)ctlevt.Controller, ctlevt.ControllerValue, when));
+                                break;
+
+                            default:
+                                // As is.
+                                chEvents.Add(new Other(chNum, mevt.GetAsShortMessage(), when));
+                                break;
+                        }
                     }
+
+                    // Make new channel. Attach corresponding events.
+                    var channel = MidiManager.Instance.OpenOutputChannel(_settings.OutputDevice, chNum, $"ch{chNum}", track.ChannelStates[chNum].Patch);
+                    channel.Events = chEvents;
+
+                    // Make new control and bind to channel.
+                    ChannelControl control = new()
+                    {
+                        Location = new(x, y),
+                        BorderStyle = BorderStyle.FixedSingle,
+                        Anchor = AnchorStyles.Right | AnchorStyles.Top,
+                        BoundChannel = channel,
+                        DrawColor = _settings.DrawColor,
+                        Options = DisplayOptions.SoloMute
+                    };
+                    control.ChannelChange += Control_ChannelChange;
+                    Controls.Add(control);
+                    _channelControls.Add(control);
+
+                    // Adjust positioning.
+                    y += control.Height + 5;
                 }
-
-                // Make new channel. Attach corresponding events.
-                var channel = MidiManager.Instance.OpenOutputChannel(_settings.OutputDevice, chnum, $"ch{chnum}", patch);
-                channel.Events = chEvents;
-
-                // Make new control and bind to channel.
-                ChannelControl control = new()
-                {
-                    Location = new(x, y),
-                    BorderStyle = BorderStyle.FixedSingle,
-                    Anchor = AnchorStyles.Right | AnchorStyles.Top,
-                    BoundChannel = channel,
-                    DrawColor = _settings.DrawColor,
-                    Options = DisplayOptions.SoloMute
-                };
-                control.ChannelChange += Control_ChannelChange;
-                Controls.Add(control);
-                _channelControls.Add(control);
-
-                // Adjust positioning.
-                y += control.Height + 5;
             }
 
             // Set timer.
-            sldBPM.Value = pinfo.Tempo;
+            sldBPM.Value = pattern.Tempo;
 
             // Update bar.
             progBar.Length = new((int)maxTick);
@@ -715,9 +720,9 @@ namespace Midifrier
         {
             if (lbPatterns.SelectedItem is not null)
             {
-                var pinfo = _mdata.GetPattern(lbPatterns.SelectedItem.ToString()!);
+                var pattern = _mdata.GetPattern(lbPatterns.SelectedItem.ToString()!);
 
-                LoadPattern(pinfo!);
+                LoadPattern(pattern!);
 
                 Rewind();
 
@@ -784,39 +789,41 @@ namespace Midifrier
                     return;
                 }
 
-                List<PatternInfo> patterns = [];
-                patternNames.ForEach(p => patterns.Add(_mdata.GetPattern(p)!));
-
                 // Get selected channels.
                 var selControls = _channelControls.Where(cc => cc.Selected).ToList();
                 if (!selControls.Any()) // grab them all.
                 {
                     _channelControls.ForEach(cc => selControls.Add(cc));
                 }
-                List<OutputChannel> channels = [.. selControls.Select(cc => cc.BoundChannel)];
+                List<int> channels = [.. selControls.Select(cc => cc.BoundChannel.ChannelNumber)];
 
-                switch (stext.ToLower())
+                // Selected patterns.
+                foreach (var p in patternNames)
                 {
-                    case "export csv":
-                        {
-                            var newfn = MakeExportFileName(_settings.ExportFolder, _mdata.FileName, "export", "csv");
-                            MidiExport.ExportCsv(newfn, patterns, channels, _mdata.Header);
-                            _logger.Info($"Exported to {newfn}");
-                        }
-                        break;
+                    var pattern = _mdata.GetPattern(p);
 
-                    case "export midi":
-                        foreach (var pattern in patterns)
-                        {
-                            var newfn = MakeExportFileName(_settings.ExportFolder, _mdata.FileName, pattern.PatternName, "mid");
-                            MidiExport.ExportMidi(newfn, pattern, channels, _mdata.Header);
-                            _logger.Info($"Export midi to {newfn}");
-                        }
-                        break;
+                    switch (stext.ToLower())
+                    {
+                        case "export csv":
+                            {
+                                var newfn = MakeExportFileName(_settings.ExportFolder, _mdata.FileName, "export", "csv");
+                                MidiExport.ExportCsv(newfn, pattern, channels, _mdata.Header);
+                                _logger.Info($"Exported to {newfn}");
+                            }
+                            break;
 
-                    default:
-                        _logger.Error($"Ooops: {stext}");
-                        break;
+                        case "export midi":
+                            {
+                                var newfn = MakeExportFileName(_settings.ExportFolder, _mdata.FileName, pattern.Name, "mid");
+                                MidiExport.ExportMidi(newfn, pattern, channels, _mdata.Header);
+                                _logger.Info($"Export midi to {newfn}");
+                            }
+                            break;
+
+                        default:
+                            _logger.Error($"Ooops: {stext}");
+                            break;
+                    }
                 }
             }
             catch (Exception ex)
@@ -928,7 +935,7 @@ namespace Midifrier
         /// </summary>
         void SetTimer()
         {
-            MidiTimeConverter mt = new(_mdata.DeltaTicksPerQuarterNote, sldBPM.Value);
+            MidiTimeConverter mt = new(_mdata.Header.DeltaTicksPerQuarterNote, sldBPM.Value);
             double period = mt.RoundedInternalPeriod();
             _mmTimer.SetTimer((int)Math.Round(period), MmTimerCallback);
         }

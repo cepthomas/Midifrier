@@ -25,8 +25,11 @@
     
     <ItemGroup>
         <Compile Remove="lib\**" />
+        <Compile Remove="_stuff\**" />
         <EmbeddedResource Remove="lib\**" />
+        <EmbeddedResource Remove="_stuff\**" />
         <None Remove="lib\**" />
+        <None Remove="_stuff\**" />
     </ItemGroup>
     
     <ItemGroup>
@@ -54,18 +57,25 @@
     </ItemGroup>
 
     <ItemGroup>
+      <ProjectReference Include="..\..\Libs\MidiLibEx\MidiLibEx.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
         <Reference Include="Ephemera.NBagOfTricks">
             <HintPath>lib\Ephemera.NBagOfTricks.dll</HintPath>
         </Reference>
+
         <Reference Include="Ephemera.NBagOfUis">
             <HintPath>lib\Ephemera.NBagOfUis.dll</HintPath>
         </Reference>
+
         <Reference Include="Ephemera.MidiLib">
           <HintPath>lib\Ephemera.MidiLib.dll</HintPath>
         </Reference>
-        <Reference Include="Ephemera.MidiLibEx">
+
+        <!-- <Reference Include="Ephemera.MidiLibEx">
           <HintPath>lib\Ephemera.MidiLibEx.dll</HintPath>
-        </Reference>
+        </Reference> -->
     </ItemGroup>
 
 </Project>

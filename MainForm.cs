@@ -17,8 +17,6 @@ using Ephemera.MidiLib;
 using Ephemera.MidiLibEx;
 
 
-// TODO1  .mix files have channel names?
-
 
 namespace Midifrier
 {
@@ -47,9 +45,6 @@ namespace Midifrier
         /// <summary>Midi events from the input file.</summary>
         MidiDataFile _mdata = new();
 
-        /// <summary>Constant.</summary>
-        const int DEFAULT_TEMPO = 100;
-
         /// <summary>Drums may be on unusual channel.</summary>
         int _drumChannel = MidiDefs.DEFAULT_DRUM_CHANNEL;
 
@@ -74,7 +69,7 @@ namespace Midifrier
             // Init logging.
             LogManager.MinLevelFile = _settings.FileLogLevel;
             LogManager.MinLevelNotif = _settings.NotifLogLevel;
-            LogManager.LogMessage += LogManager_LogMessage;
+            LogManager.LogMessage += LogMessage;
             LogManager.Run(Path.Join(appDir, "log.txt"), 100000);
 
             // Init main form from settings
@@ -113,7 +108,7 @@ namespace Midifrier
 
             sldBPM.Resolution = _settings.TempoResolution;
             sldBPM.DrawColor = _settings.DrawColor;
-            sldBPM.Value = DEFAULT_TEMPO;
+            sldBPM.Value = MidiDataFile.DEFAULT_TEMPO;
 
             // Init channels and selectors.
             for (int i = 1; i <= MidiDefs.NUM_CHANNELS; i++)
@@ -281,7 +276,7 @@ namespace Midifrier
                     _mdata = new MidiDataFile();
 
                     // Process the file.
-                    _mdata.Read(fn, false);
+                    _mdata.Read(fn);
 
                     // Init new stuff with contents of file/pattern.
                     lbPatterns.Items.Clear();
@@ -302,7 +297,7 @@ namespace Midifrier
                     lbPatterns.SelectedIndex = 0;
                     Patterns_SelectedIndexChanged(null, new());
 
-                    ExportMidiMenuItem.Enabled = _mdata.IsStyleFile;
+                    ExportMidiMenuItem.Enabled = true; // _mdata.StyleName != "";
 
                     // All good so far.
                     _fn = fn;
@@ -624,8 +619,6 @@ namespace Midifrier
             int y = lblChLoc.Top;
             lblChLoc.Hide();
 
-            sldBPM.Value = pattern.Tempo;
-
             long maxTick = 0;
 
             for (int i = 0; i < pattern.Tracks.Count; i++)
@@ -633,9 +626,10 @@ namespace Midifrier
                 var track = pattern.Tracks[i];
 
                 // Get events for the channels.
-                for (int chNum = 0; chNum < track.ChannelStates.Length; chNum++)
+                for (int chInd = 0; chInd < track.ChannelStates.Length; chInd++)
                 {
-                    if (!track.ChannelStates[chNum].HasNotes) continue;
+                    if (!track.ChannelStates[chInd].HasNotes) continue;
+                    int chNum = chInd + 1;
 
                     var midiEvents = track.GetFilteredEvents([chNum]);
 
@@ -806,7 +800,7 @@ namespace Midifrier
                     {
                         case "export csv":
                             {
-                                var newfn = MakeExportFileName(_settings.ExportFolder, _mdata.FileName, "export", "csv");
+                                var newfn = MakeExportFileName(_settings.ExportFolder, _mdata.FileName, pattern.Name, "csv");
                                 MidiExport.ExportCsv(newfn, pattern, channels, _mdata.Header);
                                 _logger.Info($"Exported to {newfn}");
                             }
@@ -845,7 +839,7 @@ namespace Midifrier
             string name = Path.GetFileNameWithoutExtension(baseFn);
 
             // Clean the file name.
-            name = name.Replace('.', '-').Replace(' ', '_');
+            name = name.Replace('.', '_').Replace(' ', '_');
             mod = mod == "" ? "default" : mod.Replace(' ', '_');
             var newfn = Path.Join(path, $"{name}_{mod}.{ext}");
             return newfn;
@@ -921,7 +915,7 @@ namespace Midifrier
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        void LogManager_LogMessage(object? sender, LogMessageEventArgs e)
+        void LogMessage(object? sender, LogMessageEventArgs e)
         {
             // Usually come from a different thread.
             if (IsHandleCreated)

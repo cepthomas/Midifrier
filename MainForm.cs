@@ -17,7 +17,6 @@ using Ephemera.MidiLib;
 using Ephemera.MidiLibEx;
 
 
-
 namespace Midifrier
 {
     public partial class MainForm : Form

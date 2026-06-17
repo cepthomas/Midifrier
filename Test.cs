@@ -3,12 +3,11 @@ using System.Text;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Runtime.CompilerServices;
 using Ephemera.NBagOfTricks;
 using Ephemera.NBagOfTricks.PNUT;
 using Midifrier;
 
-
+// Some test code, ignore.
 // Useful files - from https://github.com/cepthomas/TestAudioFiles:
 // Style file, full info: _LoveSong.S474.sty
 // Plain midi, full song: WICKGAME.MID (has other stuff after the last track)
@@ -107,25 +106,6 @@ namespace Midifrier.Test
                MidiExport.ExportMidi($"{fn1}.mid", pattern, chs1, hdr);
             });
             Assert(exThrown == null);
-
-
-
-            //TODO? these:::
-            //foreach (var (chnum, patch) in pattern!.GetChannels(true, true))
-            //{
-            //    // Get events for the channel.
-            //    var channelEvents = pattern.GetFilteredEvents([chnum]);
-            //    maxTick = Math.Max(channelEvents.Last().AbsoluteTime, maxTick);
-            //    Info($"chnum:{chnum} patch:{patch} events:{channelEvents.Count()}");
-            //}
-            //Info($"maxTick:{maxTick}");
-
-            //int now = 22;
-            //var events = pattern.GetEventsWhen(now);
-            //foreach (var mevt in events)
-            //{
-            //    // tests???...
-            //}
         }
     }
 }

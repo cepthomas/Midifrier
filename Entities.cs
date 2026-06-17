@@ -56,7 +56,7 @@ namespace Midifrier
         /// <summary>Max length of all sequences in midi ticks.</summary>
         long _maxTick = 0;
 
-        /// <summary>For scaling midi ticks to internal. Set this before adding events!</summary>
+        /// <summary>For scaling midi ticks to internal.</summary>
         readonly MidiTimeConverter _mtc;
         #endregion
 
@@ -111,7 +111,7 @@ namespace Midifrier
             // Scale time and add to collections.
             _events.Add(evt); // all
 
-            int scTime = _mtc.MidiToInternal(evt.AbsoluteTime, true);
+            int scTime = _mtc.MidiToInternal(evt.AbsoluteTime, false);
             _eventsByTime.AddLazy(scTime, evt);
 
             _maxTick = Math.Max(_maxTick, evt.AbsoluteTime);

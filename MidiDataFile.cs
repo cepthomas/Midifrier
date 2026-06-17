@@ -466,7 +466,7 @@ namespace Midifrier
         /// <param name="msg"></param>
         void Dump(string msg)
         {
-            Console.WriteLine(msg);
+            //Console.WriteLine(msg);
         }
         #endregion
     }

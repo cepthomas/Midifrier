@@ -2,8 +2,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
     
     <PropertyGroup>
-
-        <OutputType>WinExe</OutputType>
+        <OutputType>Exe</OutputType>
         <UseWindowsForms>true</UseWindowsForms>
         <OutputPath>bin\</OutputPath>
         <TargetFramework>net8.0-windows</TargetFramework>
@@ -20,15 +19,17 @@
         <!-- <DefineConstants>DEBUG;TRACE</DefineConstants> -->
         <WarningLevel>4</WarningLevel>
         <NoWarn>CS1591;CA1822;CA1860</NoWarn>
-        
     </PropertyGroup>
     
     <ItemGroup>
         <Compile Remove="lib\**" />
+        <Compile Remove="Test\**" />
         <Compile Remove="_stuff\**" />
         <EmbeddedResource Remove="lib\**" />
+        <EmbeddedResource Remove="Test\**" />
         <EmbeddedResource Remove="_stuff\**" />
         <None Remove="lib\**" />
+        <None Remove="Test\**" />
         <None Remove="_stuff\**" />
     </ItemGroup>
     
@@ -57,10 +58,6 @@
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\..\Libs\MidiLibEx\MidiLibEx.csproj" />
-    </ItemGroup>
-
-    <ItemGroup>
         <Reference Include="Ephemera.NBagOfTricks">
             <HintPath>lib\Ephemera.NBagOfTricks.dll</HintPath>
         </Reference>
@@ -72,10 +69,6 @@
         <Reference Include="Ephemera.MidiLib">
           <HintPath>lib\Ephemera.MidiLib.dll</HintPath>
         </Reference>
-
-        <!-- <Reference Include="Ephemera.MidiLibEx">
-          <HintPath>lib\Ephemera.MidiLibEx.dll</HintPath>
-        </Reference> -->
     </ItemGroup>
 
 </Project>

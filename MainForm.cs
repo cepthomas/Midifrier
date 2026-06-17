@@ -14,7 +14,6 @@ using NAudio.Midi;
 using Ephemera.NBagOfTricks;
 using Ephemera.NBagOfUis;
 using Ephemera.MidiLib;
-using Ephemera.MidiLibEx;
 
 
 namespace Midifrier

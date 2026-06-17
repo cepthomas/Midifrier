@@ -4,6 +4,9 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Resources;
+using System.Reflection;
+using Ephemera.NBagOfTricks;
+using System.Diagnostics;
 
 
 namespace Midifrier
@@ -19,7 +22,10 @@ namespace Midifrier
             Application.SetHighDpiMode(HighDpiMode.SystemAware);
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
+
+            // Pick one. Also set OutputType -> WinExe or Exe.
             Application.Run(new MainForm());
+            //Test.Executor.Run();
         }
     }
 }

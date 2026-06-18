@@ -594,7 +594,7 @@ namespace Midifrier
 
         #region Process patterns
         /// <summary>
-        /// Load the requested pattern and create controls.
+        /// Load the requested pattern, convert units, and create controls.
         /// </summary>
         /// <param name="pattern"></param>
         void LoadPattern(Pattern pattern)
@@ -617,7 +617,7 @@ namespace Midifrier
             int y = lblChLoc.Top;
             lblChLoc.Hide();
 
-            long maxTick = 0;
+//            long maxTick = 0;
 
             for (int i = 0; i < pattern.Tracks.Count; i++)
             {
@@ -627,6 +627,7 @@ namespace Midifrier
                 for (int chInd = 0; chInd < track.ChannelStates.Length; chInd++)
                 {
                     if (!track.ChannelStates[chInd].HasNotes) continue;
+
                     int chNum = chInd + 1;
 
                     var midiEvents = track.GetFilteredEvents([chNum]);
@@ -636,8 +637,8 @@ namespace Midifrier
 
                     foreach (var mevt in midiEvents)
                     {
-                        MusicTime when = new(mevt.AbsoluteTime);
-                        maxTick = Math.Max(when.Tick, maxTick);
+                        MusicTime when = new(mevt.AbsoluteTime); // >>>>>>>>>>>>>>>>>>>>>>>>> xxx not
+//                        maxTick = Math.Max(when.Tick, maxTick);
 
                         switch (mevt)
                         {
@@ -927,9 +928,9 @@ namespace Midifrier
         /// </summary>
         void SetTimer()
         {
-            MidiTimeConverter mt = new(_mdata.Header.DeltaTicksPerQuarterNote, sldBPM.Value);
-            double period = mt.RoundedInternalPeriod();
-            _mmTimer.SetTimer((int)Math.Round(period), MmTimerCallback);
+            double secPerBeat = 60.0 / sldTempo.Value;
+            double msecPerT = 1000 * secPerBeat / MusicTime.TicksPerBeat;
+            _mmTimer.SetTimer(msecPerT > 1.0 ? (int)Math.Round(msecPerT) : 1, MmTimerCallback);
         }
 
         /// <summary>

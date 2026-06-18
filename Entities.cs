@@ -51,13 +51,13 @@ namespace Midifrier
         readonly List<MidiEvent> _events = [];
 
         /// <summary>All the track midi events, key is when to play (scaled/internal time).</summary>
-        readonly Dictionary<long, List<MidiEvent>> _eventsByTime = [];
+        readonly Dictionary<MusicTime, List<MidiEvent>> _eventsByTime = [];
 
         /// <summary>Max length of all sequences in midi ticks.</summary>
         long _maxTick = 0;
 
-        /// <summary>For scaling midi ticks to internal.</summary>
-        readonly MidiTimeConverter _mtc;
+        /// <summary>Midi time resolution.</summary>
+        int _ppq = 0;
         #endregion
 
         #region Properties
@@ -67,8 +67,8 @@ namespace Midifrier
         /// <summary>Standard events - not meta.</summary>
         public int NumStandard { get; private set; } = 0;
 
-        /// <summary>Length of all sequences in scaled/internal time.</summary>
-        public int Length { get { return _mtc.MidiToInternal(_maxTick, true); } }
+        ///// <summary>Length of all sequences in scaled/internal time.</summary>
+        //public int Length { get { return _mtc.MidiToInternal(_maxTick, true); } }
 
         /// <summary>Channels and patches in this track. Index is channel number-1.</summary>
         public ChannelState[] ChannelStates { get; set; } = new ChannelState[MidiDefs.NUM_CHANNELS];
@@ -79,10 +79,10 @@ namespace Midifrier
         /// <summary>
         /// Standard constructor.
         /// </summary>
-        /// <param name="ppq">Resolution</param>
+        /// <param name="ppq">Time resolution</param>
         public Track(int ppq)
         {
-            _mtc = new(ppq);
+            _ppq = ppq;
 
             ChannelStates.ForEach(state =>
             {
@@ -108,13 +108,14 @@ namespace Midifrier
                 ChannelStates[evt.Channel - 1].HasNotes = true;
             }
 
-            // Scale time and add to collections.
-            _events.Add(evt); // all
-
-            int scTime = _mtc.MidiToInternal(evt.AbsoluteTime, false);
-            _eventsByTime.AddLazy(scTime, evt);
-
+            // All by absolute time.
+            _events.Add(evt);
             _maxTick = Math.Max(_maxTick, evt.AbsoluteTime);
+
+            // Scaled time for display and playing.
+            long itime = evt.AbsoluteTime * MusicTime.TicksPerBeat / _ppq;
+            MusicTime scTime = new(itime);
+            _eventsByTime.AddLazy(scTime, evt);
         }
 
         /// <summary>
@@ -135,9 +136,9 @@ namespace Midifrier
         /// </summary>
         /// <param name="when"></param>
         /// <returns></returns>
-        public IEnumerable<MidiEvent> GetEventsWhen(int when)
+        public IEnumerable<MidiEvent> GetEventsWhen(MusicTime when)
         {
-            List<MidiEvent> evts = _eventsByTime.ContainsKey(when) ? _eventsByTime[when] : [];
+            List<MidiEvent> evts = _eventsByTime.TryGetValue(when, out List<MidiEvent>? value) ? value : [];
             return evts;
         }
 

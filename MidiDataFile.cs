@@ -12,6 +12,30 @@ using Ephemera.NBagOfTricks;
 namespace Midifrier
 {
     /// <summary>
+    /// Contents of MThd section.
+    /// </summary>
+    public class Header
+    {
+        /// <summary>What midi type is it.</summary>
+        public int MidiFileType { get; set; } = 0;
+
+        /// <summary>How many tracks.</summary>
+        public int NumTracks { get; set; } = 0;
+
+        /// <summary>Original resolution for all events.</summary>
+        public int DeltaTicksPerQuarterNote { get; set; } = 0;
+
+        /// <summary>
+        /// Readable version.
+        /// </summary>
+        /// <returns></returns>
+        public override string ToString()
+        {
+            return $"MidiFileType:{MidiFileType} NumTracks: {NumTracks} PPQ: {DeltaTicksPerQuarterNote}";
+        }
+    }
+
+    /// <summary>
     /// Represents one complete collection of midi events from a file - standard midi or yamaha style files.
     /// Writes subsets to various output formats.
     /// </summary>
@@ -168,7 +192,7 @@ namespace Midifrier
         Pattern ReadMTrkSimple(BinaryReader br)
         {
             Pattern simplePattern = new();
-            Track currentTrack = new(Header.DeltaTicksPerQuarterNote);
+            Track currentTrack = new();
 
             // Stepping through file.
             uint chunkSize;
@@ -244,7 +268,7 @@ namespace Midifrier
                         if (sectionName == "MTrk")
                         {
                             // One mo time.
-                            currentTrack = new(Header.DeltaTicksPerQuarterNote);
+                            currentTrack = new();
                             ResetState();
                         }
                         else
@@ -287,7 +311,7 @@ namespace Midifrier
             TimeSignatureEvent? timeSigEvt = null;
 
             string _currentMarker = "";
-            Track currentTrack = new(Header.DeltaTicksPerQuarterNote);
+            Track currentTrack = new();
 
             // SInt events for initializing tracks.
             List<MidiEvent> _initEvents = [];
@@ -409,7 +433,7 @@ namespace Midifrier
                 if (currentTrack.NumStandard > 0)
                 {
                     // Finish up.
-                    var p = new Pattern() // Header.DeltaTicksPerQuarterNote)
+                    var p = new Pattern()
                     {
                         Name = currentTrack.Name,
                         Tempo = tempoEvt is null ? DEFAULT_TEMPO : (int)Math.Round(tempoEvt.Tempo),
@@ -418,7 +442,7 @@ namespace Midifrier
                     var endEvent = new MetaEvent(MetaEventType.EndTrack, 0, absoluteTime);
 
                     // Insert track 0.
-                    var trk0 = new Track(Header.DeltaTicksPerQuarterNote);
+                    var trk0 = new Track();
                     if (timeSigEvt is not null) { trk0.AddEvent(timeSigEvt); }
                     if (keySigEvt is not null) { trk0.AddEvent(keySigEvt); }
                     if (tempoEvt is not null) { trk0.AddEvent(tempoEvt); }
@@ -433,7 +457,7 @@ namespace Midifrier
                 }
 
                 // Reset, start new.
-                currentTrack = new(Header.DeltaTicksPerQuarterNote) { Name = _currentMarker };
+                currentTrack = new() { Name = _currentMarker };
                 _initEvents.ForEach(evt => currentTrack.AddEvent(evt));
                 absoluteTime = 0;
             }

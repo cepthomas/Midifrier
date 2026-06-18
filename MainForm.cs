@@ -617,7 +617,7 @@ namespace Midifrier
             int y = lblChLoc.Top;
             lblChLoc.Hide();
 
-//            long maxTick = 0;
+            long maxTick = 0;
 
             for (int i = 0; i < pattern.Tracks.Count; i++)
             {
@@ -626,7 +626,7 @@ namespace Midifrier
                 // Get events for the channels.
                 for (int chInd = 0; chInd < track.ChannelStates.Length; chInd++)
                 {
-                    if (!track.ChannelStates[chInd].HasNotes) continue;
+                    if (!track.ChannelStates[chInd].HasNotes) continue; // skip empties
 
                     int chNum = chInd + 1;
 
@@ -637,8 +637,9 @@ namespace Midifrier
 
                     foreach (var mevt in midiEvents)
                     {
-                        MusicTime when = new(mevt.AbsoluteTime); // >>>>>>>>>>>>>>>>>>>>>>>>> xxx not
-//                        maxTick = Math.Max(when.Tick, maxTick);
+                        // Scale time.
+                        MusicTime when = new(mevt.AbsoluteTime * MusicTime.SubbeatsPerBeat / _mdata.Header.DeltaTicksPerQuarterNote);
+                        maxTick = Math.Max(when.Tick, maxTick);
 
                         switch (mevt)
                         {
@@ -928,8 +929,8 @@ namespace Midifrier
         /// </summary>
         void SetTimer()
         {
-            double secPerBeat = 60.0 / sldTempo.Value;
-            double msecPerT = 1000 * secPerBeat / MusicTime.TicksPerBeat;
+            double secPerBeat = 60.0 / sldBPM.Value;
+            double msecPerT = 1000 * secPerBeat / MusicTime.SubbeatsPerBeat;
             _mmTimer.SetTimer(msecPerT > 1.0 ? (int)Math.Round(msecPerT) : 1, MmTimerCallback);
         }
 

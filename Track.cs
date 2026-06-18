@@ -12,52 +12,15 @@ using Ephemera.MidiLib;
 
 namespace Midifrier
 {
-    /// <summary>
-    /// The contents of a midi file pattern.
-    /// </summary>
-    /// <remarks>
-    /// Normal constructor.
-    /// </remarks>
-    public class Pattern()
-    {
-        #region Properties
-        /// <summary>Pattern name. Empty indicates single pattern aka plain midi file.</summary>
-        public string Name { get; set; } = MidiDataFile.UNNAMED;
-
-        /// <summary>Pattern default tempo.</summary>
-        public int Tempo { get; set; } = MidiDataFile.DEFAULT_TEMPO;
-
-        /// <summary>All the tracks in the pattern.</summary>
-        public List<Track> Tracks { get; set; } = [];
-        #endregion
-
-        /// <summary>
-        /// Readable version.
-        /// </summary>
-        /// <returns></returns>
-        public override string ToString()
-        {
-            return $"{Name} Tracks: {Tracks.Count}";
-        }
-    }
-
-    /// <summary>
-    /// The contents of a midi track.
-    /// </summary>
+    /// <summary>The contents of a midi track.</summary>
     public class Track
     {
         #region Fields
         /// <summary>All the original track midi events.</summary>
         readonly List<MidiEvent> _events = [];
 
-        /// <summary>All the track midi events, key is when to play (scaled/internal time).</summary>
-        readonly Dictionary<MusicTime, List<MidiEvent>> _eventsByTime = [];
-
         /// <summary>Max length of all sequences in midi ticks.</summary>
         long _maxTick = 0;
-
-        /// <summary>Midi time resolution.</summary>
-        int _ppq = 0;
         #endregion
 
         #region Properties
@@ -66,9 +29,6 @@ namespace Midifrier
 
         /// <summary>Standard events - not meta.</summary>
         public int NumStandard { get; private set; } = 0;
-
-        ///// <summary>Length of all sequences in scaled/internal time.</summary>
-        //public int Length { get { return _mtc.MidiToInternal(_maxTick, true); } }
 
         /// <summary>Channels and patches in this track. Index is channel number-1.</summary>
         public ChannelState[] ChannelStates { get; set; } = new ChannelState[MidiDefs.NUM_CHANNELS];
@@ -79,11 +39,8 @@ namespace Midifrier
         /// <summary>
         /// Standard constructor.
         /// </summary>
-        /// <param name="ppq">Time resolution</param>
-        public Track(int ppq)
+        public Track()
         {
-            _ppq = ppq;
-
             ChannelStates.ForEach(state =>
             {
                 state.HasNotes = false;
@@ -108,14 +65,9 @@ namespace Midifrier
                 ChannelStates[evt.Channel - 1].HasNotes = true;
             }
 
-            // All by absolute time.
+            // All events -  absolute time.
             _events.Add(evt);
             _maxTick = Math.Max(_maxTick, evt.AbsoluteTime);
-
-            // Scaled time for display and playing.
-            long itime = evt.AbsoluteTime * MusicTime.TicksPerBeat / _ppq;
-            MusicTime scTime = new(itime);
-            _eventsByTime.AddLazy(scTime, evt);
         }
 
         /// <summary>
@@ -125,21 +77,10 @@ namespace Midifrier
         /// <returns>Enumerator sorted by absolute time.</returns>
         public IEnumerable<MidiEvent> GetFilteredEvents(IEnumerable<int> channelNumbers)
         {
-            IEnumerable<MidiEvent> descs = channelNumbers.Count() > 0 ?
+            IEnumerable<MidiEvent> descs = channelNumbers.Any() ?
                 _events.Where(e => channelNumbers.Contains(e.Channel)) ?? [] :
                 _events.AsEnumerable();
             return descs.OrderBy(e => e.AbsoluteTime);
-        }
-
-        /// <summary>
-        /// Get all events at a specific scaled time.
-        /// </summary>
-        /// <param name="when"></param>
-        /// <returns></returns>
-        public IEnumerable<MidiEvent> GetEventsWhen(MusicTime when)
-        {
-            List<MidiEvent> evts = _eventsByTime.TryGetValue(when, out List<MidiEvent>? value) ? value : [];
-            return evts;
         }
 
         /// <summary>
@@ -162,29 +103,5 @@ namespace Midifrier
             return s;
         }
         #endregion
-    }
-
-    /// <summary>
-    /// Contents of MThd section.
-    /// </summary>
-    public class Header
-    {
-        /// <summary>What midi type is it.</summary>
-        public int MidiFileType { get; set; } = 0;
-
-        /// <summary>How many tracks.</summary>
-        public int NumTracks { get; set; } = 0;
-
-        /// <summary>Original resolution for all events.</summary>
-        public int DeltaTicksPerQuarterNote { get; set; } = 0;
-
-        /// <summary>
-        /// Readable version.
-        /// </summary>
-        /// <returns></returns>
-        public override string ToString()
-        {
-            return $"MidiFileType:{MidiFileType} NumTracks: {NumTracks} PPQ: {DeltaTicksPerQuarterNote}";
-        }
     }
 }

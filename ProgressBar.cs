@@ -10,8 +10,6 @@ using Ephemera.NBagOfTricks;
 using System.Windows.Forms.VisualStyles;
 using Ephemera.MidiLib;
 
-//TODO1 put in midilib or???
-
 
 namespace Midifrier
 {

@@ -11,38 +11,53 @@ using Ephemera.NBagOfTricks;
 
 namespace Midifrier
 {
+    ///// <summary>Contents of the midi file MThd section.</summary>
+    //public class HeaderX // >> make into record
+    //{
+    //    /// <summary>What midi type is it.</summary>
+    //    public int MidiFileType { get; set; } = 0;
+    //    /// <summary>How many tracks.</summary>
+    //    public int NumTracks { get; set; } = 0;
+    //    /// <summary>Original resolution for all events.</summary>
+    //    public int DeltaTicksPerQuarterNote { get; set; } = 0;
+    //    /// <summary>Readable version.</summary>
+    //}
+
+    ///// <summary>The contents of a midi file pattern.</summary>
+    //public class Pattern()
+    //{
+    //    #region Properties
+    //    /// <summary>Pattern name. Empty indicates single pattern aka plain midi file.</summary>
+    //    public string Name { get; set; } = MidiDataFile.UNNAMED;
+    //    /// <summary>Pattern default tempo.</summary>
+    //    public int Tempo { get; set; } = MidiDataFile.DEFAULT_TEMPO;
+    //    /// <summary>All the tracks in the pattern.</summary>
+    //    public List<Track> Tracks { get; set; } = [];
+    //    #endregion
+    //}
+
+
+
     /// <summary>
-    /// Contents of MThd section.
-    /// </summary>
-    public class Header
-    {
-        /// <summary>What midi type is it.</summary>
-        public int MidiFileType { get; set; } = 0;
-
-        /// <summary>How many tracks.</summary>
-        public int NumTracks { get; set; } = 0;
-
-        /// <summary>Original resolution for all events.</summary>
-        public int DeltaTicksPerQuarterNote { get; set; } = 0;
-
-        /// <summary>
-        /// Readable version.
-        /// </summary>
-        /// <returns></returns>
-        public override string ToString()
-        {
-            return $"MidiFileType:{MidiFileType} NumTracks: {NumTracks} PPQ: {DeltaTicksPerQuarterNote}";
-        }
-    }
-
-    /// <summary>
-    /// Represents one complete collection of midi events from a file - standard midi or yamaha style files.
-    /// Writes subsets to various output formats.
+    /// Processes and contains a massaged version of the midi/style file contents suitable for editing.
     /// </summary>
     public class MidiDataFile
     {
+        #region Types
+        /// <summary>Contents of the midi file MThd section.</summary>
+        public record Header(int MidiFileType, int NumTracks, int DeltaTicksPerQuarterNote)
+        { public override string ToString() { return $"MidiFileType:{MidiFileType} NumTracks:{NumTracks} PPQ:{DeltaTicksPerQuarterNote}"; } }
+
+        /// <summary>The contents of a midi file pattern.</summary>
+        public record Pattern(string Name, int Tempo, List<Track> Tracks)
+        { public override string ToString() { return $"{Name} Tracks: {Tracks.Count}"; } }
+
+
+        #endregion
+
+
         #region Fields
-        /// <summary>All the file pattern sections.</summary>
+        /// <summary>All the file pattern sections. Plain midi files will have one only.</summary>
         List<Pattern> _patterns = [];
         #endregion
 
@@ -68,7 +83,7 @@ namespace Midifrier
         public string StyleName { get; private set; } = "";
 
         /// <summary>Style file header section.</summary>
-        public Header Header { get; private set; } = new();
+        public Header var { get; private set; } //= new();
 
         /// <summary>Include events like controller changes, pitch wheel, ...</summary>
         public bool IncludeNoisy { get; set; } = false;
@@ -105,10 +120,10 @@ namespace Midifrier
                         // Read the midi header section.
                         ReadMThd(br);
 
-                        Dump($"{Header}");
+                        Dump($"{var}");
 
                         // Sanity check.
-                        if (isStyleFile && (Header.MidiFileType != 0 || Header.NumTracks != 1))
+                        if (isStyleFile && (var.MidiFileType != 0 || var.NumTracks != 1))
                         {
                             throw new InvalidOperationException("Not a valid style file");
                         }
@@ -178,10 +193,11 @@ namespace Midifrier
         {
             uint chunkSize = ReadStream(br, 4);
             if (chunkSize != 6) { throw new InvalidOperationException("Unexpected header chunk length"); }
+            var midiFileType = (int)ReadStream(br, 2);
+            var numTracks = (int)ReadStream(br, 2);
+            var deltaTicksPerQuarterNote = (int)ReadStream(br, 2);
 
-            Header.MidiFileType = (int)ReadStream(br, 2);
-            Header.NumTracks = (int)ReadStream(br, 2);
-            Header.DeltaTicksPerQuarterNote = (int)ReadStream(br, 2);
+            var = new(midiFileType, numTracks, deltaTicksPerQuarterNote);
         }
 
         /// <summary>
@@ -191,7 +207,7 @@ namespace Midifrier
         /// <returns>New tracks</returns>
         Pattern ReadMTrkSimple(BinaryReader br)
         {
-            Pattern simplePattern = new();
+            Pattern simplePattern = new(UNNAMED, DEFAULT_TEMPO, []);
             Track currentTrack = new();
 
             // Stepping through file.
@@ -433,11 +449,7 @@ namespace Midifrier
                 if (currentTrack.NumStandard > 0)
                 {
                     // Finish up.
-                    var p = new Pattern()
-                    {
-                        Name = currentTrack.Name,
-                        Tempo = tempoEvt is null ? DEFAULT_TEMPO : (int)Math.Round(tempoEvt.Tempo),
-                    };
+                    Pattern p = new(currentTrack.Name, tempoEvt is null ? DEFAULT_TEMPO : (int)Math.Round(tempoEvt.Tempo), []);
 
                     var endEvent = new MetaEvent(MetaEventType.EndTrack, 0, absoluteTime);
 

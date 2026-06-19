@@ -8,6 +8,7 @@ using System.Windows.Forms;
 using NAudio.Midi;
 using Ephemera.NBagOfTricks;
 using Ephemera.MidiLib;
+using static Midifrier.MidiDataFile;
 
 
 namespace Midifrier
@@ -106,64 +107,6 @@ namespace Midifrier
 
             // Use NAudio function to create out file.
             MidiFile.Export(fn, outColl);
-        }
-
-        /// <summary>
-        /// Export the contents as a text piano roll. TODO1
-        /// </summary>
-        /// <param name="fn">Where to boss?</param>
-        /// <param name="pattern">Specific pattern.</param>
-        /// <param name="channels">Specific channnels or all if empty.</param>
-        /// <param name="header">File header data to include.</param>
-        public static void ExportPianoRoll(string fn, Pattern pattern, List<int> channels, Header header)
-        {
-
-            // /// Get all events at a specific scaled time.
-            // public IEnumerable<MidiEvent> GetEventsWhen(int when)
-            // {
-            //     List<MidiEvent> evts = _eventsByTime.ContainsKey(when) ? _eventsByTime[when] : [];
-            //     return evts;
-            // }
-
-            /***********************************************
-
-            local example_seq =
-            {
-                -- | beat 0 | beat 1 | beat 2 | beat 3 | beat 4 | beat 5 | beat 6 | beat 7 |,  WHAT_TO_PLAY
-                -- |........|........|........|........|........|........|........|........|
-                { "|6-------|--      |        |        |7-------|--      |        |        |", "G4.m7" },
-                { "|7-------|--      |        |        |7-------|--      |        |        |",  84 },
-                { "|        |        |        |5---    |        |        |        |5-8---  |", "D6" },
-            }
-
-            local drums_verse =
-            {
-                -- |........|........|........|........|........|........|........|........|
-                { "|8       |        |8       |        |8       |        |8       |        |", bdrum },
-                { "|    8   |        |    8   |    8   |    8   |        |    8   |    8   |", snare },
-                { "|        |     8 8|        |     8 8|        |     8 8|        |     8 8|", hhcl }
-            }
-
-            ===>>>
-
-            -- channel music1 i.e.  G4.m7
-            -- | beat 0 | beat 1 | beat 2 | beat 3 | beat 4 | beat 5 | beat 6 | beat 7 |
-            41 |........|..      |        |        |........|..      |        |        | 
-            42 |........|..      |        |        |........|..      |        |        | 
-            43 |........|..      |        |        |........|..      |        |        | 
-            44 |........|..      |        |        |........|..      |        |        | 
-
-
-            -- channel drums
-            10 |.       |        |.       |        |.       |        |.       |        |
-            11 |    .   |        |    .   |    .   |    .   |        |    .   |    .   |
-            12 |        |     . .|        |     . .|        |     . .|        |     . .|
-
-            */
-
-            // // Selections.
-            // List<int> channelNumbers = [.. channels.Select(cc => cc.ChannelNumber)];
-            // //channels.ForEach(ch => { contentText.Add($"0,0,Patch,0,{ch.Patch},{ch.PatchName}"); });
         }
     }
 }

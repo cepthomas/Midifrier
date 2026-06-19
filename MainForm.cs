@@ -14,6 +14,7 @@ using NAudio.Midi;
 using Ephemera.NBagOfTricks;
 using Ephemera.NBagOfUis;
 using Ephemera.MidiLib;
+using static Midifrier.MidiDataFile;
 
 
 namespace Midifrier
@@ -45,9 +46,6 @@ namespace Midifrier
 
         /// <summary>Drums may be on unusual channel.</summary>
         int _drumChannel = MidiDefs.DEFAULT_DRUM_CHANNEL;
-
-        /// <summary>Not used currently.</summary>
-        Pattern? _currentPattern = null;
         #endregion
 
         #region Lifecycle
@@ -77,7 +75,7 @@ namespace Midifrier
             Size = new Size(_settings.FormGeometry.Width, _settings.FormGeometry.Height);
 
             // Other inits.
-            KeyPreview = true; // for routing kbd strokes through OnKeyDown - TODO1 also checks listbox, they're fighting.
+            KeyPreview = true; // for routing kbd strokes through OnKeyDown - TODO also checks listbox, they're fighting.
             SetText();
 
             // The text output.
@@ -609,8 +607,6 @@ namespace Midifrier
                 _logger.Error($"Invalid pattern!");
                 return;
             }
-
-            _currentPattern = pattern;
 
             // Create the new controls.
             int x = lblChLoc.Left;

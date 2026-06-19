@@ -22,7 +22,7 @@ namespace Midifrier.Test
     {
         // This needs DEV_PATH set, or hack to taste.
         public static string InputDir = Path.Join(Environment.GetEnvironmentVariable("DEV_PATH"), "Misc", "TestAudioFiles");
-        public static string OutputDir = Path.Join(MiscUtils.GetSourcePath(), "temp");
+        public static string OutputDir = Path.Join(MiscUtils.GetSourcePath(), "out");
 
         /// <summary>Test entry.</summary>
         public static void Run()

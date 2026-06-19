@@ -1,25 +1,49 @@
 # Midifrier
 
-- A windows tool for playing and editing plain midi files and Yamaha style files.
-- This is primarily intended to be used for auditioning parts for use in compositions created in a real DAW.
-- Because the windows multimedia timer has inadequate accuracy for midi notes, resolution is limited to 32nd notes.
-- Minimal attention has been paid to aesthetics over functionality.
-- Midi play devices are limited to the ones available on your box.
-- Since midi files and NAudio use 1-based channel numbers, so does this application, except when used as an array index.
-- Tons of styles and info at https://psrtutorial.com/.
-- For more info and detail see [MidiLib](https://github.com/cepthomas/MidiLib).
-- Requires VS2022 and .NET8.
+- Read and play midi files.
+- Read and play the patterns in Yamaha style files.
+- Remap channel patches.
+- Export subsets of input files.
 
-# Usage
+- VS2022 and .NET8.
 
-- The simple UI shows a tree directory navigator on the left and standard audio transport family of controls on the right.
-- If midi file type is `1`, all tracks are combined. Because.
-- Opens style files and plays the individual sections.
-- Export style files as their component parts.
-- Export current selection(s) and channel(s) to a new midi file. Useful for snipping style patterns.
-- Some midi files don't use 10 for drum channel so there is an option to remap.
+
+## Usage
+
+- The simple ![UI](UI.jpg) shows a tree directory navigator on the left and standard audio transport
+  family of controls on the right.
+- Open style files and play the individual patterns.
+- Export current pattern(s) and channel(s) to new midi files (type 1). Useful for snipping style patterns.
+    - If input is a plain midi file, output will be 1 pattern, with 1-N tracks, each with 1-N channels.
+    - If input is a midi style file, output will be 1-N patterns, each with 1 track, each with 1-N channels.
+- Export to csv.
+- Some midi files (particuarly single instrument) don't use 10 for drum channel so there is an option to remap.
 - Click on the settings icon to edit your options. Note that not all midi options pertain to this application.
 - In the log view: C for clear, W for word wrap toggle.
+
+
+## Style Files
+Style files contain multiple sections, each of which describes a pattern.
+
+The order of the sections in the file is at follows:
+- Midi section (type 0)
+  - MThd
+  - MTrk
+  - SFF1/2
+  - SInt
+  - Markers - delineate the pattern notes
+  - EndTrack
+- CASM section - proprietary logic for using the patterns - ignored
+- OTS (One Touch Setting) section - ignored
+- MDB (Music Finder) section - ignored
+- MH section - ignored
+
+Detail is in http://www.wierzba.homepage.t-online.de/StyleFileDescription_v21.pdf.
+
+There's tons of styles and technical info at https://psrtutorial.com/.
+
+And http://www.jososoft.dk/yamaha/articles.htm.
+
 
 # External Components
 

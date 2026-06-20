@@ -1,7 +1,7 @@
 # Midifrier
 
-- Read and play midi files.
-- Read and play the patterns in Yamaha style files.
+- Open and play midi files.
+- Open and play the patterns in Yamaha style files.
 - Remap channel patches.
 - Export subsets of input files.
 
@@ -10,13 +10,16 @@
 
 ## Usage
 
-- The simple ![UI](UI.jpg) shows a tree directory navigator on the left and standard audio transport
+![UI](UI.jpg)
+
+- The simple shows a tree directory navigator on the left and standard audio transport
   family of controls on the right.
 - Open style files and play the individual patterns.
 - Export current pattern(s) and channel(s) to new midi files (type 1). Useful for snipping style patterns.
     - If input is a plain midi file, output will be 1 pattern, with 1-N tracks, each with 1-N channels.
     - If input is a midi style file, output will be 1-N patterns, each with 1 track, each with 1-N channels.
-- Export to csv.
+- Export to csv or readable text.
+- Dump verbatim file contents.
 - Some midi files (particuarly single instrument) don't use 10 for drum channel so there is an option to remap.
 - Click on the settings icon to edit your options. Note that not all midi options pertain to this application.
 - In the log view: C for clear, W for word wrap toggle.

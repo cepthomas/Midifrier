@@ -188,7 +188,7 @@ namespace Midifrier
         /// <summary>
         /// General state management.
         /// </summary>
-        void UpdateState(ExplorerState state) 
+        void UpdateState(ExplorerState state)
         {
             // Unhook.
             btnPlay.CheckedChanged -= Play_Click;
@@ -810,6 +810,14 @@ namespace Midifrier
                             }
                             break;
 
+                        case "export text":
+                            {
+                                var newfn = MakeExportFileName(_settings.ExportFolder, _mdata.FileName, pattern.Name, "txt");
+                                MidiExport.ExportText(newfn, pattern, channels, _mdata.Header);
+                                _logger.Info($"Export midi to {newfn}");
+                            }
+                            break;
+
                         default:
                             _logger.Error($"Ooops: {stext}");
                             break;
@@ -820,6 +828,17 @@ namespace Midifrier
             {
                 _logger.Error($"{ex.Message}");
             }
+        }
+
+        /// <summary>
+        /// Dump current file to text.
+        /// </summary>
+        void DumpClick(object sender, System.EventArgs e)
+        {
+            var dumpfn = MakeExportFileName(_settings.ExportFolder, _mdata.FileName, "_dump", "txt");
+            var t = MidiExport.Dump(_mdata.FileName);
+            File.WriteAllLines(dumpfn, t);
+            _logger.Info($"Dump to {dumpfn}");
         }
 
         /// <summary>

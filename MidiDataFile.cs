@@ -57,6 +57,9 @@ namespace Midifrier
 
         /// <summary>Include events like controller changes, pitch wheel, ...</summary>
         public bool IncludeNoisy { get; set; } = false;
+
+        /// <summary>Other stuff that may appear in the input file.</summary>
+        public List<string> Extra { get; set; } = [];
         #endregion
 
         #region Public functions
@@ -104,7 +107,7 @@ namespace Midifrier
                         _patterns = isStyleFile ? ReadMTrkStyle(br) : [ReadMTrkSimple(br)];
                         break;
 
-                    // Style details.
+                    // Style detail sections. Skip for now.
                     case "CASM":
                     case "CSEG":
                     case "Sdec":
@@ -112,13 +115,15 @@ namespace Midifrier
                     case "Cntt":
                     case "OTSc":
                     case "FNRc":
-                        // Skip others for now.
-                        uint chunkSize2 = ReadStream(br, 4);
-                        br.ReadBytes((int)chunkSize2);
+                        uint chunkSize = ReadStream(br, 4);
+                        Extra.Add($"{sectionName} {chunkSize}");
+                        br.ReadBytes((int)chunkSize);
                         break;
 
                     default:
                         // Sometimes there's other stuff at the end of the file - ignore.
+                        long sz = br.BaseStream.Length - br.BaseStream.Position;
+                        Extra.Add($"Remainder {sz}");
                         done = true;
                         break;
                 }

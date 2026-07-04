@@ -147,15 +147,12 @@ namespace Midifrier
         /// <returns>The pattern. Throws if name not found.</returns>
         public Pattern GetPattern(string name)
         {
-            var pinfo = _patterns.Where(p => p.Name == name);
-            if (pinfo is not null && pinfo.Any())
-            {
-                return pinfo.First();
-            }
-            else
+            var pinfo = _patterns.Where(p => p.Name == name).FirstOrDefault();
+            if (pinfo is null)
             {
                 throw new InvalidOperationException($"Invalid pattern name [{name}]");
             }
+            return pinfo;
         }
         #endregion
 

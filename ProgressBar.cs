@@ -42,9 +42,11 @@ namespace Midifrier
         public Font FontSmall { get; set; } = new("Microsoft Sans Serif", 10, FontStyle.Regular, GraphicsUnit.Point, 0);
 
         /// <summary>Drawing the active elements of a control.</summary>
+        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
         public Color DrawColor { get; set; } = Color.Red;
 
         /// <summary>Keep going at end.</summary>
+        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
         public bool DoLoop { get; set; } = false;
 
         /// <summary>Convenience for readability.</summary>

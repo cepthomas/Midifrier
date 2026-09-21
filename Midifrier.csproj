@@ -5,7 +5,7 @@
         <OutputType>Exe</OutputType>
         <UseWindowsForms>true</UseWindowsForms>
         <OutputPath>bin\</OutputPath>
-        <TargetFramework>net8.0-windows</TargetFramework>
+        <TargetFramework>net10.0-windows</TargetFramework>
 
         <ApplicationIcon>zebra.ico</ApplicationIcon>
         <RootNamespace>Midifrier</RootNamespace>
@@ -47,8 +47,7 @@
     </ItemGroup>
 
     <ItemGroup>
-        <PackageReference Include="NAudio" Version="2.1.0" />
-        <PackageReference Include="System.Drawing.Common" Version="6.0.0" />
+        <PackageReference Include="NAudio" Version="3.1.0" />
     </ItemGroup>
 
     <ItemGroup>

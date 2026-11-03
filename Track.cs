@@ -31,7 +31,7 @@ namespace Midifrier
         public int NumStandard { get; private set; } = 0;
 
         /// <summary>Channels and patches in this track. Index is channel number-1.</summary>
-        public ChannelState[] ChannelStates { get; set; } = new ChannelState[MidiDefs.NUM_CHANNELS];
+        public ChannelState[] ChannelStates { get; set; } = new ChannelState[MidiDefs.MAX_CHANNEL];
         public record struct ChannelState(bool HasNotes, int Patch);
         #endregion
 

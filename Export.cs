@@ -132,8 +132,8 @@ namespace Midifrier
                         case TempoEvent evt: parts.AddRange([evt.Tempo, evt.MicrosecondsPerQuarterNote]); break;
                         case TimeSignatureEvent evt: parts.AddRange([evt.TimeSignature, ""]); break;
                         case KeySignatureEvent evt: parts.AddRange([evt.SharpsFlats, evt.MajorMinor]); break;
-                        case PatchChangeEvent evt: parts.AddRange([evt.Patch, MidiDefs.Instruments.GetName(evt.Patch)]); break; // TODO doesn't handle alternate banks
-                        case ControlChangeEvent evt: parts.AddRange([evt.Controller, MidiDefs.Controllers.GetName((int)evt.Controller)]); break;
+                        case PatchChangeEvent evt: parts.AddRange([evt.Patch, MidiDefs.Instruments.GetName(evt.Patch) ?? $"Patch{evt.Patch}"]); break; // TODO doesn't handle alternate banks
+                        case ControlChangeEvent evt: parts.AddRange([evt.Controller, MidiDefs.Controllers.GetName((int)evt.Controller) ?? $"Controller{evt.Controller}"]); break;
                         case PitchWheelChangeEvent evt: /*parts.AddRange([evt.Pitch, ""]);*/ break;
                         case TextEvent evt: parts.AddRange([evt.Text, ""]); break;
                         // Others as needed: TrackSequenceNumberEvent, ChannelAfterTouchEvent, SysexEvent,

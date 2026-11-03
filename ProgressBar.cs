@@ -16,7 +16,7 @@ namespace Midifrier
     /// <summary>The control.</summary>
     [DesignTimeVisible(true)]
     [Browsable(false)]
-    public class ProgressBar : UserControl
+    public class ProgressBar : UserControl //TODO1 use lib?
     {
         #region Fields
         /// <summary>For tracking mouse moves.</summary>

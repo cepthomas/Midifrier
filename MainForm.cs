@@ -35,9 +35,6 @@ namespace Midifrier
         /// <summary>Current file.</summary>
         string _fn = "";
 
-        /// <summary>All the channel controls.</summary>
-        readonly List<ChannelControl> _channelControls = [];
-
         /// <summary>The fast timer.</summary>
         readonly MmTimerEx _mmTimer = new();
 
@@ -46,6 +43,9 @@ namespace Midifrier
 
         /// <summary>Drums may be on unusual channel.</summary>
         int _drumChannel = MidiDefs.DEFAULT_DRUM_CHANNEL;
+
+        /// <summary>Shorthand.</summary>
+        readonly ChannelManager CM = ChannelManager.Instance;
         #endregion
 
         #region Lifecycle
@@ -107,7 +107,7 @@ namespace Midifrier
             sldBPM.Value = MidiDataFile.DEFAULT_TEMPO;
 
             // Init channels and selectors.
-            for (int i = 1; i <= MidiDefs.NUM_CHANNELS; i++)
+            for (int i = MidiDefs.MIN_CHANNEL; i <= MidiDefs.MAX_CHANNEL; i++)
             {
                 cmbDrumChannel.Items.Add(i);
             }
@@ -115,7 +115,7 @@ namespace Midifrier
 
             // Hook up some simple handlers.
             btnRewind.Click += (_, __) => UpdateState(ExplorerState.Rewind);
-            btnKillMidi.Click += (_, __) => MidiManager.Instance.Kill();
+            btnKillMidi.Click += (_, __) => CM.KillAll();
             sldBPM.ValueChanged += (_, __) => SetTimer();
             btnAutoplay.Click += (_, __) => _settings.Autoplay = btnAutoplay.Checked;
             btnLoop.Click += (_, __) => _settings.Loop = btnLoop.Checked;
@@ -133,7 +133,7 @@ namespace Midifrier
         protected override void OnLoad(EventArgs e)
         {
             // Set up output device.
-            if (MidiManager.Instance.GetOutputDevice(_settings.OutputDevice) is null)
+            if (CM.GetOutputDevice(_settings.OutputDevice) is null)
             {
                 _logger.Error($"Invalid midi output device:{_settings.OutputDevice}");
             }
@@ -164,13 +164,14 @@ namespace Midifrier
         {
             // Stop and destroy mmtimer.
             Stop();
-            MidiManager.Instance.Kill();
+            CM.KillAll();
 
             // Resources.
             _mmTimer.Stop();
             _mmTimer.Dispose();
-            DestroyControls();
-            MidiManager.Instance.DestroyDevices();
+            //DestroyControls();
+            //CM.DestroyDevices();
+            CM.Destroy(Controls);
 
             // Wait a bit in case there are some lingering events.
             System.Threading.Thread.Sleep(100);
@@ -406,7 +407,7 @@ namespace Midifrier
         public void Stop()
         {
             _mmTimer.Stop();
-            MidiManager.Instance.Kill();
+            CM.KillAll();
         }
 
         /// <summary>
@@ -445,43 +446,35 @@ namespace Midifrier
         /// <returns>True if sequence completed.</returns>
         public bool DoNextStep()
         {
-            // Update all channels. Any soloes?
-            bool anySolo = _channelControls.Where(c => c.State == ChannelState.Solo).Any();
-
             // Process each channel.
-            foreach (var cc in _channelControls)
+            foreach (var ch in CM.GetOutputChannels())
             {
-                var ch = cc!.BoundChannel!;
+                // Process any sequence steps.
+                var playEvents = ch.Events.Get(progBar.Current);
 
-                // Look for events to send. Any explicit solos?
-                if (cc.State == ChannelState.Solo || (!anySolo && cc.State == ChannelState.Normal))
+                foreach (var mevt in playEvents)
                 {
-                    // Process any sequence steps.
-                    var playEvents = ch.Events.Get(progBar.Current);
-
-                    foreach (var mevt in playEvents)
+                    switch (mevt)
                     {
-                        switch (mevt)
-                        {
-                            case NoteOn evt:
-                                // Adjust volume.
-                                evt.Velocity = MathUtils.Constrain((int)(evt.Velocity * ch.Volume), 0, MidiDefs.MAX_MIDI);
-                                // Adjust channel.
-                                evt.ChannelNumber = evt.ChannelNumber == _drumChannel ? MidiDefs.DEFAULT_DRUM_CHANNEL : evt.ChannelNumber;
-                                ch.Send(evt);
-                                break;
+                        case NoteOn evt:
+                            // Adjust volume.
+                            var cc = CM.GetControl(ch);
+                            evt.Velocity = MathUtils.Constrain((int)(evt.Velocity * cc!.Volume), 0, MidiDefs.MAX_MIDI);
+                            // Adjust channel.
+                            evt.ChannelNumber = evt.ChannelNumber == _drumChannel ? MidiDefs.DEFAULT_DRUM_CHANNEL : evt.ChannelNumber;
+                            ch.Send(evt);
+                            break;
 
-                            case NoteOff evt:
-                                // Adjust channel.
-                                evt.ChannelNumber = evt.ChannelNumber == _drumChannel ? MidiDefs.DEFAULT_DRUM_CHANNEL : evt.ChannelNumber;
-                                ch.Send(evt);
-                                break;
+                        case NoteOff evt:
+                            // Adjust channel.
+                            evt.ChannelNumber = evt.ChannelNumber == _drumChannel ? MidiDefs.DEFAULT_DRUM_CHANNEL : evt.ChannelNumber;
+                            ch.Send(evt);
+                            break;
 
-                            default:
-                                // Everything else as is.
-                                ch.Send(mevt);
-                                break;
-                        }
+                        default:
+                            // Everything else as is.
+                            ch.Send(mevt);
+                            break;
                     }
                 }
             }
@@ -514,41 +507,6 @@ namespace Midifrier
         }
 
         /// <summary>
-        /// The user clicked something in one of the player controls.
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        void Control_ChannelChange(object? sender, ChannelChangeEventArgs e)
-        {
-            var cc = sender as ChannelControl;
-            var channel = cc!.BoundChannel!;
-
-            if (e.State)
-            {
-                switch (cc.State)
-                {
-                    case ChannelState.Normal:
-                        break;
-
-                    case ChannelState.Solo:
-                        // Mute any other non-solo channels.
-                        MidiManager.Instance.OutputChannels.ForEach(ch =>
-                        {
-                            if (channel.ChannelNumber != ch.ChannelNumber && cc.State != ChannelState.Solo)
-                            {
-                                MidiManager.Instance.Kill(channel);
-                            }
-                        });
-                        break;
-
-                    case ChannelState.Mute:
-                        MidiManager.Instance.Kill(channel);
-                        break;
-                }
-            }
-        }
-
-        /// <summary>
         /// All about me.
         /// </summary>
         void About_Click(object? sender, EventArgs e)
@@ -571,25 +529,6 @@ namespace Midifrier
         }
         #endregion
 
-        #region Channel Controls
-        /// <summary>
-        /// Destroy controls.
-        /// </summary>
-        void DestroyControls()
-        {
-            MidiManager.Instance.Kill();
-
-            // Clean out our current elements.
-            _channelControls.ForEach(c =>
-            {
-                c.ChannelChange -= Control_ChannelChange;
-                Controls.Remove(c);
-                c.Dispose();
-            });
-            _channelControls.Clear();
-        }
-        #endregion
-
         #region Process patterns
         /// <summary>
         /// Load the requested pattern, convert units, and create controls.
@@ -598,8 +537,7 @@ namespace Midifrier
         void LoadPattern(Pattern pattern)
         {
             Stop();
-            DestroyControls();
-            MidiManager.Instance.DestroyChannels();
+            CM.Destroy(Controls);
 
             // Load the new one.
             if (pattern is null)
@@ -670,25 +608,24 @@ namespace Midifrier
                     }
 
                     // Make new channel. Attach corresponding events.
-                    var channel = MidiManager.Instance.OpenOutputChannel(_settings.OutputDevice, chNum, $"ch{chNum}", track.ChannelStates[chNum].Patch);
-                    channel.Events = chEvents;
+                    var chan = CM.OpenOutputChannel(_settings.OutputDevice, chNum, track.ChannelStates[chNum].Patch);
+                    chan.Events = chEvents;
 
                     // Make new control and bind to channel.
-                    ChannelControl control = new()
+                    ChannelControl ctrl = new()
                     {
                         Location = new(x, y),
                         BorderStyle = BorderStyle.FixedSingle,
                         Anchor = AnchorStyles.Right | AnchorStyles.Top,
-                        BoundChannel = channel,
                         DrawColor = _settings.DrawColor,
-                        Options = DisplayOptions.SoloMute
+                        Info = ($"Ch {chNum}", $"{chan}")
                     };
-                    control.ChannelChange += Control_ChannelChange;
-                    Controls.Add(control);
-                    _channelControls.Add(control);
+                    //control.InfoClick += ChannelControl_InfoClick;
+                    Controls.Add(ctrl);
+                    CM.Bind(chan, ctrl);
 
                     // Adjust positioning.
-                    y += control.Height + 5;
+                    y += ctrl.Height + 5;
                 }
             }
 
@@ -780,12 +717,8 @@ namespace Midifrier
                 }
 
                 // Get selected channels.
-                var selControls = _channelControls.Where(cc => cc.Selected).ToList();
-                if (!selControls.Any()) // grab them all.
-                {
-                    _channelControls.ForEach(cc => selControls.Add(cc));
-                }
-                List<int> channels = [.. selControls.Select(cc => cc.BoundChannel.ChannelNumber)];
+                var selChannels = CM.GetOutputChannels(true);
+                List<int> channelNumbers = [.. selChannels.Select(ch => ch.ChannelNumber)];
 
                 // Selected patterns.
                 foreach (var p in patternNames)
@@ -797,7 +730,7 @@ namespace Midifrier
                         case "export csv":
                             {
                                 var newfn = MakeExportFileName(_settings.ExportFolder, _mdata.FileName, pattern.Name, "csv");
-                                MidiExport.ExportCsv(newfn, pattern, channels, _mdata.Header);
+                                MidiExport.ExportCsv(newfn, pattern, channelNumbers, _mdata.Header);
                                 _logger.Info($"Exported to {newfn}");
                             }
                             break;
@@ -805,7 +738,7 @@ namespace Midifrier
                         case "export midi":
                             {
                                 var newfn = MakeExportFileName(_settings.ExportFolder, _mdata.FileName, pattern.Name, "mid");
-                                MidiExport.ExportMidi(newfn, pattern, channels, _mdata.Header);
+                                MidiExport.ExportMidi(newfn, pattern, channelNumbers, _mdata.Header);
                                 _logger.Info($"Export midi to {newfn}");
                             }
                             break;
@@ -813,7 +746,7 @@ namespace Midifrier
                         case "export text":
                             {
                                 var newfn = MakeExportFileName(_settings.ExportFolder, _mdata.FileName, pattern.Name, "txt");
-                                MidiExport.ExportText(newfn, pattern, channels, _mdata.Header);
+                                MidiExport.ExportText(newfn, pattern, channelNumbers, _mdata.Header);
                                 _logger.Info($"Export midi to {newfn}");
                             }
                             break;

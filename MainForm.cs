@@ -16,7 +16,7 @@ using Ephemera.NBagOfUis;
 using Ephemera.MidiLib;
 using static Midifrier.MidiDataFile;
 
-
+solo/mute   patch name
 namespace Midifrier
 {
     public partial class MainForm : Form
@@ -92,6 +92,9 @@ namespace Midifrier
             btnAutoplay.Checked = _settings.Autoplay;
             btnLoop.Checked = _settings.Loop;
             progBar.DrawColor = _settings.DrawColor;
+            //progBar.SelectedColor =
+            progBar.Snap = SnapType.Beat; //FourBar
+            progBar.GridLines = 4 * MusicTime.SubbeatsPerBar;
 
             // FilTree settings.
             ftree.RootDirs = _settings.RootDirs;
@@ -104,6 +107,9 @@ namespace Midifrier
 
             sldBPM.Resolution = _settings.TempoResolution;
             sldBPM.DrawColor = _settings.DrawColor;
+            sldBPM.Maximum = 200;
+            sldBPM.Minimum = 50;
+            sldBPM.Resolution = 5;
             sldBPM.Value = MidiDataFile.DEFAULT_TEMPO;
 
             // Init channels and selectors.
@@ -169,8 +175,6 @@ namespace Midifrier
             // Resources.
             _mmTimer.Stop();
             _mmTimer.Dispose();
-            //DestroyControls();
-            //CM.DestroyDevices();
             CM.Destroy(Controls);
 
             // Wait a bit in case there are some lingering events.
@@ -447,10 +451,11 @@ namespace Midifrier
         public bool DoNextStep()
         {
             // Process each channel.
-            foreach (var ch in CM.GetOutputChannels())
+            foreach (var ch in CM.GetChannels())
             {
                 // Process any sequence steps.
                 var playEvents = ch.Events.Get(progBar.Current);
+
 
                 foreach (var mevt in playEvents)
                 {
@@ -547,9 +552,8 @@ namespace Midifrier
             }
 
             // Create the new controls.
-            int x = lblChLoc.Left;
-            int y = lblChLoc.Top;
-            lblChLoc.Hide();
+            int x = btnClearPatterns.Right + 5;
+            int y = btnClearPatterns.Top;
 
             long maxTick = 0;
 
@@ -618,14 +622,22 @@ namespace Midifrier
                         BorderStyle = BorderStyle.FixedSingle,
                         Anchor = AnchorStyles.Right | AnchorStyles.Top,
                         DrawColor = _settings.DrawColor,
-                        Info = ($"Ch {chNum}", $"{chan}")
+                        Info = ($"Ch {chNum} {chan.PatchName}", $"{chan}")
                     };
                     //control.InfoClick += ChannelControl_InfoClick;
                     Controls.Add(ctrl);
                     CM.Bind(chan, ctrl);
 
                     // Adjust positioning.
-                    y += ctrl.Height + 5;
+                    if (chInd == 5)
+                    {
+                        y = btnClearPatterns.Top;
+                        x = ctrl.Right + 5;
+                    }
+                    else
+                    {
+                        y += ctrl.Height + 5;
+                    }
                 }
             }
 
@@ -633,7 +645,12 @@ namespace Midifrier
             sldBPM.Value = pattern.Tempo;
 
             // Update bar.
-            progBar.Length = new((int)maxTick);
+            // Sections. 256 ticks = 32 beats = 8 bars
+            Dictionary<MusicTime, string> sectInfo = [];
+            sectInfo.Add(new(0), "");
+            sectInfo.Add(new(maxTick), "");
+
+            progBar.InitSectionInfo(sectInfo);
             progBar.Current.Reset();
             progBar.Invalidate();
         }
@@ -717,7 +734,7 @@ namespace Midifrier
                 }
 
                 // Get selected channels.
-                var selChannels = CM.GetOutputChannels(true);
+                var selChannels = CM.GetChannels(true);
                 List<int> channelNumbers = [.. selChannels.Select(ch => ch.ChannelNumber)];
 
                 // Selected patterns.

@@ -47,12 +47,11 @@
             ExportCsvMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             ExportMidiMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             exportTextToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            dumpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             ToolsMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             SettingsMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             AboutMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            progBar = new ProgressBar();
-            lblChLoc = new System.Windows.Forms.Label();
-            dumpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            progBar = new Ephemera.MidiLib.TimeBar();
             toolStrip.SuspendLayout();
             MenuStrip.SuspendLayout();
             SuspendLayout();
@@ -145,17 +144,10 @@
             // 
             sldBPM.AccessibleName = "sldBPM";
             sldBPM.AutoSize = false;
-            sldBPM.BorderStyle = System.Windows.Forms.BorderStyle.None;
-            sldBPM.DrawColor = System.Drawing.Color.White;
-            sldBPM.Label = "BPM";
-            sldBPM.Maximum = 249D;
-            sldBPM.Minimum = 40D;
             sldBPM.Name = "sldBPM";
-            sldBPM.Resolution = 1D;
             sldBPM.Size = new System.Drawing.Size(150, 38);
             sldBPM.Text = "bpm";
             sldBPM.ToolTipText = "How fast";
-            sldBPM.Value = 100D;
             // 
             // toolStripSeparator9
             // 
@@ -203,13 +195,9 @@
             tvInfo.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             tvInfo.Location = new System.Drawing.Point(8, 548);
             tvInfo.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
-            tvInfo.MatchUseBackground = true;
-            tvInfo.MaxText = 5000;
             tvInfo.Name = "tvInfo";
-            tvInfo.Prompt = "";
             tvInfo.Size = new System.Drawing.Size(604, 122);
             tvInfo.TabIndex = 58;
-            tvInfo.WordWrap = true;
             // 
             // lbPatterns
             // 
@@ -281,46 +269,53 @@
             // OpenMenuItem
             // 
             OpenMenuItem.Name = "OpenMenuItem";
-            OpenMenuItem.Size = new System.Drawing.Size(206, 24);
+            OpenMenuItem.Size = new System.Drawing.Size(156, 24);
             OpenMenuItem.Text = "Open";
             OpenMenuItem.Click += Open_Click;
             // 
             // toolStripSeparator3
             // 
             toolStripSeparator3.Name = "toolStripSeparator3";
-            toolStripSeparator3.Size = new System.Drawing.Size(203, 6);
+            toolStripSeparator3.Size = new System.Drawing.Size(153, 6);
             // 
             // RecentMenuItem
             // 
             RecentMenuItem.Name = "RecentMenuItem";
-            RecentMenuItem.Size = new System.Drawing.Size(206, 24);
+            RecentMenuItem.Size = new System.Drawing.Size(156, 24);
             RecentMenuItem.Text = "Recent";
             // 
             // toolStripSeparator2
             // 
             toolStripSeparator2.Name = "toolStripSeparator2";
-            toolStripSeparator2.Size = new System.Drawing.Size(203, 6);
+            toolStripSeparator2.Size = new System.Drawing.Size(153, 6);
             // 
             // ExportCsvMenuItem
             // 
             ExportCsvMenuItem.Name = "ExportCsvMenuItem";
-            ExportCsvMenuItem.Size = new System.Drawing.Size(206, 24);
+            ExportCsvMenuItem.Size = new System.Drawing.Size(156, 24);
             ExportCsvMenuItem.Text = "Export CSV";
             ExportCsvMenuItem.Click += Export_Click;
             // 
             // ExportMidiMenuItem
             // 
             ExportMidiMenuItem.Name = "ExportMidiMenuItem";
-            ExportMidiMenuItem.Size = new System.Drawing.Size(206, 24);
+            ExportMidiMenuItem.Size = new System.Drawing.Size(156, 24);
             ExportMidiMenuItem.Text = "Export Midi";
             ExportMidiMenuItem.Click += Export_Click;
             // 
             // exportTextToolStripMenuItem
             // 
             exportTextToolStripMenuItem.Name = "exportTextToolStripMenuItem";
-            exportTextToolStripMenuItem.Size = new System.Drawing.Size(206, 24);
+            exportTextToolStripMenuItem.Size = new System.Drawing.Size(156, 24);
             exportTextToolStripMenuItem.Text = "Export Text";
             exportTextToolStripMenuItem.Click += Export_Click;
+            // 
+            // dumpToolStripMenuItem
+            // 
+            dumpToolStripMenuItem.Name = "dumpToolStripMenuItem";
+            dumpToolStripMenuItem.Size = new System.Drawing.Size(156, 24);
+            dumpToolStripMenuItem.Text = "Dump";
+            dumpToolStripMenuItem.Click += DumpClick;
             // 
             // ToolsMenuItem
             // 
@@ -347,37 +342,17 @@
             // 
             progBar.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right;
             progBar.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            progBar.DoLoop = false;
-            progBar.DrawColor = System.Drawing.Color.Black;
             progBar.Location = new System.Drawing.Point(643, 76);
             progBar.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             progBar.Name = "progBar";
             progBar.Size = new System.Drawing.Size(379, 47);
             progBar.TabIndex = 93;
             // 
-            // lblChLoc
-            // 
-            lblChLoc.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right;
-            lblChLoc.AutoSize = true;
-            lblChLoc.Location = new System.Drawing.Point(743, 131);
-            lblChLoc.Name = "lblChLoc";
-            lblChLoc.Size = new System.Drawing.Size(45, 19);
-            lblChLoc.TabIndex = 97;
-            lblChLoc.Text = "label1";
-            // 
-            // dumpToolStripMenuItem
-            // 
-            dumpToolStripMenuItem.Name = "dumpToolStripMenuItem";
-            dumpToolStripMenuItem.Size = new System.Drawing.Size(206, 24);
-            dumpToolStripMenuItem.Text = "Dump";
-            dumpToolStripMenuItem.Click += DumpClick;
-            // 
             // MainForm
             // 
             AutoScaleDimensions = new System.Drawing.SizeF(8F, 19F);
             AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             ClientSize = new System.Drawing.Size(1034, 674);
-            Controls.Add(lblChLoc);
             Controls.Add(lbPatterns);
             Controls.Add(btnAllPatterns);
             Controls.Add(btnClearPatterns);
@@ -406,7 +381,8 @@
         private System.Windows.Forms.ToolTip toolTip;
         private Ephemera.NBagOfUis.FilTree ftree;
         private Ephemera.NBagOfUis.TextViewer tvInfo;
-        private ProgressBar progBar;
+        // private ProgressBar progBar;
+        private Ephemera.MidiLib.TimeBar progBar;
         private System.Windows.Forms.CheckedListBox lbPatterns;
         private System.Windows.Forms.Button btnAllPatterns;
         private System.Windows.Forms.Button btnClearPatterns;
@@ -426,7 +402,6 @@
         private System.Windows.Forms.ToolStripLabel toolStripLabel1;
         private System.Windows.Forms.ToolStripComboBox cmbDrumChannel;
         private System.Windows.Forms.ToolStripButton btnKillMidi;
-        private System.Windows.Forms.Label lblChLoc;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator4;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator6;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator7;

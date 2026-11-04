@@ -16,7 +16,8 @@ using Ephemera.NBagOfUis;
 using Ephemera.MidiLib;
 using static Midifrier.MidiDataFile;
 
-solo/mute   patch name
+// TODO1: solo/mute, patch name ???
+
 namespace Midifrier
 {
     public partial class MainForm : Form
@@ -625,7 +626,6 @@ namespace Midifrier
                         Info = ($"Ch {chNum} {chan.PatchName}", $"{chan}")
                     };
                     //control.InfoClick += ChannelControl_InfoClick;
-                    Controls.Add(ctrl);
                     CM.Bind(chan, ctrl);
 
                     // Adjust positioning.

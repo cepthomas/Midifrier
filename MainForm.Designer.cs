@@ -51,7 +51,7 @@
             ToolsMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             SettingsMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             AboutMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            progBar = new Ephemera.MidiLib.TimeBar();
+            timeBar = new Ephemera.MidiLib.TimeBar();
             toolStrip.SuspendLayout();
             MenuStrip.SuspendLayout();
             SuspendLayout();
@@ -338,15 +338,15 @@
             AboutMenuItem.Text = "About";
             AboutMenuItem.Click += About_Click;
             // 
-            // progBar
+            // timeBar
             // 
-            progBar.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right;
-            progBar.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            progBar.Location = new System.Drawing.Point(643, 76);
-            progBar.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
-            progBar.Name = "progBar";
-            progBar.Size = new System.Drawing.Size(379, 47);
-            progBar.TabIndex = 93;
+            timeBar.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right;
+            timeBar.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            timeBar.Location = new System.Drawing.Point(643, 76);
+            timeBar.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
+            timeBar.Name = "timeBar";
+            timeBar.Size = new System.Drawing.Size(379, 47);
+            timeBar.TabIndex = 93;
             // 
             // MainForm
             // 
@@ -356,7 +356,7 @@
             Controls.Add(lbPatterns);
             Controls.Add(btnAllPatterns);
             Controls.Add(btnClearPatterns);
-            Controls.Add(progBar);
+            Controls.Add(timeBar);
             Controls.Add(ftree);
             Controls.Add(tvInfo);
             Controls.Add(toolStrip);
@@ -381,8 +381,7 @@
         private System.Windows.Forms.ToolTip toolTip;
         private Ephemera.NBagOfUis.FilTree ftree;
         private Ephemera.NBagOfUis.TextViewer tvInfo;
-        // private ProgressBar progBar;
-        private Ephemera.MidiLib.TimeBar progBar;
+        private Ephemera.MidiLib.TimeBar timeBar;
         private System.Windows.Forms.CheckedListBox lbPatterns;
         private System.Windows.Forms.Button btnAllPatterns;
         private System.Windows.Forms.Button btnClearPatterns;

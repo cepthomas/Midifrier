@@ -46,7 +46,10 @@ namespace Midifrier
         int _drumChannel = MidiDefs.DEFAULT_DRUM_CHANNEL;
 
         /// <summary>Shorthand.</summary>
-        readonly ChannelManager CM = ChannelManager.Instance;
+        readonly ChannelManager CM;
+
+        /// <summary>Shorthand.</summary>
+        readonly InputManager IM;
         #endregion
 
         #region Lifecycle
@@ -60,6 +63,8 @@ namespace Midifrier
             _settings = (UserSettings)UserSettings.Load(appDir, typeof(UserSettings));
 
             InitializeComponent();
+            CM = new(Controls);
+            IM = new();
 
             Icon = Icon.ExtractAssociatedIcon(Assembly.GetExecutingAssembly().Location);
 
@@ -92,10 +97,10 @@ namespace Midifrier
             toolStrip.Renderer = new ToolStripCheckBoxRenderer() { SelectedColor = _settings.DrawColor };
             btnAutoplay.Checked = _settings.Autoplay;
             btnLoop.Checked = _settings.Loop;
-            progBar.DrawColor = _settings.DrawColor;
-            //progBar.SelectedColor =
-            progBar.Snap = SnapType.Beat; //FourBar
-            progBar.GridLines = 4 * MusicTime.SubbeatsPerBar;
+            timeBar.DrawColor = _settings.DrawColor;
+            //timeBar.SelectedColor
+            timeBar.Snap = SnapType.Beat; //FourBar
+            timeBar.GridLines = 4 * MusicTime.SubbeatsPerBar;
 
             // FilTree settings.
             ftree.RootDirs = _settings.RootDirs;
@@ -112,6 +117,12 @@ namespace Midifrier
             sldBPM.Minimum = 50;
             sldBPM.Resolution = 5;
             sldBPM.Value = MidiDataFile.DEFAULT_TEMPO;
+
+            sldVolume.Maximum = 2.0;
+            sldVolume.Minimum = 0.0;
+            sldVolume.Resolution = 0.1;
+            sldVolume.DrawColor = _settings.DrawColor;
+            sldVolume.Value = _settings.Volume;
 
             // Init channels and selectors.
             for (int i = MidiDefs.MIN_CHANNEL; i <= MidiDefs.MAX_CHANNEL; i++)
@@ -176,7 +187,8 @@ namespace Midifrier
             // Resources.
             _mmTimer.Stop();
             _mmTimer.Dispose();
-            CM.Destroy(Controls);
+            CM.Dispose();
+            IM.Dispose();
 
             // Wait a bit in case there are some lingering events.
             System.Threading.Thread.Sleep(100);
@@ -420,7 +432,7 @@ namespace Midifrier
         /// </summary>
         public void Rewind()
         {
-            progBar.Rewind();
+            timeBar.Rewind();
         }
         #endregion
 
@@ -452,11 +464,10 @@ namespace Midifrier
         public bool DoNextStep()
         {
             // Process each channel.
-            foreach (var ch in CM.GetChannels())
+            foreach (var (chan, ctrl) in CM.GetChannels())
             {
                 // Process any sequence steps.
-                var playEvents = ch.Events.Get(progBar.Current);
-
+                var playEvents = chan.Events.Get(timeBar.Current);
 
                 foreach (var mevt in playEvents)
                 {
@@ -464,29 +475,28 @@ namespace Midifrier
                     {
                         case NoteOn evt:
                             // Adjust volume.
-                            var cc = CM.GetControl(ch);
-                            evt.Velocity = MathUtils.Constrain((int)(evt.Velocity * cc!.Volume), 0, MidiDefs.MAX_MIDI);
+                            evt.Velocity = MathUtils.Constrain((int)(evt.Velocity * ctrl!.Volume * sldVolume.Value), 0, MidiDefs.MAX_MIDI);
                             // Adjust channel.
                             evt.ChannelNumber = evt.ChannelNumber == _drumChannel ? MidiDefs.DEFAULT_DRUM_CHANNEL : evt.ChannelNumber;
-                            ch.Send(evt);
+                            chan.Send(evt);
                             break;
 
                         case NoteOff evt:
                             // Adjust channel.
                             evt.ChannelNumber = evt.ChannelNumber == _drumChannel ? MidiDefs.DEFAULT_DRUM_CHANNEL : evt.ChannelNumber;
-                            ch.Send(evt);
+                            chan.Send(evt);
                             break;
 
                         default:
                             // Everything else as is.
-                            ch.Send(mevt);
+                            chan.Send(mevt);
                             break;
                     }
                 }
             }
 
             // Bump time. Check for end of play.
-            bool done = !progBar.Increment();
+            bool done = !timeBar.Increment();
 
             return done;
         }
@@ -543,7 +553,7 @@ namespace Midifrier
         void LoadPattern(Pattern pattern)
         {
             Stop();
-            CM.Destroy(Controls);
+            CM.Reset();
 
             // Load the new one.
             if (pattern is null)
@@ -613,7 +623,7 @@ namespace Midifrier
                     }
 
                     // Make new channel. Attach corresponding events.
-                    var chan = CM.OpenOutputChannel(_settings.OutputDevice, chNum, track.ChannelStates[chNum].Patch);
+                    var chan = CM.OpenChannel(_settings.OutputDevice, chNum, track.ChannelStates[chNum].Patch);
                     chan.Events = chEvents;
 
                     // Make new control and bind to channel.
@@ -623,6 +633,7 @@ namespace Midifrier
                         BorderStyle = BorderStyle.FixedSingle,
                         Anchor = AnchorStyles.Right | AnchorStyles.Top,
                         DrawColor = _settings.DrawColor,
+                        Volume = 1.0,
                         Info = ($"Ch {chNum} {chan.PatchName}", $"{chan}")
                     };
                     //control.InfoClick += ChannelControl_InfoClick;
@@ -650,9 +661,9 @@ namespace Midifrier
             sectInfo.Add(new(0), "");
             sectInfo.Add(new(maxTick), "");
 
-            progBar.InitSectionInfo(sectInfo);
-            progBar.Current.Reset();
-            progBar.Invalidate();
+            timeBar.InitSectionInfo(sectInfo);
+            timeBar.Current.Reset();
+            timeBar.Invalidate();
         }
 
         /// <summary>
@@ -734,8 +745,9 @@ namespace Midifrier
                 }
 
                 // Get selected channels.
-                var selChannels = CM.GetChannels(true);
-                List<int> channelNumbers = [.. selChannels.Select(ch => ch.ChannelNumber)];
+                List<int> channelNumbers = [.. CM.GetChannels().
+                    Where(ch => ch.ctrl is not null && ch.ctrl.Selected).
+                    Select(ch => ch.chan.ChannelNumber)];
 
                 // Selected patterns.
                 foreach (var p in patternNames)
@@ -870,6 +882,9 @@ namespace Midifrier
             _settings.Loop = btnLoop.Checked;
             _settings.TempoResolution = (int)sldBPM.Resolution;
             _settings.SplitterPosition = ftree.SplitterPosition;
+
+            _settings.Volume = sldVolume.Value;
+
             _settings.Save();
         }
         #endregion

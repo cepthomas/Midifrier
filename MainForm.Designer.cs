@@ -19,6 +19,8 @@
             toolStrip = new System.Windows.Forms.ToolStrip();
             btnAutoplay = new System.Windows.Forms.ToolStripButton();
             toolStripSeparator4 = new System.Windows.Forms.ToolStripSeparator();
+            sldVolume = new Ephemera.NBagOfUis.ToolStripSlider();
+            toolStripSeparator5 = new System.Windows.Forms.ToolStripSeparator();
             btnLoop = new System.Windows.Forms.ToolStripButton();
             toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
             btnKillMidi = new System.Windows.Forms.ToolStripButton();
@@ -59,7 +61,7 @@
             // toolStrip
             // 
             toolStrip.ImageScalingSize = new System.Drawing.Size(20, 20);
-            toolStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] { btnAutoplay, toolStripSeparator4, btnLoop, toolStripSeparator1, btnKillMidi, toolStripSeparator6, toolStripLabel1, cmbDrumChannel, toolStripSeparator7, sldBPM, toolStripSeparator9, btnPlay, toolStripSeparator10, btnRewind, toolStripSeparator12 });
+            toolStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] { btnAutoplay, toolStripSeparator4, sldVolume, toolStripSeparator5, btnLoop, toolStripSeparator1, btnKillMidi, toolStripSeparator6, toolStripLabel1, cmbDrumChannel, toolStripSeparator7, sldBPM, toolStripSeparator9, btnPlay, toolStripSeparator10, btnRewind, toolStripSeparator12 });
             toolStrip.Location = new System.Drawing.Point(0, 27);
             toolStrip.Name = "toolStrip";
             toolStrip.Size = new System.Drawing.Size(1034, 43);
@@ -83,6 +85,21 @@
             // 
             toolStripSeparator4.Name = "toolStripSeparator4";
             toolStripSeparator4.Size = new System.Drawing.Size(6, 43);
+            // 
+            // sldVolume
+            // 
+            sldVolume.AccessibleName = "sldVolume";
+            sldVolume.AutoSize = false;
+            sldVolume.Name = "sldVolume";
+            sldVolume.Size = new System.Drawing.Size(150, 38);
+            sldVolume.Label = "volume";
+            sldVolume.Text = "volume";
+            sldVolume.ToolTipText = "How loud";
+            // 
+            // toolStripSeparator5
+            // 
+            toolStripSeparator5.Name = "toolStripSeparator5";
+            toolStripSeparator5.Size = new System.Drawing.Size(6, 43);
             // 
             // btnLoop
             // 
@@ -146,6 +163,7 @@
             sldBPM.AutoSize = false;
             sldBPM.Name = "sldBPM";
             sldBPM.Size = new System.Drawing.Size(150, 38);
+            sldBPM.Label = "bpm";
             sldBPM.Text = "bpm";
             sldBPM.ToolTipText = "How fast";
             // 
@@ -412,5 +430,7 @@
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator12;
         private System.Windows.Forms.ToolStripMenuItem exportTextToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem dumpToolStripMenuItem;
+        private Ephemera.NBagOfUis.ToolStripSlider sldVolume;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator5;
     }
 }

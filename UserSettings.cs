@@ -63,6 +63,9 @@ namespace Midifrier
 
         #region Persisted Non-editable Persisted Properties
         [Browsable(false)]
+        public double Volume { get; set; } = 0.8;
+
+        [Browsable(false)]
         public bool Autoplay { get; set; } = true;
 
         [Browsable(false)]

@@ -50,6 +50,10 @@
     </ItemGroup>
 
     <ItemGroup>
+      <ProjectReference Include="..\..\Libs\MidiLib\MidiLib.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
         <Reference Include="Ephemera.NBagOfTricks">
             <HintPath>lib\Ephemera.NBagOfTricks.dll</HintPath>
         </Reference>
@@ -58,9 +62,9 @@
             <HintPath>lib\Ephemera.NBagOfUis.dll</HintPath>
         </Reference>
 
-        <Reference Include="Ephemera.MidiLib">
+<!--         <Reference Include="Ephemera.MidiLib">
           <HintPath>lib\Ephemera.MidiLib.dll</HintPath>
         </Reference>
-    </ItemGroup>
+ -->    </ItemGroup>
 
 </Project>

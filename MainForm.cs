@@ -16,7 +16,7 @@ using Ephemera.NBagOfUis;
 using Ephemera.MidiLib;
 using static Midifrier.MidiDataFile;
 
-// TODO1: solo/mute, patch name ???
+// TODO1: patch name ???
 
 namespace Midifrier
 {
@@ -623,7 +623,7 @@ namespace Midifrier
                     }
 
                     // Make new channel. Attach corresponding events.
-                    var chan = CM.OpenChannel(_settings.OutputDevice, chNum, track.ChannelStates[chNum].Patch);
+                    var chan = CM.OpenChannel(_settings.OutputDevice, chNum, pattern.Patches[chNum - 1]); // track.ChannelStates[chNum].Patch);
                     chan.Events = chEvents;
 
                     // Make new control and bind to channel.

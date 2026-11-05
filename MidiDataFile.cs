@@ -7,6 +7,7 @@ using System.Diagnostics;
 using System.Windows.Forms;
 using NAudio.Midi;
 using Ephemera.NBagOfTricks;
+using Ephemera.MidiLib;
 
 
 namespace Midifrier
@@ -17,7 +18,7 @@ namespace Midifrier
     { public override string ToString() { return $"MidiFileType:{MidiFileType} NumTracks:{NumTracks} PPQ:{DeltaTicksPerQuarterNote}"; } }
 
     /// <summary>The contents of a midi file pattern.</summary>
-    public record Pattern(string Name, int Tempo, List<Track> Tracks)
+    public record Pattern(string Name, int Tempo, int[] Patches, List<Track> Tracks)
     { public override string ToString() { return $"{Name} Tracks: {Tracks.Count}"; } }
     #endregion
 
@@ -29,6 +30,10 @@ namespace Midifrier
         #region Fields
         /// <summary>All the file pattern sections. Plain midi files will have one only.</summary>
         List<Pattern> _patterns = [];
+
+        /// <summary>Kind of crude way to track patch changes.</summary>
+        readonly int[] _currentPatches = new int[MidiDefs.MAX_CHANNEL];
+
         #endregion
 
         #region Constants
@@ -179,7 +184,7 @@ namespace Midifrier
         /// <returns>New tracks</returns>
         Pattern ReadMTrkSimple(BinaryReader br)
         {
-            Pattern simplePattern = new(UNNAMED, DEFAULT_TEMPO, []);
+            Pattern simplePattern = new(UNNAMED, DEFAULT_TEMPO, [.. _currentPatches], []);
             Track currentTrack = new();
 
             // Stepping through file.
@@ -210,7 +215,7 @@ namespace Midifrier
                         break;
 
                     case PatchChangeEvent evt:
-                        currentTrack.SetPatch(evt.Channel, evt.Patch);
+                        _currentPatches[evt.Channel - 1] = evt.Patch;
                         currentTrack.AddEvent(evt);
                         break;
 
@@ -330,7 +335,7 @@ namespace Midifrier
                         break;
 
                     case PatchChangeEvent evt:
-                        currentTrack.SetPatch(evt.Channel, evt.Patch);
+                        _currentPatches[evt.Channel - 1] = evt.Patch;
                         AddMidiEvent(evt);
                         break;
 
@@ -421,7 +426,7 @@ namespace Midifrier
                 if (currentTrack.NumStandard > 0)
                 {
                     // Finish up.
-                    Pattern p = new(currentTrack.Name, tempoEvt is null ? DEFAULT_TEMPO : (int)Math.Round(tempoEvt.Tempo), []);
+                    Pattern p = new(currentTrack.Name, tempoEvt is null ? DEFAULT_TEMPO : (int)Math.Round(tempoEvt.Tempo), [.. _currentPatches], []);
 
                     var endEvent = new MetaEvent(MetaEventType.EndTrack, 0, absoluteTime);
 

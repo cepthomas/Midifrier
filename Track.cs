@@ -32,7 +32,7 @@ namespace Midifrier
 
         /// <summary>Channels and patches in this track. Index is channel number-1.</summary>
         public ChannelState[] ChannelStates { get; set; } = new ChannelState[MidiDefs.MAX_CHANNEL];
-        public record struct ChannelState(bool HasNotes, int Patch);
+        public record struct ChannelState(bool HasNotes); //, int other stuff);
         #endregion
 
         #region Functions
@@ -44,7 +44,6 @@ namespace Midifrier
             ChannelStates.ForEach(state =>
             {
                 state.HasNotes = false;
-                state.Patch = -1;
             });
         }
 
@@ -81,16 +80,6 @@ namespace Midifrier
                 _events.Where(e => channelNumbers.Contains(e.Channel)) ?? [] :
                 _events.AsEnumerable();
             return descs.OrderBy(e => e.AbsoluteTime);
-        }
-
-        /// <summary>
-        /// Safely add/update info.
-        /// </summary>
-        /// <param name="channel">The channel number</param>
-        /// <param name="patch">The patch. Can be default -1.</param>
-        public void SetPatch(int channel, int patch)
-        {
-            ChannelStates[channel - 1].Patch = patch;
         }
 
         /// <summary>

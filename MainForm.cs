@@ -16,7 +16,7 @@ using Ephemera.NBagOfUis;
 using Ephemera.MidiLib;
 using static Midifrier.MidiDataFile;
 
-// TODO1: solo/mute ???
+// TODO1: solo/mute not working ???
 
 namespace Midifrier
 {
@@ -634,8 +634,9 @@ namespace Midifrier
                         Anchor = AnchorStyles.Right | AnchorStyles.Top,
                         DrawColor = _settings.DrawColor,
                         Volume = 1.0,
-                        Info = ($"Midi Ch {chNum} ({chan.Patch})", $"{chan}{Environment.NewLine}{chan.PatchName} ({chan.Patch})")
+                        Info = ($"Midi Ch {chNum}", $"{chan.PatchName} ({chan.Patch}){Environment.NewLine}{chan}")
                     };
+
                     //control.InfoClick += ChannelControl_InfoClick;
                     CM.Bind(chan, ctrl);
 

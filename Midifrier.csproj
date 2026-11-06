@@ -22,8 +22,11 @@
     
     <ItemGroup>
         <Compile Remove="lib\**" />
+        <Compile Remove="Test\**" />
         <EmbeddedResource Remove="lib\**" />
+        <EmbeddedResource Remove="Test\**" />
         <None Remove="lib\**" />
+        <None Remove="Test\**" />
     </ItemGroup>
     
     <ItemGroup>
@@ -64,7 +67,7 @@
 
 <!--         <Reference Include="Ephemera.MidiLib">
           <HintPath>lib\Ephemera.MidiLib.dll</HintPath>
-        </Reference>
- -->    </ItemGroup>
+        </Reference> -->    
+    </ItemGroup>
 
 </Project>

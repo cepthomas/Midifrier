@@ -32,7 +32,7 @@ namespace Midifrier
 
         /// <summary>Channels and patches in this track. Index is channel number-1.</summary>
         public ChannelState[] ChannelStates { get; set; } = new ChannelState[MidiDefs.MAX_CHANNEL];
-        public record struct ChannelState(bool HasNotes); //, int other stuff);
+        public record struct ChannelState(bool HasNotes); //, ?? other stuff);
         #endregion
 
         #region Functions

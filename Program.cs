@@ -25,7 +25,6 @@ namespace Midifrier
 
             // Pick one. Also set OutputType -> WinExe or Exe.
             Application.Run(new MainForm());
-            //Test.Executor.Run();
         }
     }
 }

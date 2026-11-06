@@ -31,7 +31,7 @@ namespace Midifrier
         /// <summary>All the file pattern sections. Plain midi files will have one only.</summary>
         List<Pattern> _patterns = [];
 
-        /// <summary>Kind of crude way to track patch changes.</summary>
+        /// <summary>Current patches gleaned while parsing file.</summary>
         readonly int[] _currentPatches = new int[MidiDefs.MAX_CHANNEL];
 
         #endregion

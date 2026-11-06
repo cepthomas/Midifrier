@@ -8,7 +8,7 @@ using Ephemera.NBagOfTricks.PNUT;
 using Midifrier;
 using System.Windows.Forms;
 
-// Some test code, you can ignore.
+// Some test code, you can ignore. // TODO1 keep?
 // It uses files from https://github.com/cepthomas/TestAudioFiles:
 //  - Style file, full info: _LoveSong.S474.sty
 //  - Plain midi, full song: WICKGAME.MID (has other stuff after the last track)

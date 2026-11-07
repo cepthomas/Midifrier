@@ -16,7 +16,7 @@ using Ephemera.NBagOfUis;
 using Ephemera.MidiLib;
 using static Midifrier.MidiDataFile;
 
-// TODO1: solo/mute not working ???
+
 
 namespace Midifrier
 {
@@ -527,6 +527,10 @@ namespace Midifrier
         /// </summary>
         void About_Click(object? sender, EventArgs e)
         {
+            // dev
+            // CM.DumpState().ForEach(l => Console.WriteLine(l));
+            // return;
+
             Tools.ShowReadme("Midifrier");
             tvInfo.Append(string.Join(Environment.NewLine, MidiDefs.GenUserDeviceInfo()));
         }
@@ -626,7 +630,7 @@ namespace Midifrier
                     var chan = CM.OpenChannel(_settings.OutputDevice, chNum, pattern.Patches[chNum - 1], chNum == _drumChannel);
                     chan.Events = chEvents;
 
-                    // Make new control and bind to channel.
+                    // Make new control and bind to channel. Note there is no good channel name so use patch.
                     ChannelControl ctrl = new()
                     {
                         Location = new(x, y),
@@ -634,9 +638,9 @@ namespace Midifrier
                         Anchor = AnchorStyles.Right | AnchorStyles.Top,
                         DrawColor = _settings.DrawColor,
                         Volume = 1.0,
-                        Info = ($"Midi Ch {chNum}", $"{chan.PatchName} ({chan.Patch}){Environment.NewLine}{chan}")
+                        Info1 = $"M{chNum} {chan.PatchName}",
+                        Info2 = $"{chan.PatchName} ({chan.Patch}){Environment.NewLine}{chan}"
                     };
-
                     //control.InfoClick += ChannelControl_InfoClick;
                     CM.Bind(chan, ctrl);
 

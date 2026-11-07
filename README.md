@@ -5,7 +5,7 @@
 - Remap channel patches.
 - Export subsets of input files.
 
-- VS2022 and .NET8.
+- VS2022 and .NET10.
 
 
 ## Usage

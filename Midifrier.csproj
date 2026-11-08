@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project Sdk="Microsoft.NET.Sdk">
-    
+
     <PropertyGroup>
         <OutputType>Exe</OutputType>
         <UseWindowsForms>true</UseWindowsForms>
@@ -19,7 +19,7 @@
         <WarningLevel>4</WarningLevel>
         <NoWarn>CS1591;CA1822;CA1860</NoWarn>
     </PropertyGroup>
-    
+
     <ItemGroup>
         <Compile Remove="lib\**" />
         <Compile Remove="Test\**" />
@@ -28,7 +28,7 @@
         <None Remove="lib\**" />
         <None Remove="Test\**" />
     </ItemGroup>
-    
+
     <ItemGroup>
         <Compile Update="Properties\Resources.Designer.cs">
             <DesignTime>True</DesignTime>
@@ -53,10 +53,6 @@
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\..\Libs\MidiLib\MidiLib.csproj" />
-    </ItemGroup>
-
-    <ItemGroup>
         <Reference Include="Ephemera.NBagOfTricks">
             <HintPath>lib\Ephemera.NBagOfTricks.dll</HintPath>
         </Reference>
@@ -65,9 +61,10 @@
             <HintPath>lib\Ephemera.NBagOfUis.dll</HintPath>
         </Reference>
 
-<!--         <Reference Include="Ephemera.MidiLib">
-          <HintPath>lib\Ephemera.MidiLib.dll</HintPath>
-        </Reference> -->    
+        <Reference Include="Ephemera.MidiLib">
+            <HintPath>lib\Ephemera.MidiLib.dll</HintPath>
+        </Reference>
+
     </ItemGroup>
 
 </Project>

@@ -627,7 +627,7 @@ namespace Midifrier
                     }
 
                     // Make new channel. Attach corresponding events.
-                    var chan = CM.OpenChannel(_settings.OutputDevice, chNum, pattern.Patches[chNum - 1], chNum == _drumChannel);
+                    var chan = CM.OpenChannel(_settings.OutputDevice, chNum, "???", pattern.Patches[chNum - 1], chNum == _drumChannel);
                     chan.Events = chEvents;
 
                     // Make new control and bind to channel. Note there is no good channel name so use patch.

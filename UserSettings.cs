@@ -23,7 +23,7 @@ namespace Midifrier
         [DisplayName("Output Device")]
         [Description("Valid output device.")]
         [Browsable(true)]
-        [Editor(typeof(GenericListTypeEditor), typeof(UITypeEditor))]
+        [Editor(typeof(MidiOutputDeviceTypeEditor), typeof(UITypeEditor))]
         public string OutputDevice { get; set; } = "???";
 
         [DisplayName("Tempo Resolution")]

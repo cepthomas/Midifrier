@@ -45,11 +45,8 @@ namespace Midifrier
         /// <summary>Drums may be on unusual channel.</summary>
         int _drumChannel = MidiDefs.DEFAULT_DRUM_CHANNEL;
 
-        /// <summary>Shorthand.</summary>
+        /// <summary>Service.</summary>
         readonly ChannelManager CM;
-
-        /// <summary>Shorthand.</summary>
-        readonly InputManager IM;
         #endregion
 
         #region Lifecycle
@@ -64,7 +61,6 @@ namespace Midifrier
 
             InitializeComponent();
             CM = new(Controls);
-            IM = new();
 
             Icon = Icon.ExtractAssociatedIcon(Assembly.GetExecutingAssembly().Location);
 
@@ -188,7 +184,6 @@ namespace Midifrier
             _mmTimer.Stop();
             _mmTimer.Dispose();
             CM.Dispose();
-            IM.Dispose();
 
             // Wait a bit in case there are some lingering events.
             System.Threading.Thread.Sleep(100);
@@ -627,8 +622,8 @@ namespace Midifrier
                     }
 
                     // Make new channel. Attach corresponding events.
-                    var chan = CM.OpenChannel(_settings.OutputDevice, chNum, "???", pattern.Patches[chNum - 1], chNum == _drumChannel);
-                    chan.Events = chEvents;
+                    var mout = CM.OpenMidiOutput(_settings.OutputDevice, chNum, "???", pattern.Patches[chNum - 1], chNum == _drumChannel);
+                    mout.Events = chEvents;
 
                     // Make new control and bind to channel. Note there is no good channel name so use patch.
                     ChannelControl ctrl = new()
@@ -638,11 +633,11 @@ namespace Midifrier
                         Anchor = AnchorStyles.Right | AnchorStyles.Top,
                         DrawColor = _settings.DrawColor,
                         Volume = 1.0,
-                        Info1 = $"M{chNum} {chan.PatchName}",
-                        Info2 = $"{chan.PatchName} ({chan.Patch}){Environment.NewLine}{chan}"
+                        Info1 = $"M{chNum} {mout.PatchName}",
+                        Info2 = $"{mout.PatchName} ({mout.Patch}){Environment.NewLine}{mout}"
                     };
                     //control.InfoClick += ChannelControl_InfoClick;
-                    CM.Bind(chan, ctrl);
+                    CM.Bind(mout, ctrl);
 
                     // Adjust positioning.
                     if (chInd == 5)

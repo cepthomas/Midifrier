@@ -146,11 +146,11 @@ namespace Midifrier
         /// <param name="e"></param>
         protected override void OnLoad(EventArgs e)
         {
-            // Set up output device.
-            if (CM.GetOutputDevice(_settings.OutputDevice) is null)
-            {
-                _logger.Error($"Invalid midi output device:{_settings.OutputDevice}");
-            }
+//            // Set up output device.
+//            if (CM.GetOutputDevice(_settings.OutputDevice) is null)
+//            {
+//                _logger.Error($"Invalid midi output device:{_settings.OutputDevice}");
+//            }
 
             // Initialize tree from user settings.
             InitNavigator();
@@ -459,7 +459,7 @@ namespace Midifrier
         public bool DoNextStep()
         {
             // Process each channel.
-            foreach (var (chan, ctrl) in CM.GetChannels())
+            foreach (var (chan, ctrl) in CM.GetOutputs())
             {
                 // Process any sequence steps.
                 var playEvents = chan.Events.Get(timeBar.Current);
@@ -607,11 +607,11 @@ namespace Midifrier
                                 break;
 
                             case PatchChangeEvent pevt:
-                                chEvents.Add(new Patch(chNum, pevt.Patch, when));
+                                chEvents.Add(new Patch(pevt));
                                 break;
 
                             case ControlChangeEvent ctlevt:
-                                chEvents.Add(new Controller(chNum, (int)ctlevt.Controller, ctlevt.ControllerValue, when));
+                                chEvents.Add(new Controller(ctlevt));
                                 break;
 
                             default:
@@ -622,7 +622,9 @@ namespace Midifrier
                     }
 
                     // Make new channel. Attach corresponding events.
-                    var mout = CM.OpenMidiOutput(_settings.OutputDevice, chNum, "???", pattern.Patches[chNum - 1], chNum == _drumChannel);
+                    var mout = CM.OpenMidiOutput(_settings.OutputDevice, chNum, "???");
+                    MidiDefs.InstrumentId patchId = (MidiDefs.InstrumentId)Enum.ToObject(typeof(MidiDefs.InstrumentId), pattern.Patches[chNum - 1]);
+                    CM.SetPatch(mout, patchId);
                     mout.Events = chEvents;
 
                     // Make new control and bind to channel. Note there is no good channel name so use patch.
@@ -633,8 +635,8 @@ namespace Midifrier
                         Anchor = AnchorStyles.Right | AnchorStyles.Top,
                         DrawColor = _settings.DrawColor,
                         Volume = 1.0,
-                        Info1 = $"M{chNum} {mout.PatchName}",
-                        Info2 = $"{mout.PatchName} ({mout.Patch}){Environment.NewLine}{mout}"
+                        Info1 = $"M{chNum} {patchId}",
+                        Info2 = $"{patchId} ({(int)patchId}){Environment.NewLine}{mout}"
                     };
                     //control.InfoClick += ChannelControl_InfoClick;
                     CM.Bind(mout, ctrl);
@@ -745,9 +747,9 @@ namespace Midifrier
                 }
 
                 // Get selected channels.
-                List<int> channelNumbers = [.. CM.GetChannels().
+                List<int> channelNumbers = [.. CM.GetOutputs().
                     Where(ch => ch.ctrl is not null && ch.ctrl.Selected).
-                    Select(ch => ch.chan.ChannelNumber)];
+                    Select(ch => ch.mout.ChannelNumber)];
 
                 // Selected patterns.
                 foreach (var p in patternNames)

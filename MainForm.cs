@@ -472,13 +472,13 @@ namespace Midifrier
                             // Adjust volume.
                             evt.Velocity = MathUtils.Constrain((int)(evt.Velocity * ctrl!.Volume * sldVolume.Value), 0, MidiDefs.MAX_MIDI);
                             // Adjust channel.
-                            evt.ChannelNumber = evt.ChannelNumber == _drumChannel ? MidiDefs.DEFAULT_DRUM_CHANNEL : evt.ChannelNumber;
+                            evt.MidiChannel = evt.MidiChannel == _drumChannel ? MidiDefs.DEFAULT_DRUM_CHANNEL : evt.MidiChannel;
                             chan.Send(evt);
                             break;
 
                         case NoteOff evt:
                             // Adjust channel.
-                            evt.ChannelNumber = evt.ChannelNumber == _drumChannel ? MidiDefs.DEFAULT_DRUM_CHANNEL : evt.ChannelNumber;
+                            evt.MidiChannel = evt.MidiChannel == _drumChannel ? MidiDefs.DEFAULT_DRUM_CHANNEL : evt.MidiChannel;
                             chan.Send(evt);
                             break;
 
@@ -749,7 +749,7 @@ namespace Midifrier
                 // Get selected channels.
                 List<int> channelNumbers = [.. CM.GetOutputs().
                     Where(ch => ch.ctrl is not null && ch.ctrl.Selected).
-                    Select(ch => ch.mout.ChannelNumber)];
+                    Select(ch => ch.mout.MidiChannel)];
 
                 // Selected patterns.
                 foreach (var p in patternNames)

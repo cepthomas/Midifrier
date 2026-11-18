@@ -42,6 +42,9 @@ namespace Midifrier
         /// <summary>Midi events from the input file.</summary>
         MidiDataFile _mdata = new();
 
+        /// <summary>Midi events per output.</summary>
+        readonly Dictionary<MidiOutput, List<BaseEvent>> _outputEvents = [];
+
         /// <summary>Drums may be on unusual channel.</summary>
         int _drumChannel = MidiDefs.DEFAULT_DRUM_CHANNEL;
 
@@ -462,7 +465,7 @@ namespace Midifrier
             foreach (var mout in CM.GetOutputs())
             {
                 // Process any sequence steps.
-                var playEvents = mout.Events.Get(timeBar.Current);
+                var playEvents = _outputEvents[mout].Where(e => e.When == timeBar.Current);
 
                 foreach (var mevt in playEvents)
                 {
@@ -553,6 +556,7 @@ namespace Midifrier
         {
             Stop();
             CM.Reset();
+            _outputEvents.Clear();
 
             // Load the new one.
             if (pattern is null)
@@ -581,7 +585,7 @@ namespace Midifrier
                     var midiEvents = track.GetFilteredEvents([chNum]);
 
                     // Convert native events to internal.
-                    EventCollection chEvents = new();
+                    List<BaseEvent> chEvents = [];
 
                     foreach (var mevt in midiEvents)
                     {
@@ -625,7 +629,7 @@ namespace Midifrier
                     var mout = CM.OpenMidiOutput(_settings.OutputDevice, chNum, "???");
                     MidiDefs.InstrumentId patchId = (MidiDefs.InstrumentId)Enum.ToObject(typeof(MidiDefs.InstrumentId), pattern.Patches[chNum - 1]);
                     CM.SetPatch(mout, patchId);
-                    mout.Events = chEvents;
+                    _outputEvents.Add(mout, chEvents);
 
                     // Make new control and bind to channel. Note there is no good channel name so use patch.
                     ChannelControl ctrl = new()

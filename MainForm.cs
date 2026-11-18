@@ -459,7 +459,7 @@ namespace Midifrier
         public bool DoNextStep()
         {
             // Process each output.
-            foreach (var (mout, ctrl) in CM.GetOutputs())
+            foreach (var mout in CM.GetOutputs())
             {
                 // Process any sequence steps.
                 var playEvents = mout.Events.Get(timeBar.Current);
@@ -470,7 +470,7 @@ namespace Midifrier
                     {
                         case NoteOn evt:
                             // Adjust volume.
-                            evt.Velocity = MathUtils.Constrain((int)(evt.Velocity * ctrl!.Volume * sldVolume.Value), 0, MidiDefs.MAX_MIDI);
+                            evt.Velocity = MathUtils.Constrain((int)(evt.Velocity * mout.VolumeDelta * sldVolume.Value), 0, MidiDefs.MAX_MIDI);
                             // Adjust output.
                             evt.MidiChannel = evt.MidiChannel == _drumChannel ? MidiDefs.DEFAULT_DRUM_CHANNEL : evt.MidiChannel;
                             mout.Send(evt);
@@ -748,8 +748,8 @@ namespace Midifrier
 
                 // Get selected channels.
                 List<int> channelNumbers = [.. CM.GetOutputs().
-                    Where(o => o.ctrl is not null && o.ctrl.Selected).
-                    Select(o => o.mout.MidiChannel)];
+                    Where(o => o.Selected).
+                    Select(o => o.MidiChannel)];
 
                 // Selected patterns.
                 foreach (var p in patternNames)

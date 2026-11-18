@@ -49,7 +49,7 @@ namespace Midifrier
         int _drumChannel = MidiDefs.DEFAULT_DRUM_CHANNEL;
 
         /// <summary>Service.</summary>
-        readonly ChannelManager CM;
+        readonly MidiManager MM;
         #endregion
 
         #region Lifecycle
@@ -63,7 +63,7 @@ namespace Midifrier
             _settings = (UserSettings)UserSettings.Load(appDir, typeof(UserSettings));
 
             InitializeComponent();
-            CM = new(Controls);
+            MM = new(Controls);
 
             Icon = Icon.ExtractAssociatedIcon(Assembly.GetExecutingAssembly().Location);
 
@@ -132,7 +132,7 @@ namespace Midifrier
 
             // Hook up some simple handlers.
             btnRewind.Click += (_, __) => UpdateState(ExplorerState.Rewind);
-            btnKillMidi.Click += (_, __) => CM.KillAll();
+            btnKillMidi.Click += (_, __) => MM.KillAll();
             sldBPM.ValueChanged += (_, __) => SetTimer();
             btnAutoplay.Click += (_, __) => _settings.Autoplay = btnAutoplay.Checked;
             btnLoop.Click += (_, __) => _settings.Loop = btnLoop.Checked;
@@ -150,7 +150,7 @@ namespace Midifrier
         protected override void OnLoad(EventArgs e)
         {
 //            // Set up output device.
-//            if (CM.GetOutputDevice(_settings.OutputDevice) is null)
+//            if (MM.GetOutputDevice(_settings.OutputDevice) is null)
 //            {
 //                _logger.Error($"Invalid midi output device:{_settings.OutputDevice}");
 //            }
@@ -181,12 +181,12 @@ namespace Midifrier
         {
             // Stop and destroy mmtimer.
             Stop();
-            CM.KillAll();
+            MM.KillAll();
 
             // Resources.
             _mmTimer.Stop();
             _mmTimer.Dispose();
-            CM.Dispose();
+            MM.Dispose();
 
             // Wait a bit in case there are some lingering events.
             System.Threading.Thread.Sleep(100);
@@ -422,7 +422,7 @@ namespace Midifrier
         public void Stop()
         {
             _mmTimer.Stop();
-            CM.KillAll();
+            MM.KillAll();
         }
 
         /// <summary>
@@ -462,7 +462,7 @@ namespace Midifrier
         public bool DoNextStep()
         {
             // Process each output.
-            foreach (var mout in CM.GetOutputs())
+            foreach (var mout in MM.GetOutputs())
             {
                 // Process any sequence steps.
                 var playEvents = _outputEvents[mout].Where(e => e.When == timeBar.Current);
@@ -526,7 +526,7 @@ namespace Midifrier
         void About_Click(object? sender, EventArgs e)
         {
             // dev
-            // CM.DumpState().ForEach(l => Console.WriteLine(l));
+            // MM.DumpState().ForEach(l => Console.WriteLine(l));
             // return;
 
             Tools.ShowReadme("Midifrier");
@@ -555,7 +555,7 @@ namespace Midifrier
         void LoadPattern(Pattern pattern)
         {
             Stop();
-            CM.Reset();
+            MM.Reset();
             _outputEvents.Clear();
 
             // Load the new one.
@@ -626,9 +626,9 @@ namespace Midifrier
                     }
 
                     // Make new channel. Attach corresponding events.
-                    var mout = CM.OpenMidiOutput(_settings.OutputDevice, chNum, "???");
+                    var mout = MM.OpenMidiOutput(_settings.OutputDevice, chNum, "???");
                     MidiDefs.InstrumentId patchId = (MidiDefs.InstrumentId)Enum.ToObject(typeof(MidiDefs.InstrumentId), pattern.Patches[chNum - 1]);
-                    CM.SetPatch(mout, patchId);
+                    MM.SetPatch(mout, patchId);
                     _outputEvents.Add(mout, chEvents);
 
                     // Make new control and bind to channel. Note there is no good channel name so use patch.
@@ -643,7 +643,7 @@ namespace Midifrier
                         Info2 = $"{patchId} ({(int)patchId}){Environment.NewLine}{mout}"
                     };
                     //control.InfoClick += ChannelControl_InfoClick;
-                    CM.Bind(mout, ctrl);
+                    MM.Bind(mout, ctrl);
 
                     // Adjust positioning.
                     if (chInd == 5)
@@ -751,7 +751,7 @@ namespace Midifrier
                 }
 
                 // Get selected channels.
-                List<int> channelNumbers = [.. CM.GetOutputs().
+                List<int> channelNumbers = [.. MM.GetOutputs().
                     Where(o => o.Selected).
                     Select(o => o.MidiChannel)];
 

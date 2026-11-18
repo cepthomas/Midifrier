@@ -458,11 +458,11 @@ namespace Midifrier
         /// <returns>True if sequence completed.</returns>
         public bool DoNextStep()
         {
-            // Process each channel.
-            foreach (var (chan, ctrl) in CM.GetOutputs())
+            // Process each output.
+            foreach (var (mout, ctrl) in CM.GetOutputs())
             {
                 // Process any sequence steps.
-                var playEvents = chan.Events.Get(timeBar.Current);
+                var playEvents = mout.Events.Get(timeBar.Current);
 
                 foreach (var mevt in playEvents)
                 {
@@ -471,20 +471,20 @@ namespace Midifrier
                         case NoteOn evt:
                             // Adjust volume.
                             evt.Velocity = MathUtils.Constrain((int)(evt.Velocity * ctrl!.Volume * sldVolume.Value), 0, MidiDefs.MAX_MIDI);
-                            // Adjust channel.
+                            // Adjust output.
                             evt.MidiChannel = evt.MidiChannel == _drumChannel ? MidiDefs.DEFAULT_DRUM_CHANNEL : evt.MidiChannel;
-                            chan.Send(evt);
+                            mout.Send(evt);
                             break;
 
                         case NoteOff evt:
-                            // Adjust channel.
+                            // Adjust output.
                             evt.MidiChannel = evt.MidiChannel == _drumChannel ? MidiDefs.DEFAULT_DRUM_CHANNEL : evt.MidiChannel;
-                            chan.Send(evt);
+                            mout.Send(evt);
                             break;
 
                         default:
                             // Everything else as is.
-                            chan.Send(mevt);
+                            mout.Send(mevt);
                             break;
                     }
                 }
@@ -748,8 +748,8 @@ namespace Midifrier
 
                 // Get selected channels.
                 List<int> channelNumbers = [.. CM.GetOutputs().
-                    Where(ch => ch.ctrl is not null && ch.ctrl.Selected).
-                    Select(ch => ch.mout.MidiChannel)];
+                    Where(o => o.ctrl is not null && o.ctrl.Selected).
+                    Select(o => o.mout.MidiChannel)];
 
                 // Selected patterns.
                 foreach (var p in patternNames)
